@@ -285,19 +285,17 @@ const COLORS = [
   {n:'коричневый', h:'#8d6e63'},{n:'тёмный', h:'#37474F'},{n:'белый', h:'#f5f5f5'},
 ];
 
-// СПИСОК "МУСОРНЫХ" ИМЁН ИЗ GDRIVE (не использовать как название мода)
 const GENERIC_NAMES = [
   'update', 'redux', 'preset', 'presets', 'files', 'file', 'download', 
   'gta5', 'gta 5', 'мод', 'мода', 'моды', 'mods', 'mod', 'reshade', 
   'graphics', 'graphic', 'setting', 'settings', 'config', 'v1', 'v2', 
   'v3', 'v4', 'v5', 'final', 'new', 'test', 'скачать', 'папка', 'folder',
   'installation', 'install', 'rar', 'zip', 'archive', 'архив',
-  'мой ���иск', 'my drive', 'shared', 'shared with me'
+  'мой диск', 'my drive', 'shared', 'shared with me'
 ];
 
 function cleanFilename(name) {
   if (!name) return '';
-  // Убираем расширения (.rar, .zip, .7z и т.д.)
   return name.replace(/\.(rar|zip|7z|tar|gz|exe|iso|mp4|avi)$/i, '').trim();
 }
 
@@ -305,11 +303,8 @@ function isGenericName(name) {
   if (!name) return true;
   const cleaned = cleanFilename(name).toLowerCase().trim();
   if (cleaned.length < 3) return true;
-  // Проверяем на точное совпадение
   if (GENERIC_NAMES.includes(cleaned)) return true;
-  // Проверяем на частичное (например "update v1" или "redux files")
   for (const generic of GENERIC_NAMES) {
-    // если имя это generic + цифра/версия
     const patterns = [
       new RegExp(`^${generic}\\s*[v]?\\d*$`, 'i'),
       new RegExp(`^${generic}\\s*(final|new|test)$`, 'i'),
@@ -320,13 +315,6 @@ function isGenericName(name) {
   return false;
 }
 
-/**
- * УМНОЕ АВТО-НАЗВАНИЕ
- * Приоритет:
- * 1. GDrive filename если он НЕ generic
- * 2. YouTube title
- * 3. GDrive filename даже если generic (last resort)
- */
 function getSmartName(driveFilename, ytTitle) {
   const cleanedDrive = cleanFilename(driveFilename);
   if (cleanedDrive && !isGenericName(cleanedDrive)) {
@@ -342,7 +330,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentAdmin = null;
 let allApprovedMods = [];
 let currentDayModId = null;
-let allExistingTags = []; // ГЛОБАЛЬНЫЙ список тегов
+let allExistingTags = [];
 let myLocks = new Set();
 let othersLocks = new Map();
 
@@ -401,7 +389,6 @@ function toast(msg) {
   setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(100px)'; t.style.transition='all .3s'; setTimeout(() => t.remove(), 300); }, 3000);
 }
 
-// ============ ЗАГРУЗКА ТЕГОВ ============
 async function loadAllTags() {
   try {
     const {data} = await sb.from('mods').select('tags');
@@ -423,7 +410,6 @@ async function loadAllTags() {
   }
 }
 
-// Добавить тег в глобальный список сразу после одобрения (без перезагрузки)
 function addTagsToGlobal(tags) {
   tags.forEach(tag => {
     const clean = String(tag).toLowerCase().trim();
@@ -435,7 +421,6 @@ function addTagsToGlobal(tags) {
       allExistingTags.push({name: clean, count: 1});
     }
   });
-  // Пересортировка по популярности
   allExistingTags.sort((a,b) => b.count - a.count);
 }
 
@@ -445,7 +430,6 @@ async function refreshAll() {
   loadApprovedCount();
 }
 
-// ============ ЛОКИ ============
 async function initLockSystem() {
   setInterval(refreshMyLocks, 5000);
   setInterval(checkAllLocks, 3000);
@@ -541,7 +525,6 @@ async function updateOnlineCount() {
   } catch(e) {}
 }
 
-// ============ PENDING ============
 async function loadPending() {
   const box = document.getElementById('pendingList');
   box.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
@@ -594,10 +577,8 @@ function makePendingCard(item) {
   let colorsHTML = '';
   COLORS.forEach(c => { colorsHTML += `<div class="color-opt" style="background:${c.h}" data-color="${c.n}" data-hex="${c.h}" title="${c.n}"></div>`; });
   
-  // УМНОЕ НАЗВАНИЕ по умолчанию
   const defaultName = getSmartName(driveFilename, titles[0] || '');
   
-  // Кандидаты названий
   const nameCandidates = [];
   if (cleanedDrive) {
     nameCandidates.push({
@@ -728,7 +709,6 @@ function makePendingCard(item) {
   return card;
 }
 
-// ============ УМНЫЕ ТЕГИ ============
 function setupTagsInput(card, itemId) {
   const container = card.querySelector('.tags-container');
   const input = card.querySelector('.tags-input');
@@ -771,7 +751,6 @@ function setupTagsInput(card, itemId) {
     highlightedIndex = -1;
     
     if (!query) {
-      // Топ-8 популярных
       const top = allExistingTags.filter(t => !card._tags.has(t.name)).slice(0, 8);
       if (top.length === 0) { hideDropdown(); return; }
       top.forEach((t, i) => addDropdownItem(t.name, t.count, false, i));
@@ -874,13 +853,13 @@ async function approveMod(item, card) {
     const {error: e1} = await sb.from('mods').insert({
       type: selectedType, name: name, author: author, color: hex, color_name: selectedColor.dataset.color,
       youtube_url: ytUrl, youtube_id: ytIdMatch ? ytIdMatch[1] : '', drive_url: item.drive_url,
-      preview_image: preview, description: desc, tags: tags, badge: badge, palette: [hex, hex, hex, hex]
+      preview_image: preview, description: desc, tags: tags, badge: badge, palette: [hex, hex, hex, hex],
+      drive_filename: item.drive_filename || null
     });
     if (e1) throw e1;
     await sb.from('pending_mods').delete().eq('id', item.id);
     await releaseLock(item.id);
     
-    // 🔥 ГЛАВНОЕ: сразу обновляем глобальный список тегов
     addTagsToGlobal(tags);
     
     toast('✅ Мод "'+name+'" опубликован!');
@@ -913,14 +892,20 @@ async function loadApproved() {
     const isDay = r.id === dayId;
     const card = document.createElement('div');
     card.className = 'approved-card' + (isDay ? ' is-day' : '');
+    // Умное отображение имени в списке
+    let displayName = r.name;
+    if (r.drive_filename) {
+      const cleaned = cleanFilename(r.drive_filename);
+      if (cleaned && !isGenericName(cleaned)) displayName = cleaned;
+    }
     card.innerHTML = `
       <div class="approved-preview"><img src="${r.preview_image||''}" onerror="this.style.display='none'"><div class="approved-color-bar" style="background:${r.color}"></div></div>
       <div class="approved-body">
-        <div class="approved-name">${r.name}</div>
+        <div class="approved-name">${displayName}</div>
         <div class="approved-meta">👤 ${r.author} · ${r.type==='redux'?'✨ Redux':'💫 REV'} · 🎨 ${r.color_name}</div>
         <div class="approved-stats"><span><i class="fas fa-star"></i>${r.rating||5}</span><span><i class="fas fa-download"></i>${r.downloads||0}</span></div>
         <div class="approved-buttons">
-          <button class="btn btn-danger" style="width:100%;padding:8px" onclick="deleteMod(${r.id},'${r.name.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i> Удалить</button>
+          <button class="btn btn-danger" style="width:100%;padding:8px" onclick="deleteMod(${r.id},'${displayName.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i> Удалить</button>
         </div>
       </div>`;
     box.appendChild(card);
@@ -952,6 +937,14 @@ async function loadModOfDay() {
   }
 }
 
+function getDisplayName(mod) {
+  if (mod.drive_filename) {
+    const cleaned = cleanFilename(mod.drive_filename);
+    if (cleaned && !isGenericName(cleaned)) return cleaned;
+  }
+  return mod.name;
+}
+
 function renderDayCurrent() {
   const box = document.getElementById('dayCurrentBox');
   if (!currentDayModId) {
@@ -963,7 +956,8 @@ function renderDayCurrent() {
     box.innerHTML = `<div class="day-current"><div class="day-current-icon">⚠️</div><div class="day-current-info"><div class="day-current-label">⭐ мод дня</div><div class="day-current-name">Не найден</div><div class="day-current-meta">Мод был удалён — вернись к автоматическому режиму</div></div><div class="day-current-actions"><button class="btn btn-sec" onclick="clearDayMod()"><i class="fas fa-times"></i> Сбросить</button></div></div>`;
     return;
   }
-  box.innerHTML = `<div class="day-current"><div class="day-current-icon">${mod.type==='redux'?'✨':'💫'}</div><div class="day-current-info"><div class="day-current-label">⭐ сейчас на главной</div><div class="day-current-name">${mod.name}</div><div class="day-current-meta">👤 ${mod.author} · 🎨 ${mod.color_name} · ⭐ ${mod.rating}</div></div><div class="day-current-actions"><button class="btn btn-sec" onclick="clearDayMod()"><i class="fas fa-magic"></i> Автовыбор</button></div></div>`;
+  const displayName = getDisplayName(mod);
+  box.innerHTML = `<div class="day-current"><div class="day-current-icon">${mod.type==='redux'?'✨':'💫'}</div><div class="day-current-info"><div class="day-current-label">⭐ сейчас на главной</div><div class="day-current-name">${displayName}</div><div class="day-current-meta">👤 ${mod.author} · 🎨 ${mod.color_name} · ⭐ ${mod.rating}</div></div><div class="day-current-actions"><button class="btn btn-sec" onclick="clearDayMod()"><i class="fas fa-magic"></i> Автовыбор</button></div></div>`;
 }
 
 function renderDayModList(query) {
@@ -975,7 +969,10 @@ function renderDayModList(query) {
   let filtered = allApprovedMods;
   if (query) {
     const q = query.toLowerCase();
-    filtered = allApprovedMods.filter(m => m.name.toLowerCase().includes(q) || m.author.toLowerCase().includes(q));
+    filtered = allApprovedMods.filter(m => {
+      const displayName = getDisplayName(m).toLowerCase();
+      return displayName.includes(q) || m.author.toLowerCase().includes(q);
+    });
   }
   if (filtered.length === 0) {
     box.innerHTML = '<div class="empty"><i class="fas fa-search"></i><h3>Ничего не найдено</h3></div>';
@@ -985,15 +982,16 @@ function renderDayModList(query) {
   box.innerHTML = '';
   filtered.forEach(r => {
     const isDay = r.id === currentDayModId;
+    const displayName = getDisplayName(r);
     const card = document.createElement('div');
     card.className = 'approved-card' + (isDay ? ' is-day' : '');
     card.innerHTML = `
       <div class="approved-preview"><img src="${r.preview_image||''}" onerror="this.style.display='none'"><div class="approved-color-bar" style="background:${r.color}"></div></div>
       <div class="approved-body">
-        <div class="approved-name">${r.name}</div>
+        <div class="approved-name">${displayName}</div>
         <div class="approved-meta">👤 ${r.author} · ${r.type==='redux'?'✨ Redux':'💫 REV'}</div>
         <div class="approved-stats"><span><i class="fas fa-star"></i>${r.rating||5}</span><span><i class="fas fa-download"></i>${r.downloads||0}</span></div>
-        ${isDay ? '<button class="btn btn-sec" style="width:100%;padding:8px" disabled><i class="fas fa-check"></i> Уже мод дня</button>' : `<button class="btn btn-gold" style="width:100%;padding:8px" onclick="setDayMod(${r.id},'${r.name.replace(/'/g,"\\'")}')"><i class="fas fa-star"></i> Сделать модом дня</button>`}
+        ${isDay ? '<button class="btn btn-sec" style="width:100%;padding:8px" disabled><i class="fas fa-check"></i> Уже мод дня</button>' : `<button class="btn btn-gold" style="width:100%;padding:8px" onclick="setDayMod(${r.id},'${displayName.replace(/'/g,"\\'")}')"><i class="fas fa-star"></i> Сделать модом дня</button>`}
       </div>`;
     box.appendChild(card);
   });
@@ -1026,7 +1024,6 @@ sb.channel('pending_changes').on('postgres_changes', {event:'INSERT', schema:'pu
   if (currentAdmin) { toast('🔔 Новая заявка!'); loadPending(); }
 }).subscribe();
 
-// Real-time обновление списка тегов при появлении нового мода в БД
 sb.channel('mods_tags_sync').on('postgres_changes', {event:'INSERT', schema:'public', table:'mods'}, () => {
   loadAllTags();
 }).subscribe();
