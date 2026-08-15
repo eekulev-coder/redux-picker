@@ -1,74 +1,72 @@
-// ============ DATABASE ============
-const REDUXES=[
-{id:1,type:"redux",name:"NaturalVision Evolved",author:"Razed",color:"#4CAF50",colorName:"зелёный",cat:"Реализм",rating:4.9,votes:342,dl:0,date:"2024-01-15",badge:"top",tags:["реализм","4K","HDR"],desc:"Один из самых реалистичных редуксов. Полностью переработанное освещение, текстуры и эффекты погоды.",palette:["#2d5a27","#8bc34a","#c8e6c9","#1b5e20"]},
-{id:2,type:"redux",name:"QuantV",author:"Quant",color:"#4d9fff",colorName:"синий",cat:"Графика",rating:4.8,votes:289,dl:0,date:"2024-02-20",badge:"hot",tags:["рейтрейсинг","свет"],desc:"Продвинутый графический мод с эффектами рейтрейсинга и реалистичными отражениями.",palette:["#1565c0","#42a5f5","#bbdefb","#0d47a1"]},
-{id:3,type:"redux",name:"Redux Mod",author:"Josh Romito",color:"#ff9800",colorName:"оранжевый",cat:"Комплексный",rating:4.5,votes:456,dl:0,date:"2023-08-10",badge:"top",tags:["текстуры","погода","звуки"],desc:"Комплексный мод: графика, погода, транспорт и звуки. Классика среди редуксов.",palette:["#e65100","#ff9800","#ffe0b2","#bf360c"]},
-{id:4,type:"redux",name:"VisualV",author:"_CP_",color:"#c04dff",colorName:"фиолетовый",cat:"Графика",rating:4.7,votes:198,dl:0,date:"2024-03-05",badge:"new",tags:["таймцикл","атмосфера"],desc:"Кинематографическая атмосфера с улучшенным таймциклом и погодой.",palette:["#6a1b9a","#ab47bc","#e1bee7","#4a148c"]},
-{id:5,type:"redux",name:"Pinnacle of V",author:"Pinnacle",color:"#ff4d9d",colorName:"розовый",cat:"Реализм",rating:4.6,votes:167,dl:0,date:"2023-11-22",badge:null,tags:["реализм","текстуры"],desc:"Реалистичный редукс с акцентом на детали дорог и зданий.",palette:["#c2185b","#f06292","#fce4ec","#880e4f"]},
-{id:6,type:"redux",name:"NVE + QuantV",author:"Community",color:"#00ffcc",colorName:"циан",cat:"Комбо",rating:4.9,votes:234,dl:0,date:"2024-04-01",badge:"hot",tags:["комбо","максимум"],desc:"Объединение двух лучших модов — максимальное качество графики.",palette:["#00897b","#4db6ac","#b2dfdb","#004d40"]},
-{id:7,type:"redux",name:"Realism Beyond",author:"Tore_",color:"#8d6e63",colorName:"коричневый",cat:"Реализм",rating:4.4,votes:123,dl:0,date:"2023-09-15",badge:null,tags:["реализм","грязь"],desc:"Реалистичный износ и детали. Мир выглядит живым.",palette:["#4e342e","#8d6e63","#d7ccc8","#3e2723"]},
-{id:8,type:"redux",name:"CinematicFX",author:"PixelKing",color:"#ff9800",colorName:"оранжевый",cat:"Кино",rating:4.3,votes:145,dl:0,date:"2024-01-30",badge:"new",tags:["кино","DOF"],desc:"Кинематографические эффекты: DOF, lens flare, цветокоррекция.",palette:["#ef6c00","#ffa726","#fff3e0","#e65100"]},
-{id:9,type:"redux",name:"Vice Cry",author:"ViceCry Team",color:"#ff4d9d",colorName:"розовый",cat:"Ретро",rating:4.7,votes:278,dl:0,date:"2023-12-10",badge:"hot",tags:["vice","ретро","неон"],desc:"Неоновые огни и ретро-атмосфера 80-х.",palette:["#ad1457","#ec407a","#fce4ec","#880e4f"]},
-{id:10,type:"redux",name:"DarkSide",author:"DarkMaster",color:"#37474F",colorName:"тёмный",cat:"Атмосфера",rating:4.2,votes:98,dl:0,date:"2024-02-14",badge:null,tags:["нуар","контраст"],desc:"Тёмная мрачная атмосфера с высоким контрастом.",palette:["#263238","#546e7a","#cfd8dc","#1a2327"]},
-{id:11,type:"redux",name:"NightCity Neon",author:"CyberMods",color:"#7C4DFF",colorName:"фиолетовый",cat:"Тематический",rating:4.6,votes:201,dl:0,date:"2024-03-18",badge:"new",tags:["неон","киберпанк"],desc:"Киберпанк: неоновые вывески и яркие отражения.",palette:["#311b92","#7c4dff","#d1c4e9","#1a0063"]},
-{id:12,type:"redux",name:"Golden Hour",author:"SunsetLover",color:"#ffb84d",colorName:"жёлтый",cat:"Освещение",rating:4.6,votes:189,dl:0,date:"2024-04-15",badge:"hot",tags:["закат","золотой час"],desc:"Вечный золотой час — идеально для скриншотов.",palette:["#f57f17","#ffc107","#fff8e1","#ff6f00"]},
-{id:13,type:"redux",name:"PhotoRealistic",author:"LensGod",color:"#4CAF50",colorName:"зелёный",cat:"Реализм",rating:4.8,votes:312,dl:0,date:"2024-04-10",badge:"hot",tags:["фото","4K"],desc:"Максимально близко к реальной фотографии.",palette:["#1b5e20","#66bb6a","#c8e6c9","#2e7d32"]},
-{id:14,type:"redux",name:"Anime Shade",author:"OtakuMods",color:"#ff80AB",colorName:"розовый",cat:"Стилизация",rating:4.1,votes:87,dl:0,date:"2024-01-20",badge:"new",tags:["аниме","cel-shading"],desc:"Аниме-стилизация GTA 5 с cel-shading.",palette:["#c2185b","#ff80ab","#fce4ec","#ad1457"]},
-{id:15,type:"redux",name:"Midnight Club",author:"NightRacer",color:"#4d9fff",colorName:"синий",cat:"Ночной",rating:4.5,votes:156,dl:0,date:"2024-01-10",badge:null,tags:["ночь","гонки"],desc:"Ночной мод для стрит-рейсинга.",palette:["#0d47a1","#2196f3","#bbdefb","#1565c0"]},
-{id:16,type:"redux",name:"SunnyDay Ultra",author:"SolarMod",color:"#ffeb3b",colorName:"жёлтый",cat:"Погода",rating:4.1,votes:78,dl:0,date:"2023-07-20",badge:null,tags:["солнце","лето"],desc:"Яркий солнечный мод для летней атмосферы.",palette:["#f9a825","#ffee58","#fff9c4","#f57f17"]},
-{id:17,type:"redux",name:"Winter Wonderland",author:"FrostByte",color:"#B3E5FC",colorName:"голубой",cat:"Сезонный",rating:4.3,votes:134,dl:0,date:"2023-12-25",badge:null,tags:["зима","снег"],desc:"Зимний мод: снежные улицы и иней.",palette:["#01579b","#4fc3f7","#e1f5fe","#0277bd"]},
-{id:18,type:"redux",name:"Tropical Paradise",author:"IslandVibes",color:"#00E676",colorName:"зелёный",cat:"Тематический",rating:4.2,votes:91,dl:0,date:"2024-02-05",badge:null,tags:["тропики","океан"],desc:"Тропическая атмосфера: зелень и океан.",palette:["#1b5e20","#00e676","#c8e6c9","#2e7d32"]},
-];
+// ============================================================
+// REDUX PICKER — полный app.js с Supabase
+// ============================================================
 
-const REVIKS=[
-{id:101,type:"revik",name:"Sharp REV",author:"SharpMods",color:"#ff4d9d",colorName:"розовый",cat:"Резкость",rating:4.7,votes:189,dl:0,date:"2024-03-20",badge:"hot",tags:["резкость","чёткость"],desc:"Максимальная резкость и чёткость картинки для капта.",palette:["#c2185b","#ff4d9d","#fce4ec","#880e4f"]},
-{id:102,type:"revik",name:"Neon REV Pro",author:"CyberMods",color:"#00ffcc",colorName:"циан",cat:"Неон",rating:4.8,votes:234,dl:0,date:"2024-04-05",badge:"top",tags:["неон","яркость"],desc:"Яркие неоновые оттенки, идеальны для ночных каптов.",palette:["#00897b","#00ffcc","#b2dfdb","#004d40"]},
-{id:103,type:"revik",name:"Contrast Master",author:"DarkMaster",color:"#37474F",colorName:"тёмный",cat:"Контраст",rating:4.5,votes:156,dl:0,date:"2024-02-10",badge:null,tags:["контраст","чёрный"],desc:"Экстремальный контраст для глубокой картинки.",palette:["#263238","#546e7a","#cfd8dc","#1a2327"]},
-{id:104,type:"revik",name:"Sunset REV",author:"SunsetLover",color:"#ffb84d",colorName:"жёлтый",cat:"Освещение",rating:4.6,votes:145,dl:0,date:"2024-03-15",badge:"new",tags:["закат","тепло"],desc:"Тёплая закатная палитра для атмосферных каптов.",palette:["#f57f17","#ffc107","#fff8e1","#ff6f00"]},
-{id:105,type:"revik",name:"Vice REV",author:"ViceCry Team",color:"#ff4d9d",colorName:"розовый",cat:"Ретро",rating:4.7,votes:198,dl:0,date:"2024-01-25",badge:"hot",tags:["vice","ретро"],desc:"Ретро-стиль Vice City в форме REV.",palette:["#ad1457","#ec407a","#fce4ec","#880e4f"]},
-{id:106,type:"revik",name:"Cold Blue",author:"FrostByte",color:"#4d9fff",colorName:"синий",cat:"Холод",rating:4.4,votes:112,dl:0,date:"2024-02-28",badge:null,tags:["холод","синева"],desc:"Холодные синие тона, зимняя эстетика.",palette:["#0d47a1","#2196f3","#bbdefb","#1565c0"]},
-{id:107,type:"revik",name:"Cinematic REV",author:"PixelKing",color:"#ff9800",colorName:"оранжевый",cat:"Кино",rating:4.6,votes:167,dl:0,date:"2024-03-08",badge:"new",tags:["кино","драма"],desc:"Кинематографический REV для эпичных каптов.",palette:["#ef6c00","#ffa726","#fff3e0","#e65100"]},
-{id:108,type:"revik",name:"Green Machine",author:"Razed",color:"#4CAF50",colorName:"зелёный",cat:"Природа",rating:4.5,votes:143,dl:0,date:"2024-04-01",badge:null,tags:["зелень","природа"],desc:"Насыщенная зелёная палитра для природных сцен.",palette:["#2d5a27","#8bc34a","#c8e6c9","#1b5e20"]},
-{id:109,type:"revik",name:"Purple Rain",author:"CyberMods",color:"#c04dff",colorName:"фиолетовый",cat:"Тематический",rating:4.8,votes:212,dl:0,date:"2024-04-12",badge:"hot",tags:["фиолет","дождь"],desc:"Фиолетовый REV с эффектом дождя.",palette:["#6a1b9a","#ab47bc","#e1bee7","#4a148c"]},
-{id:110,type:"revik",name:"Clean White",author:"MinimalMods",color:"#f5f5f5",colorName:"голубой",cat:"Минимализм",rating:4.3,votes:98,dl:0,date:"2024-01-05",badge:null,tags:["минимал","белый"],desc:"Чистый минималистичный REV без лишних эффектов.",palette:["#eeeeee","#f5f5f5","#ffffff","#e0e0e0"]},
-];
+const SUPABASE_URL = 'https://pdpmorawwynhkoxunzyn.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkcG1vcmF3d3luaGtveHVuenluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MzkzNTQsImV4cCI6MjEwMjMxNTM1NH0.HiV97Jc5iIsdWn7RxBLSee9KhUwClc2qzxHBRZKJ8zU';
 
-const DB=[...REDUXES,...REVIKS];
+let sb = null;
+let DB = [];
+
+const supaScript = document.createElement('script');
+supaScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+document.head.appendChild(supaScript);
 
 const COLORS=[
 {n:"все",v:"all",h:null},{n:"розовый",v:"розовый",h:"#ff4d9d"},{n:"оранжевый",v:"оранжевый",h:"#ff9800"},
 {n:"жёлтый",v:"жёлтый",h:"#ffeb3b"},{n:"зелёный",v:"зелёный",h:"#4CAF50"},{n:"голубой",v:"голубой",h:"#B3E5FC"},
 {n:"циан",v:"циан",h:"#00ffcc"},{n:"синий",v:"синий",h:"#4d9fff"},{n:"фиолетовый",v:"фиолетовый",h:"#c04dff"},
-{n:"коричневый",v:"коричневый",h:"#8d6e63"},{n:"тёмный",v:"тёмный",h:"#37474F"},
+{n:"коричневый",v:"коричневый",h:"#8d6e63"},{n:"тёмный",v:"тёмный",h:"#37474F"},{n:"белый",v:"белый",h:"#f5f5f5"},
 ];
 
-const emojiMap={"NaturalVision Evolved":"🌿","QuantV":"💎","Redux Mod":"🎨","VisualV":"👁️","Pinnacle of V":"🏔️","NVE + QuantV":"⚡","Realism Beyond":"🌍","CinematicFX":"🎬","Vice Cry":"🌆","DarkSide":"🌑","NightCity Neon":"🌃","Golden Hour":"🌅","PhotoRealistic":"📸","Anime Shade":"🎌","Midnight Club":"🌙","SunnyDay Ultra":"☀️","Winter Wonderland":"❄️","Tropical Paradise":"🏝️","Sharp REV":"🔪","Neon REV Pro":"💠","Contrast Master":"⚫","Sunset REV":"🌇","Vice REV":"💗","Cold Blue":"🧊","Cinematic REV":"🎥","Green Machine":"🌱","Purple Rain":"💜","Clean White":"⚪"};
+function getEmoji(r){return r.type==='redux'?'✨':'💫'}
 
 let ST={search:'',color:'all',author:'all',sort:'popular',type:'all'};
 let currentUser=null,favorites=[];
 let userRatings={};
 let authMode='login';
 
-// Загружаем реальные скачивания из localStorage
-function loadDownloads(){
-var stored=JSON.parse(localStorage.getItem('rdx_downloads')||'{}');
-DB.forEach(function(r){
-  if(stored[r.id]!==undefined)r.dl=stored[r.id];
-});
+// ============ ЗАГРУЗКА МОДОВ ============
+async function loadMods(){
+  if(!sb)return;
+  try{
+    const {data,error}=await sb.from('mods').select('*').order('created_at',{ascending:false});
+    if(error)throw error;
+    DB=data.map(function(r){
+      return {
+        id:r.id,type:r.type||'redux',name:r.name,author:r.author,
+        color:r.color,colorName:r.color_name,
+        rating:parseFloat(r.rating)||5.0,votes:r.votes||0,dl:r.downloads||0,
+        date:r.created_at?r.created_at.split('T')[0]:new Date().toISOString().split('T')[0],
+        badge:r.badge,tags:r.tags||[],desc:r.description||'',
+        palette:r.palette&&r.palette.length?r.palette:[r.color,r.color,r.color,r.color],
+        link:r.drive_url,preview:r.preview_image||'',youtube:r.youtube_url||''
+      };
+    });
+    return true;
+  }catch(e){
+    console.error('❌ Ошибка загрузки модов:',e);
+    return false;
+  }
 }
 
-function saveDownloads(){
-var data={};
-DB.forEach(function(r){data[r.id]=r.dl});
-localStorage.setItem('rdx_downloads',JSON.stringify(data));
-}
-
-function incrementDownload(id){
-var r=DB.find(function(x){return x.id===id});
-if(!r)return;
-r.dl++;
-saveDownloads();
-animateStats();
+function setupRealtime(){
+  if(!sb)return;
+  sb.channel('mods_changes')
+    .on('postgres_changes',{event:'*',schema:'public',table:'mods'},async function(){
+      await loadMods();
+      renderGrid();
+      renderDayCard();
+      renderMarquee();
+      initFilters();
+      animateStats();
+    })
+    .subscribe();
+  sb.channel('settings_changes')
+    .on('postgres_changes',{event:'*',schema:'public',table:'site_settings'},function(){
+      renderDayCard();
+    })
+    .subscribe();
 }
 
 // ============ CURSOR ============
@@ -91,31 +89,23 @@ document.querySelectorAll('.redux-card-wrapper').forEach(function(el){
 }
 
 // ============ BRANCHES ============
+var isLowPerf=navigator.hardwareConcurrency&&navigator.hardwareConcurrency<4;
 function updateBranches(){
+if(isLowPerf)return;
 var tl=document.getElementById('branchTL'),br=document.getElementById('branchBR');
 if(!tl||!br)return;
-var tlDist=Math.sqrt(mx*mx+my*my);
-var maxD=400;
-if(tlDist<maxD){
-  var f=(maxD-tlDist)/maxD;
-  tl.style.transform='translate('+(-mx*f*0.15)+'px,'+(-my*f*0.15)+'px) rotate('+(-f*8)+'deg)';
-}else{
-  tl.style.transform='translate(0,0) rotate(0)';
+var tlDist=Math.sqrt(mx*mx+my*my),maxD=400;
+if(tlDist<maxD){var f=(maxD-tlDist)/maxD;tl.style.transform='translate('+(-mx*f*0.15)+'px,'+(-my*f*0.15)+'px) rotate('+(-f*8)+'deg)'}
+else{tl.style.transform='translate(0,0) rotate(0)'}
+var brDx=mx-innerWidth,brDy=my-innerHeight,brDist=Math.sqrt(brDx*brDx+brDy*brDy);
+if(brDist<maxD){var f2=(maxD-brDist)/maxD;br.style.transform='translate('+(-brDx*f2*0.15)+'px,'+(-brDy*f2*0.15)+'px) rotate('+(180+f2*8)+'deg)'}
+else{br.style.transform='translate(0,0) rotate(180deg)'}
 }
-var brDx=mx-innerWidth,brDy=my-innerHeight;
-var brDist=Math.sqrt(brDx*brDx+brDy*brDy);
-if(brDist<maxD){
-  var f2=(maxD-brDist)/maxD;
-  br.style.transform='translate('+(-brDx*f2*0.15)+'px,'+(-brDy*f2*0.15)+'px) rotate('+(180+f2*8)+'deg)';
-}else{
-  br.style.transform='translate(0,0) rotate(180deg)';
-}
-}
-setInterval(updateBranches,50);
+if(!isLowPerf)setInterval(updateBranches,50);
 
 // ============ PARTICLES ============
 var pCanvas=document.getElementById('particlesCanvas'),pCtx=pCanvas.getContext('2d');
-var particles=[],pMouse={x:-999,y:-999};
+var particles=[],pMouse={x:-999,y:-999},particlesRunning=true;
 function resizePCanvas(){pCanvas.width=innerWidth;pCanvas.height=innerHeight}
 resizePCanvas();addEventListener('resize',resizePCanvas);
 document.addEventListener('mousemove',function(e){pMouse.x=e.clientX;pMouse.y=e.clientY});
@@ -138,14 +128,13 @@ Particle.prototype.draw=function(){
 var isDark=document.documentElement.dataset.theme==='dark';
 pCtx.beginPath();pCtx.arc(this.x,this.y,this.size,0,Math.PI*2);
 pCtx.fillStyle='hsla('+this.hue+',75%,'+(isDark?75:45)+'%,'+(isDark?.55:.25)+')';pCtx.fill();
-pCtx.beginPath();pCtx.arc(this.x,this.y,this.size*3,0,Math.PI*2);
-pCtx.fillStyle='hsla('+this.hue+',75%,'+(isDark?75:45)+'%,'+(isDark?.08:.04)+')';pCtx.fill();
 };
 
-function initParticles(){particles=[];var c=Math.min(180,Math.floor(pCanvas.width*pCanvas.height/10000));for(var i=0;i<c;i++)particles.push(new Particle())}
+function initParticles(){particles=[];var c=isLowPerf?60:Math.min(120,Math.floor(pCanvas.width*pCanvas.height/15000));for(var i=0;i<c;i++)particles.push(new Particle())}
 initParticles();addEventListener('resize',initParticles);
 
 function animParticles(){
+if(!particlesRunning){requestAnimationFrame(animParticles);return}
 pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
 var isDark=document.documentElement.dataset.theme==='dark';
 var i,j,dx,dy,d;
@@ -156,9 +145,11 @@ for(i=0;i<particles.length;i++)for(j=i+1;j<particles.length;j++){
 }
 requestAnimationFrame(animParticles)}
 animParticles();
+document.addEventListener('visibilitychange',function(){particlesRunning=!document.hidden});
 
 // ============ WIND ============
 function initWind(){
+if(isLowPerf)return;
 var wind=document.getElementById('wind');
 function makeWind(){
   var line=document.createElement('div');line.className='wind-line';
@@ -186,6 +177,7 @@ document.body.appendChild(p);
 setTimeout(function(){p.remove()},(dur+2)*1000);
 }
 function startPetals(){
+if(isLowPerf)return;
 for(var i=0;i<8;i++)setTimeout(spawnPetal,i*300);
 setInterval(spawnPetal,1200);
 }
@@ -193,11 +185,10 @@ setInterval(spawnPetal,1200);
 // ============ LOADING ============
 function runLoading(){
 var bar=document.getElementById('loadingBar'),text=document.getElementById('loadingText'),sakura=document.getElementById('loadingSakura');
-var i,p,side;
-for(i=0;i<35;i++){
-  p=document.createElement('div');p.className='load-petal';
+for(var i=0;i<35;i++){
+  var p=document.createElement('div');p.className='load-petal';
   p.textContent=petalEmojis[Math.floor(Math.random()*petalEmojis.length)];
-  side=Math.random();
+  var side=Math.random();
   if(side<.25){p.style.left=Math.random()*18+'%';p.style.top=Math.random()*100+'%'}
   else if(side<.5){p.style.right=Math.random()*18+'%';p.style.top=Math.random()*100+'%'}
   else if(side<.75){p.style.top=Math.random()*18+'%';p.style.left=Math.random()*100+'%'}
@@ -206,7 +197,7 @@ for(i=0;i<35;i++){
   p.style.fontSize=(1.2+Math.random()*2.5)+'rem';
   sakura.appendChild(p);
 }
-var msgs=['loading assets...','connecting database...','rendering interface...','almost ready...','welcome 🌸'];
+var msgs=['loading mods...','connecting database...','rendering interface...','almost ready...','welcome 🌸'];
 var pct=0,mi=0;
 var iv=setInterval(function(){
   pct+=Math.random()*15+5;if(pct>100)pct=100;
@@ -216,26 +207,35 @@ var iv=setInterval(function(){
 },200);
 }
 
-function showMain(){
-loadDownloads(); // грузим реальные скачивания
-var ids=['navbar','hero','reduxDay','trendingMarquee','catalog','about','footer'];
-ids.forEach(function(id,i){
-  setTimeout(function(){var el=document.getElementById(id);if(el){el.style.opacity='1';el.style.transition='opacity .8s'}},i*150);
-});
-var footer=document.getElementById('footer');
-if(footer){
-  footer.innerHTML='<p>© 2026 REDUX PICKER by <a href="https://www.youtube.com/@thagreatest" target="_blank" style="color:var(--s1);font-weight:700">@thagreatest</a></p><p>🌸 Все моды принадлежат их авторам</p>';
+async function waitForSupabase(){
+  return new Promise(function(resolve){
+    if(window.supabase){resolve();return}
+    supaScript.onload=function(){resolve()};
+  });
 }
-// Скрываем фильтр категорий
-var catSel=document.getElementById('catSel');
-if(catSel)catSel.style.display='none';
 
-startPetals();initWind();
-setupNavbar();setupTheme();
-renderDayCard();renderMarquee();initFilters();initTypeSwitcher();renderGrid();
-setupModals();setupAuth();bindHovers();animateStats();
-setupMagnetic();setupPages();setupTelegram();loadUserData();
-setTimeout(function(){toast('🌸 Добро пожаловать в Redux Picker')},800);
+async function showMain(){
+  await waitForSupabase();
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  await loadMods();
+  setupRealtime();
+  
+  var ids=['navbar','hero','reduxDay','trendingMarquee','catalog','about','footer'];
+  ids.forEach(function(id,i){
+    setTimeout(function(){var el=document.getElementById(id);if(el){el.style.opacity='1';el.style.transition='opacity .5s'}},i*120);
+  });
+  var footer=document.getElementById('footer');
+  if(footer){
+    footer.innerHTML='<p>© 2026 REDUX PICKER by <a href="https://www.youtube.com/@thagreatest" target="_blank" style="color:var(--s1);font-weight:700">@thagreatest</a></p><p>🌸 Все моды принадлежат их авторам</p>';
+  }
+  var catSel=document.getElementById('catSel');
+  if(catSel)catSel.style.display='none';
+
+  startPetals();initWind();
+  setupNavbar();setupTheme();
+  renderDayCard();renderMarquee();initFilters();initTypeSwitcher();renderGrid();
+  setupModals();setupAuth();bindHovers();animateStats();
+  setupMagnetic();setupPages();setupTelegram();loadUserData();
 }
 
 function toast(msg){
@@ -259,25 +259,23 @@ function setupNavbar(){addEventListener('scroll',function(){document.getElementB
 function setupTheme(){
 document.getElementById('themeBtn').addEventListener('click',function(){
   var html=document.documentElement;
+  html.classList.add('theme-switching');
   var isDark=html.dataset.theme==='dark';
   html.dataset.theme=isDark?'light':'dark';
   localStorage.setItem('rdx_theme',html.dataset.theme);
-  toast(isDark?'☀️ Светлая тема':'🌙 Тёмная тема');
+  requestAnimationFrame(function(){setTimeout(function(){html.classList.remove('theme-switching')},100)});
 });
 var saved=localStorage.getItem('rdx_theme');
 if(saved)document.documentElement.dataset.theme=saved;
 }
 
-// РЕАЛЬНЫЕ СЧЁТЧИКИ
 function animateStats(){
 var totalMods=DB.length;
 var uniqueAuthors=[];
 DB.forEach(function(r){if(uniqueAuthors.indexOf(r.author)===-1)uniqueAuthors.push(r.author)});
-var totalAuthors=uniqueAuthors.length;
 var totalDownloads=DB.reduce(function(sum,r){return sum+r.dl},0);
-
 animateNum('statMods',totalMods);
-animateNum('statAuthors',totalAuthors);
+animateNum('statAuthors',uniqueAuthors.length);
 animateNum('statDownloads',totalDownloads);
 }
 
@@ -285,9 +283,7 @@ function animateNum(id,target){
 var el=document.getElementById(id);
 if(!el)return;
 var current=parseInt((el.textContent||'0').replace(/\D/g,''))||0;
-var start=performance.now();
-var dur=800;
-var startVal=current;
+var start=performance.now(),dur=800,startVal=current;
 function upd(t){
   var p=Math.min((t-start)/dur,1);
   var val=Math.floor(startVal+(target-startVal)*(1-Math.pow(1-p,3)));
@@ -303,12 +299,41 @@ document.querySelectorAll('.magnetic').forEach(function(b){
   b.addEventListener('mouseleave',function(){b.style.transform=''});
 });}
 
-function renderDayCard(){
-var r=DB.reduce(function(a,b){return a.rating>b.rating?a:b});
-var emoji=emojiMap[r.name]||'🌸';
+// ============ МОД ДНЯ ============
+async function renderDayCard(){
+if(DB.length===0){document.getElementById('reduxDay').innerHTML='';return}
+
+var r=null;
+
+// Проверяем есть ли выбранный админом мод дня
+if(sb){
+  try{
+    const {data,error}=await sb.from('site_settings').select('value').eq('key','mod_of_day_id').single();
+    if(!error&&data&&data.value){
+      var dayId=parseInt(data.value);
+      r=DB.find(function(m){return m.id===dayId});
+    }
+  }catch(e){/* нет настройки — фолбэк на автовыбор */}
+}
+
+// Автоматический выбор — мод с макс рейтингом
+if(!r){
+  r=DB.reduce(function(a,b){
+    // Приоритет: сначала рейтинг, при равенстве — больше голосов, потом больше скачиваний
+    if(b.rating>a.rating)return b;
+    if(b.rating===a.rating){
+      if(b.votes>a.votes)return b;
+      if(b.votes===a.votes&&b.dl>a.dl)return b;
+    }
+    return a;
+  });
+}
+
+var emoji=getEmoji(r);
 document.getElementById('reduxDay').innerHTML=
 '<div class="day-card">'+
 '<div class="day-preview" style="background:linear-gradient(135deg,'+r.color+'11,'+r.color+'33)">'+
+(r.preview?'<img src="'+r.preview+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.7" onerror="this.remove()">':'')+
 '<div class="day-preview-glow" style="background:'+r.color+'"></div>'+
 '<div class="day-preview-icon">'+emoji+'</div></div>'+
 '<div class="day-content">'+
@@ -320,7 +345,6 @@ document.getElementById('reduxDay').innerHTML=
 '<button class="day-btn" data-id="'+r.id+'"><i class="fas fa-eye"></i> Подробнее</button>'+
 '<div class="day-tags-inline">'+r.tags.slice(0,3).map(function(t){return '<span class="day-tag">'+t+'</span>'}).join('')+'</div>'+
 '</div></div></div>';
-
 var dayAuthorEl=document.querySelector('.day-author[data-author]');
 if(dayAuthorEl)dayAuthorEl.addEventListener('click',function(){openAuthorPage(dayAuthorEl.dataset.author)});
 var dayBtn=document.querySelector('.day-btn[data-id]');
@@ -331,10 +355,10 @@ bindHovers();
 function getReduxById(id){return DB.find(function(r){return r.id===id})}
 
 function renderMarquee(){
+if(DB.length===0){document.getElementById('marqueeTrack').innerHTML='';return}
 var sorted=DB.slice().sort(function(a,b){return b.dl-a.dl}).slice(0,10);
 var items=sorted.map(function(r,i){
-  var emoji=emojiMap[r.name]||'🌸';
-  return '<span class="marquee-item" data-id="'+r.id+'"><span class="rank">#'+(i+1)+'</span> <span class="emoji">'+emoji+'</span> <span>'+r.name+'</span></span>';
+  return '<span class="marquee-item" data-id="'+r.id+'"><span class="rank">#'+(i+1)+'</span> <span class="emoji">'+getEmoji(r)+'</span> <span>'+r.name+'</span></span>';
 }).join('<span class="marquee-sep">·</span>');
 document.getElementById('marqueeTrack').innerHTML=items+'<span class="marquee-sep">·</span>'+items;
 document.querySelectorAll('.marquee-item').forEach(function(el){
@@ -343,21 +367,15 @@ document.querySelectorAll('.marquee-item').forEach(function(el){
 bindHovers();
 }
 
-// TYPE SWITCHER
 function initTypeSwitcher(){
 document.querySelectorAll('.type-btn').forEach(function(b){
-  // Обновляем текст: Ревики → REV
-  if(b.dataset.type==='revik'){
-    b.innerHTML='💫 REV';
-  }
+  if(b.dataset.type==='revik')b.innerHTML='💫 REV';
   b.addEventListener('click',function(e){
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault();e.stopPropagation();
     document.querySelectorAll('.type-btn').forEach(function(x){x.classList.remove('active')});
     b.classList.add('active');
     ST.type=b.dataset.type;
     renderGrid();
-    toast('🎨 Показываю: '+(ST.type==='all'?'все моды':ST.type==='redux'?'редуксы':'REV'));
   });
 });
 }
@@ -365,18 +383,25 @@ document.querySelectorAll('.type-btn').forEach(function(b){
 function initFilters(){
 var au=[];DB.forEach(function(r){if(au.indexOf(r.author)===-1)au.push(r.author)});au.sort();
 var as=document.getElementById('authorSel');
+as.innerHTML='<option value="all">Все авторы</option>';
 au.forEach(function(a){var o=document.createElement('option');o.value=a;o.textContent=a;as.appendChild(o)});
 var cp=document.getElementById('colorPills');
-COLORS.forEach(function(c){
-  var b=document.createElement('button');b.className='color-pill'+(c.v==='all'?' all-c active':'');
-  b.title=c.n;if(c.h)b.style.background=c.h;
-  b.onclick=function(){document.querySelectorAll('.color-pill').forEach(function(x){x.classList.remove('active')});b.classList.add('active');ST.color=c.v;renderGrid()};
-  cp.appendChild(b);
-});
+if(cp.children.length===0){
+  COLORS.forEach(function(c){
+    var b=document.createElement('button');b.className='color-pill'+(c.v==='all'?' all-c active':'');
+    b.title=c.n;if(c.h)b.style.background=c.h;
+    b.onclick=function(){document.querySelectorAll('.color-pill').forEach(function(x){x.classList.remove('active')});b.classList.add('active');ST.color=c.v;renderGrid()};
+    cp.appendChild(b);
+  });
+}
 var dt;
-document.getElementById('searchIn').oninput=function(e){clearTimeout(dt);dt=setTimeout(function(){ST.search=e.target.value.toLowerCase().trim();renderGrid()},200)};
+var searchIn=document.getElementById('searchIn');
+if(searchIn){
+  searchIn.oninput=function(e){clearTimeout(dt);dt=setTimeout(function(){ST.search=e.target.value.toLowerCase().trim();renderGrid()},200)};
+}
 document.getElementById('authorSel').onchange=function(e){ST.author=e.target.value;renderGrid()};
-document.getElementById('sortSel').onchange=function(e){ST.sort=e.target.value;renderGrid()};
+var sortSel=document.getElementById('sortSel');
+if(sortSel)sortSel.onchange=function(e){ST.sort=e.target.value;renderGrid()};
 }
 
 function renderGrid(target){
@@ -406,16 +431,19 @@ if(list.length===0){
   if(target==='favGrid'){
     grid.innerHTML='<div class="fav-empty" style="grid-column:1/-1"><div class="fav-empty-icon">💔</div><h3>Пусто</h3><p>'+(currentUser?'Ты ещё не добавил ничего в избранное':'Войди в аккаунт чтобы сохранять моды')+'</p>'+(!currentUser?'<button class="btn-primary" onclick="document.getElementById(\'authBtn\').click()"><i class="fas fa-user"></i> Войти</button>':'<button class="btn-primary" onclick="goToCatalog()"><i class="fas fa-th-large"></i> К каталогу</button>')+'</div>';
   }else{
-    grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🔍</div><h3>Ничего не найдено</h3><p>Попробуй изменить фильтры</p></div>';
+    grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🌸</div><h3>Пока нет модов</h3><p>Скоро тут появятся крутые редуксы и REV</p></div>';
   }
   updateFavBadge();return;
 }
 
-list.forEach(function(r,i){
+var BATCH=9;
+var rendered=0;
+function renderBatch(){
+var batch=list.slice(rendered,rendered+BATCH);
+batch.forEach(function(r,i){
   var wrapper=document.createElement('div');
   wrapper.className='redux-card-wrapper';
-  wrapper.style.animationDelay=i*.04+'s';
-  
+  wrapper.style.animationDelay=(i*.04)+'s';
   var card=document.createElement('div');
   card.className='redux-card';
   var isFav=favorites.indexOf(r.id)!==-1;
@@ -423,13 +451,14 @@ list.forEach(function(r,i){
   var typeBadge=r.type==='redux'?'<div class="card-type-badge type-redux">✨ Redux</div>':'<div class="card-type-badge type-revik">💫 REV</div>';
   var starsDisplay='';
   for(var si=0;si<5;si++){starsDisplay+='<i class="fas fa-star '+(si<Math.round(r.rating)?'':'empty')+'"></i>'}
+  var previewHTML=r.preview?'<img src="'+r.preview+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6" loading="lazy" onerror="this.remove()">':'';
   
   card.innerHTML=
     '<div class="card-preview" style="background:linear-gradient(135deg,'+r.color+'11,'+r.color+'22)">'+
+    previewHTML+
     '<div class="card-glow" style="background:'+r.color+'"></div>'+
     '<div class="card-color-bar" style="background:'+r.color+'"></div>'+
-    badge+
-    typeBadge+
+    badge+typeBadge+
     '<button class="card-fav '+(isFav?'active':'')+'" data-id="'+r.id+'"><i class="fas fa-heart"></i></button>'+
     '</div>'+
     '<div class="card-body">'+
@@ -446,29 +475,20 @@ list.forEach(function(r,i){
     '</div></div>';
   
   wrapper.appendChild(card);
-  
   wrapper.addEventListener('mousemove',function(e){
     var rect=wrapper.getBoundingClientRect();
-    var x=e.clientX-rect.left;
-    var y=e.clientY-rect.top;
-    var cxr=rect.width/2;
-    var cyr=rect.height/2;
-    var dx=(x-cxr)/cxr;
-    var dy=(y-cyr)/cyr;
-    var rotY=dx*15;
-    var rotX=-dy*15;
-    card.style.transform='rotateX('+rotX+'deg) rotateY('+rotY+'deg) scale(1.04)';
+    var x=e.clientX-rect.left,y=e.clientY-rect.top;
+    var dx=(x-rect.width/2)/(rect.width/2),dy=(y-rect.height/2)/(rect.height/2);
+    card.style.transform='rotateX('+(-dy*15)+'deg) rotateY('+(dx*15)+'deg) scale(1.04)';
   });
-  wrapper.addEventListener('mouseleave',function(){
-    card.style.transform='rotateX(0deg) rotateY(0deg) scale(1)';
-  });
-  
+  wrapper.addEventListener('mouseleave',function(){card.style.transform='rotateX(0deg) rotateY(0deg) scale(1)'});
   card.addEventListener('click',function(e){
     if(e.target.closest('.card-fav')||e.target.closest('.palette-dot')||e.target.closest('.card-author-link'))return;
     openDetail(r);
   });
   grid.appendChild(wrapper);
 });
+rendered+=BATCH;
 
 document.querySelectorAll('.card-fav').forEach(function(f){
   f.addEventListener('click',function(e){e.stopPropagation();toggleFav(parseInt(f.dataset.id))});
@@ -476,7 +496,12 @@ document.querySelectorAll('.card-fav').forEach(function(f){
 document.querySelectorAll('.card-author-link').forEach(function(a){
   a.addEventListener('click',function(e){e.stopPropagation();openAuthorPage(a.dataset.author)});
 });
-bindHovers();updateFavBadge();
+bindHovers();
+
+if(rendered<list.length){requestAnimationFrame(renderBatch)}
+}
+renderBatch();
+updateFavBadge();
 }
 
 function updateFavBadge(){
@@ -485,19 +510,15 @@ if(favorites.length>0){b.style.display='inline-block';b.textContent=favorites.le
 else b.style.display='none';
 }
 
-// AUTHOR PAGE
 function openAuthorPage(authorName){
 if(!authorName)return;
 var authorMods=DB.filter(function(r){return r.author===authorName});
-if(authorMods.length===0){toast('❌ Нет модов у этого автора');return}
-
+if(authorMods.length===0)return;
 closeAllModals();
-
 var totalDl=authorMods.reduce(function(s,r){return s+r.dl},0);
 var avgRating=(authorMods.reduce(function(s,r){return s+r.rating},0)/authorMods.length).toFixed(1);
 var reduxCount=authorMods.filter(function(r){return r.type==='redux'}).length;
 var revikCount=authorMods.filter(function(r){return r.type==='revik'}).length;
-
 document.getElementById('authorAvatar').textContent=authorName.charAt(0).toUpperCase();
 document.getElementById('authorName').textContent=authorName;
 document.getElementById('authorStats').innerHTML=
@@ -506,11 +527,9 @@ document.getElementById('authorStats').innerHTML=
   (revikCount>0?'<span>💫 '+revikCount+' REV</span>':'')+
   '<span><i class="fas fa-download"></i> '+totalDl.toLocaleString('ru')+' скачиваний</span>'+
   '<span><i class="fas fa-star"></i> '+avgRating+' средний рейтинг</span>';
-
 document.getElementById('homePage').style.display='none';
 document.getElementById('favoritesPage').classList.remove('active');
 document.getElementById('authorPage').classList.add('active');
-
 window._authorGridList=authorMods;
 renderGrid('authorGrid');
 window.scrollTo({top:0,behavior:'smooth'});
@@ -527,12 +546,8 @@ document.querySelectorAll('[data-page]').forEach(function(a){
   a.addEventListener('click',function(e){
     e.preventDefault();
     var page=a.dataset.page;
-    if(page==='home-about'){
-      switchPage('home');
-      setTimeout(function(){document.getElementById('about').scrollIntoView({behavior:'smooth'})},300);
-    }else{
-      switchPage(page);
-    }
+    if(page==='home-about'){switchPage('home');setTimeout(function(){document.getElementById('about').scrollIntoView({behavior:'smooth'})},300)}
+    else{switchPage(page)}
   });
 });
 document.getElementById('authorBack').addEventListener('click',closeAuthorPage);
@@ -555,9 +570,7 @@ if(page==='favorites'){
 
 function goToCatalog(){
 switchPage('home');
-setTimeout(function(){
-  document.getElementById('catalog').scrollIntoView({behavior:'smooth',block:'start'});
-},300);
+setTimeout(function(){document.getElementById('catalog').scrollIntoView({behavior:'smooth',block:'start'})},300);
 }
 
 function toggleFav(id){
@@ -567,44 +580,52 @@ if(idx>-1)favorites.splice(idx,1);else favorites.push(id);
 saveUserData();renderGrid();
 if(document.getElementById('favoritesPage').classList.contains('active'))renderGrid('favGrid');
 if(document.getElementById('authorPage').classList.contains('active'))renderGrid('authorGrid');
-toast(idx>-1?'💔 Удалено из избранного':'💖 Добавлено в избранное');
 }
 
-function rateRedux(id,star){
+async function rateRedux(id,star){
 if(!currentUser){toast('🌸 Войди чтобы ставить оценки');return}
-var r=DB.find(function(x){return x.id===id});
-if(!r)return;
-
-var oldRating=userRatings[id];
-userRatings[id]=star;
-saveUserData();
-
-if(oldRating){
-  r.rating=parseFloat((((r.rating*r.votes)-oldRating+star)/r.votes).toFixed(1));
-}else{
-  r.rating=parseFloat((((r.rating*r.votes)+star)/(r.votes+1)).toFixed(1));
-  r.votes++;
+if(!sb)return;
+try{
+  const {error}=await sb.rpc('add_rating',{p_mod_id:id,p_user_login:currentUser,p_rating:star});
+  if(error)throw error;
+  userRatings[id]=star;
+  saveUserData();
+  await loadMods();
+  var r=getReduxById(id);
+  if(r)openDetail(r);
+  renderGrid();
+}catch(e){
+  console.error('Ошибка оценки:',e);
+}
 }
 
-openDetail(r);
-toast('⭐ Твоя оценка: '+star+'/5 для '+r.name);
+async function incrementDownload(id){
+if(!sb)return;
+try{
+  await sb.rpc('increment_downloads',{mod_id:id});
+  var r=getReduxById(id);
+  if(r)r.dl++;
+  animateStats();
+  renderGrid();
+}catch(e){
+  console.error('Ошибка счётчика:',e);
+}
 }
 
 function openDetail(r){
 var modal=document.getElementById('detailModal'),box=document.getElementById('detailBox');
 var isFav=favorites.indexOf(r.id)!==-1;
 var typeLabel=r.type==='redux'?'✨ Redux':'💫 REV';
-
 var myRating=userRatings[r.id]||0;
 var starsHtml='';
-for(var i=0;i<5;i++){
-  starsHtml+='<i class="fas fa-star '+(i<myRating?'':'empty')+'" data-star="'+(i+1)+'"></i>';
-}
+for(var i=0;i<5;i++){starsHtml+='<i class="fas fa-star '+(i<myRating?'':'empty')+'" data-star="'+(i+1)+'"></i>'}
 var ratingLabel=myRating?'Твоя оценка: '+myRating+'/5':(currentUser?'Поставь оценку!':'Войди чтобы оценить');
+var previewHTML=r.preview?'<img src="'+r.preview+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6" onerror="this.remove()">':'';
 
 box.innerHTML=
 '<button class="modal-close" onclick="closeAllModals()"><i class="fas fa-times"></i></button>'+
 '<div class="detail-preview" style="background:linear-gradient(135deg,'+r.color+'22,'+r.color+'44)">'+
+previewHTML+
 '<div class="detail-glow" style="background:'+r.color+'"></div></div>'+
 '<div class="detail-body">'+
 '<h2 class="detail-title">'+r.name+'</h2>'+
@@ -626,34 +647,24 @@ box.innerHTML=
 '<button class="btn-secondary" onclick="toggleFav('+r.id+');closeAllModals();"><i class="fas fa-heart"></i> '+(isFav?'В избранном':'В избранное')+'</button></div>'+
 '<div class="detail-share">'+
 '<div class="detail-share-url">reduxpicker.com/mod/'+r.id+'</div>'+
-'<button class="detail-share-copy" onclick="navigator.clipboard.writeText(\'reduxpicker.com/mod/'+r.id+'\');toast(\'📋 Скопировано!\')">Copy</button></div></div>';
+'<button class="detail-share-copy" onclick="navigator.clipboard.writeText(\'reduxpicker.com/mod/'+r.id+'\')">Copy</button></div></div>';
 
 modal.classList.add('active');
 document.body.style.overflow='hidden';
 
 var authorLink=box.querySelector('.detail-author-link');
-if(authorLink){
-  authorLink.addEventListener('click',function(){
-    openAuthorPage(authorLink.dataset.author);
-  });
-}
-
+if(authorLink){authorLink.addEventListener('click',function(){openAuthorPage(authorLink.dataset.author)})}
 box.querySelectorAll('.detail-stars i').forEach(function(s){
-  s.addEventListener('click',function(){
-    rateRedux(r.id,parseInt(s.dataset.star));
-  });
+  s.addEventListener('click',function(){rateRedux(r.id,parseInt(s.dataset.star))});
 });
 
-// Кнопка "Скачать" — считает скачивание
 var dlBtn=box.querySelector('#detailDlBtn');
 if(dlBtn){
   dlBtn.addEventListener('click',function(){
     incrementDownload(r.id);
-    toast('⬇️ Скачивание засчитано!');
-    renderGrid();
+    if(r.link)window.open(r.link,'_blank');
   });
 }
-
 bindHovers();
 document.querySelectorAll('.blob').forEach(function(b,i){if(i===0)b.style.background=r.color;if(i===2)b.style.background=r.palette[1]||r.color});
 }
@@ -669,8 +680,9 @@ document.getElementById('closeAuth').onclick=closeAllModals;
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAllModals()});
 }
 
-// РАНДОМ РУЛЕТКА
+// ============ РАНДОМ ============
 function startRandom(){
+if(DB.length===0){toast('❌ Пока нет модов');return}
 var modal=document.getElementById('randomModal');
 modal.classList.add('active');
 document.body.style.overflow='hidden';
@@ -678,78 +690,99 @@ document.getElementById('rollingView').style.display='block';
 document.getElementById('resultView').style.display='none';
 
 var slot=document.getElementById('slotBox');
-slot.innerHTML='<div class="slot-marker"></div><div class="slot-reel" id="slotReel"></div>';
+if(!document.getElementById('slotStyles')){
+  var st=document.createElement('style');
+  st.id='slotStyles';
+  st.textContent=`
+    .slot{position:relative;height:180px;overflow:hidden;background:linear-gradient(90deg,var(--bg2),transparent 15%,transparent 85%,var(--bg2));border-radius:16px;border:1px solid var(--glass-border)}
+    .slot-marker{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);width:3px;background:linear-gradient(180deg,transparent,var(--s1),var(--s1),transparent);z-index:10;box-shadow:0 0 20px var(--s1),0 0 40px var(--s1);pointer-events:none}
+    .slot-marker::before,.slot-marker::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent}
+    .slot-marker::before{top:-2px;border-top:12px solid var(--s1);filter:drop-shadow(0 0 8px var(--s1))}
+    .slot-marker::after{bottom:-2px;border-bottom:12px solid var(--s1);filter:drop-shadow(0 0 8px var(--s1))}
+    .slot-reel{position:absolute;top:50%;left:0;transform:translateY(-50%);display:flex;gap:12px;padding:0 50%;will-change:transform}
+    .slot-item{flex-shrink:0;width:140px;height:140px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;position:relative;overflow:hidden;background:var(--surface);border:2px solid transparent;transition:transform .2s}
+    .slot-item.winner{animation:winnerPulse .6s ease-in-out infinite alternate;transform:scale(1.05);z-index:5}
+    .slot-item .slot-emoji{font-size:2rem;filter:drop-shadow(0 0 8px currentColor)}
+    .slot-item .slot-name{font-family:var(--font-bold);font-weight:800;font-size:.75rem;text-align:center;line-height:1.2;color:var(--text);text-shadow:0 2px 6px rgba(0,0,0,.5);word-break:break-word}
+    .slot-item .slot-type{font-family:var(--font-bold);font-size:.55rem;letter-spacing:1px;text-transform:uppercase;opacity:.7}
+    @keyframes winnerPulse{
+      from{box-shadow:0 0 20px currentColor,0 0 40px currentColor;transform:scale(1.05)}
+      to{box-shadow:0 0 40px currentColor,0 0 80px currentColor,0 0 120px currentColor;transform:scale(1.15)}
+    }
+    .slot-flash{position:absolute;inset:0;background:radial-gradient(circle,var(--s1),transparent 70%);opacity:0;pointer-events:none;z-index:20;transition:opacity .4s}
+    .slot-flash.active{opacity:.4;animation:flashFade .8s ease-out forwards}
+    @keyframes flashFade{0%{opacity:.8}100%{opacity:0}}
+  `;
+  document.head.appendChild(st);
+}
 
+slot.innerHTML='<div class="slot-marker"></div><div class="slot-reel" id="slotReel"></div><div class="slot-flash" id="slotFlash"></div>';
 var reel=document.getElementById('slotReel');
+var flash=document.getElementById('slotFlash');
+
 var winner=DB[Math.floor(Math.random()*DB.length)];
-var TOTAL=60;
-var WINNER_POS=TOTAL-5;
+
+var ITEM_WIDTH=140;
+var GAP=12;
+var STEP=ITEM_WIDTH+GAP;
+var TOTAL=40;
+var WINNER_POS=TOTAL-6;
 
 var items=[];
 for(var i=0;i<TOTAL;i++){
-  if(i===WINNER_POS)items.push(winner);
-  else items.push(DB[Math.floor(Math.random()*DB.length)]);
+  items.push(i===WINNER_POS?winner:DB[Math.floor(Math.random()*DB.length)]);
 }
 
 var itemsHTML='';
 items.forEach(function(r){
-  var emoji=emojiMap[r.name]||'🎨';
-  itemsHTML+='<div class="slot-item" style="color:'+r.color+'"><span class="emoji">'+emoji+'</span><span class="name">'+r.name+'</span></div>';
+  var typeLabel=r.type==='redux'?'REDUX':'REV';
+  itemsHTML+='<div class="slot-item" style="color:'+r.color+';background:linear-gradient(135deg,'+r.color+'22,'+r.color+'11);border-color:'+r.color+'44">'+
+    '<div class="slot-emoji">'+getEmoji(r)+'</div>'+
+    '<div class="slot-name">'+r.name+'</div>'+
+    '<div class="slot-type" style="color:'+r.color+'">'+typeLabel+'</div>'+
+  '</div>';
 });
 reel.innerHTML=itemsHTML;
 
+reel.style.transition='none';
+reel.style.transform='translate(0,-50%)';
+void reel.offsetHeight;
+
+var slotWidth=slot.offsetWidth;
+var finalX=-(WINNER_POS*STEP)-(ITEM_WIDTH/2)+slotWidth/2;
+var jitter=(Math.random()*40-20);
+finalX+=jitter;
+
 setTimeout(function(){
-  var slotHeight=slot.offsetHeight || 180;
-  var itemHeight=60;
-  var finalY=(slotHeight/2)-(WINNER_POS*itemHeight+itemHeight/2);
-  
-  reel.style.transition='none';
-  reel.style.transform='translateY(0)';
-  reel.classList.add('spinning');
-  
-  void reel.offsetHeight;
+  reel.style.transition='transform 2.8s cubic-bezier(.15,.85,.35,1)';
+  reel.style.transform='translate('+finalX+'px,-50%)';
   
   setTimeout(function(){
-    reel.style.transition='transform 4.5s cubic-bezier(0.17,0.67,0.32,1)';
-    reel.style.transform='translateY('+finalY+'px)';
-    
-    setTimeout(function(){
-      reel.classList.remove('spinning');
-      reel.classList.add('slowing');
-    },3800);
-    
-    setTimeout(function(){
-      reel.classList.remove('slowing');
-      var itemEls=reel.querySelectorAll('.slot-item');
-      if(itemEls[WINNER_POS]){
-        itemEls[WINNER_POS].classList.add('winner');
-      }
-      setTimeout(function(){
-        showRandom(winner);
-      },800);
-    },4600);
-  },50);
-},100);
+    var itemEls=reel.querySelectorAll('.slot-item');
+    if(itemEls[WINNER_POS]){itemEls[WINNER_POS].classList.add('winner')}
+    flash.classList.add('active');
+    setTimeout(function(){showRandom(winner)},700);
+  },2900);
+},30);
 }
 
 function showRandom(r){
 document.getElementById('rollingView').style.display='none';
 document.getElementById('resultView').style.display='block';
-var emoji=emojiMap[r.name]||'🌸';
 var typeLabel=r.type==='redux'?'✨ Redux':'💫 REV';
 document.getElementById('resultCard').innerHTML=
 '<div style="background:var(--glass);backdrop-filter:blur(30px);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:24px;text-align:left;position:relative;overflow:hidden">'+
 '<div style="position:absolute;top:-40px;right:-40px;width:150px;height:150px;background:'+r.color+';border-radius:50%;filter:blur(60px);opacity:.4"></div>'+
 '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;position:relative">'+
-'<div style="font-size:2rem">'+emoji+'</div>'+
+'<div style="font-size:2rem">'+getEmoji(r)+'</div>'+
 '<div><div style="font-family:var(--font-bold);font-weight:800;font-size:1.15rem">'+r.name+'</div>'+
 '<div style="font-family:var(--font-body);font-size:.75rem;color:var(--text2);font-weight:500">'+r.author+' · '+typeLabel+'</div></div></div>'+
-'<div style="font-size:.85rem;color:var(--text2);font-weight:500;position:relative;line-height:1.5">'+r.desc.slice(0,120)+'...</div>'+
+'<div style="font-size:.85rem;color:var(--text2);font-weight:500;position:relative;line-height:1.5">'+(r.desc?r.desc.slice(0,120)+'...':'')+'</div>'+
 '<div style="margin-top:12px;display:flex;gap:15px;align-items:center;font-family:var(--font-bold);font-size:.75rem;color:var(--s1);position:relative">'+
 '<span><i class="fas fa-star"></i> '+r.rating+'</span>'+
 '<span style="color:var(--text2)"><i class="fas fa-download"></i> '+r.dl+'</span></div></div>';
 document.getElementById('viewResultBtn').onclick=function(){closeAllModals();setTimeout(function(){openDetail(r)},200)};
-spawnConfetti();toast('🎲 Выпал: '+r.name);
+spawnConfetti();
 bindHovers();
 }
 
@@ -763,10 +796,7 @@ document.querySelectorAll('.blob').forEach(function(b,i){b.style.background=cols
 function setupTelegram(){
 document.getElementById('tgLink').addEventListener('click',function(e){
   var rect=e.currentTarget.getBoundingClientRect();
-  var x=rect.left+rect.width/2;
-  var y=rect.top;
-  var auraAmount=Math.floor(Math.random()*9000000)+1000000;
-  spawnAuraCounter(x,y,auraAmount);
+  spawnAuraCounter(rect.left+rect.width/2,rect.top,Math.floor(Math.random()*9000000)+1000000);
 });
 }
 
@@ -776,12 +806,10 @@ el.className='aura-popup';
 el.style.left=x+'px';el.style.top=y+'px';
 el.textContent='+0 AURA';
 document.body.appendChild(el);
-var start=performance.now();
-var dur=1200;
+var start=performance.now(),dur=1200;
 function upd(t){
   var p=Math.min((t-start)/dur,1);
-  var eased=1-Math.pow(1-p,3);
-  var cur=Math.floor(eased*finalNum);
+  var cur=Math.floor((1-Math.pow(1-p,3))*finalNum);
   el.textContent='+'+cur.toLocaleString()+' AURA';
   if(p<1)requestAnimationFrame(upd);
 }
@@ -799,23 +827,17 @@ document.getElementById('authBtn').onclick=function(){
 function renderAuthContent(){
 var c=document.getElementById('authContent');
 if(authMode==='login'){
-  c.innerHTML=
-    '<div class="auth-title"><span class="g">Войти</span></div>'+
-    '<div class="auth-sub">Введи данные аккаунта</div>'+
-    '<div class="auth-field"><label>Логин</label><input id="authLogin" placeholder="ваш логин" autocomplete="off"></div>'+
-    '<div class="auth-field"><label>Пароль</label><input id="authPass" type="password" placeholder="ваш пароль" autocomplete="off"></div>'+
-    '<button class="auth-submit" id="authSubmitBtn">Войти</button>'+
-    '<div class="auth-error" id="authError"></div>'+
-    '<div class="auth-switch">Нет аккаунта? <a href="#" id="authSwitchBtn">Создать</a></div>';
+  c.innerHTML='<div class="auth-title"><span class="g">Войти</span></div><div class="auth-sub">Введи данные аккаунта</div>'+
+  '<div class="auth-field"><label>Логин</label><input id="authLogin" placeholder="ваш логин" autocomplete="off"></div>'+
+  '<div class="auth-field"><label>Пароль</label><input id="authPass" type="password" placeholder="ваш пароль" autocomplete="off"></div>'+
+  '<button class="auth-submit" id="authSubmitBtn">Войти</button><div class="auth-error" id="authError"></div>'+
+  '<div class="auth-switch">Нет аккаунта? <a href="#" id="authSwitchBtn">Создать</a></div>';
 }else{
-  c.innerHTML=
-    '<div class="auth-title"><span class="g">Регистрация</span></div>'+
-    '<div class="auth-sub">Создай новый аккаунт</div>'+
-    '<div class="auth-field"><label>Логин</label><input id="authLogin" placeholder="придумай логин" autocomplete="off"></div>'+
-    '<div class="auth-field"><label>Пароль</label><input id="authPass" type="password" placeholder="придумай пароль" autocomplete="off"></div>'+
-    '<button class="auth-submit" id="authSubmitBtn">Создать аккаунт</button>'+
-    '<div class="auth-error" id="authError"></div>'+
-    '<div class="auth-switch">Уже есть аккаунт? <a href="#" id="authSwitchBtn">Войти</a></div>';
+  c.innerHTML='<div class="auth-title"><span class="g">Регистрация</span></div><div class="auth-sub">Создай новый аккаунт</div>'+
+  '<div class="auth-field"><label>Логин</label><input id="authLogin" placeholder="придумай логин" autocomplete="off"></div>'+
+  '<div class="auth-field"><label>Пароль</label><input id="authPass" type="password" placeholder="придумай пароль" autocomplete="off"></div>'+
+  '<button class="auth-submit" id="authSubmitBtn">Создать аккаунт</button><div class="auth-error" id="authError"></div>'+
+  '<div class="auth-switch">Уже есть аккаунт? <a href="#" id="authSwitchBtn">Войти</a></div>';
 }
 document.getElementById('authSubmitBtn').onclick=handleAuthSubmit;
 document.getElementById('authSwitchBtn').onclick=function(e){e.preventDefault();authMode=(authMode==='login')?'register':'login';renderAuthContent()};
@@ -824,7 +846,7 @@ document.getElementById('authPass').addEventListener('keydown',function(e){if(e.
 bindHovers();
 }
 
-function handleAuthSubmit(){
+async function handleAuthSubmit(){
 var login=document.getElementById('authLogin').value.trim();
 var pass=document.getElementById('authPass').value.trim();
 var err=document.getElementById('authError');
@@ -832,24 +854,31 @@ err.classList.remove('active');
 if(!login||!pass){err.textContent='Заполни оба поля';err.classList.add('active');return}
 if(login.length<3){err.textContent='Логин слишком короткий (мин. 3)';err.classList.add('active');return}
 if(pass.length<4){err.textContent='Пароль слишком короткий (мин. 4)';err.classList.add('active');return}
-var users=JSON.parse(localStorage.getItem('rdx_users')||'{}');
-if(authMode==='login'){
-  if(!users[login]){err.textContent='Аккаунт не найден. Создай новый!';err.classList.add('active');return}
-  if(users[login].pass!==pass){err.textContent='Неверный пароль';err.classList.add('active');return}
-  currentUser=login;
-  favorites=users[login].favorites||[];
-  userRatings=users[login].ratings||{};
-  localStorage.setItem('rdx_current',login);
-  closeAllModals();updateAuthUI();renderGrid();
-  toast('🌸 С возвращением, '+login+'!');
-}else{
-  if(users[login]){err.textContent='Логин уже занят';err.classList.add('active');return}
-  users[login]={pass:pass,favorites:[],ratings:{}};
-  localStorage.setItem('rdx_users',JSON.stringify(users));
-  currentUser=login;favorites=[];userRatings={};
-  localStorage.setItem('rdx_current',login);
-  closeAllModals();updateAuthUI();renderGrid();
-  spawnConfetti();toast('✨ Аккаунт создан! Добро пожаловать, '+login);
+
+try{
+  if(authMode==='login'){
+    const {data,error}=await sb.from('users').select('*').eq('login',login).eq('password',pass).single();
+    if(error||!data){err.textContent='Неверный логин или пароль';err.classList.add('active');return}
+    currentUser=login;
+    favorites=data.favorites||[];
+    const {data:ratings}=await sb.from('user_ratings').select('mod_id,rating').eq('user_login',login);
+    userRatings={};
+    if(ratings)ratings.forEach(function(r){userRatings[r.mod_id]=r.rating});
+    localStorage.setItem('rdx_current',login);
+    closeAllModals();updateAuthUI();renderGrid();
+    toast('🌸 С возвращением, '+login+'!');
+  }else{
+    const {data:exists}=await sb.from('users').select('id').eq('login',login).single();
+    if(exists){err.textContent='Логин уже занят';err.classList.add('active');return}
+    const {error}=await sb.from('users').insert({login:login,password:pass,favorites:[]});
+    if(error)throw error;
+    currentUser=login;favorites=[];userRatings={};
+    localStorage.setItem('rdx_current',login);
+    closeAllModals();updateAuthUI();renderGrid();
+    spawnConfetti();toast('✨ Добро пожаловать, '+login+'!');
+  }
+}catch(e){
+  err.textContent='Ошибка: '+e.message;err.classList.add('active');
 }
 }
 
@@ -862,8 +891,7 @@ c.innerHTML=
   '<div class="auth-user-name">'+currentUser+'</div>'+
   '<div class="auth-user-stats">💖 В избранном: <b style="color:var(--s1)">'+favorites.length+'</b> · ⭐ Оценок: <b style="color:var(--s1)">'+ratedCount+'</b></div>'+
   '<button class="btn-secondary" style="width:100%;margin-bottom:10px" onclick="closeAllModals();switchPage(\'favorites\')"><i class="fas fa-heart"></i> Открыть избранное</button>'+
-  '<button class="auth-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Выйти</button>'+
-  '</div>';
+  '<button class="auth-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Выйти</button></div>';
 document.getElementById('logoutBtn').onclick=logoutUser;
 bindHovers();
 }
@@ -872,7 +900,6 @@ function logoutUser(){
 currentUser=null;favorites=[];userRatings={};
 localStorage.removeItem('rdx_current');
 updateAuthUI();renderGrid();closeAllModals();
-toast('👋 Ты вышел из аккаунта');
 }
 
 function updateAuthUI(){
@@ -880,27 +907,26 @@ document.getElementById('authBtnText').textContent=currentUser||'Войти';
 updateFavBadge();
 }
 
-function saveUserData(){
-if(!currentUser)return;
-var users=JSON.parse(localStorage.getItem('rdx_users')||'{}');
-if(users[currentUser]){
-  users[currentUser].favorites=favorites;
-  users[currentUser].ratings=userRatings;
-  localStorage.setItem('rdx_users',JSON.stringify(users));
-}
+async function saveUserData(){
+if(!currentUser||!sb)return;
+try{
+  await sb.from('users').update({favorites:favorites}).eq('login',currentUser);
+}catch(e){console.error('save error:',e)}
 }
 
-function loadUserData(){
+async function loadUserData(){
 var cur=localStorage.getItem('rdx_current');
-if(cur){
-  var users=JSON.parse(localStorage.getItem('rdx_users')||'{}');
-  if(users[cur]){
-    currentUser=cur;
-    favorites=users[cur].favorites||[];
-    userRatings=users[cur].ratings||{};
-    updateAuthUI();renderGrid();
-  }
-}
+if(!cur||!sb)return;
+try{
+  const {data,error}=await sb.from('users').select('*').eq('login',cur).single();
+  if(error||!data){localStorage.removeItem('rdx_current');return}
+  currentUser=cur;
+  favorites=data.favorites||[];
+  const {data:ratings}=await sb.from('user_ratings').select('mod_id,rating').eq('user_login',cur);
+  userRatings={};
+  if(ratings)ratings.forEach(function(r){userRatings[r.mod_id]=r.rating});
+  updateAuthUI();renderGrid();
+}catch(e){console.error('load user error:',e)}
 }
 
 document.addEventListener('DOMContentLoaded',runLoading);
