@@ -325,23 +325,7 @@ justify-content:center;
 .slot-pointer::before{top:-2px}
 .slot-pointer::after{content:'▲';bottom:-2px}
 .slot-reel{display:flex;flex-direction:row;height:100%;align-items:center;will-change:transform}
-.slot-item{
-width:100%;
-height:100%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-family:var(--font-bold);
-font-weight:700;
-font-size:1.2rem;
-padding:0 15px;
-white-space:nowrap;
-text-align:center;
-box-sizing:border-box;
-overflow:hidden;
-text-overflow:ellipsis;
-transition:color 0.05s;
-}
+.slot-item{min-width:200px;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--font-bold);font-weight:700;font-size:1rem;padding:0 20px;white-space:nowrap;text-align:center;flex-shrink:0}
 .random-actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap}
 
 /*=== AUTH MODAL ===*/
