@@ -1,5 +1,5 @@
 // ============================================================
-// REDUX PICKER — полный app.js с Supabase
+// REDUX PICKER — app.js (Supabase, YouTube плеер, hover-видео)
 // ============================================================
 
 const SUPABASE_URL = 'https://pdpmorawwynhkoxunzyn.supabase.co';
@@ -19,22 +19,58 @@ const COLORS=[
 {n:"коричневый",v:"коричневый",h:"#8d6e63"},{n:"тёмный",v:"тёмный",h:"#37474F"},{n:"белый",v:"белый",h:"#f5f5f5"},
 ];
 
+const GENERIC_NAMES = [
+  'update','redux','preset','presets','files','file','download',
+  'gta5','gta 5','мод','мода','моды','mods','mod','reshade',
+  'graphics','graphic','setting','settings','config','v1','v2',
+  'v3','v4','v5','final','new','test','скачать','папка','folder',
+  'installation','install','rar','zip','archive','архив',
+  'мой диск','my drive','shared','shared with me'
+];
+
+function cleanFilename(name){
+  if(!name)return '';
+  return name.replace(/\.(rar|zip|7z|tar|gz|exe|iso|mp4|avi)$/i,'').trim();
+}
+
+function isGenericName(name){
+  if(!name)return true;
+  var cleaned=cleanFilename(name).toLowerCase().trim();
+  if(cleaned.length<3)return true;
+  if(GENERIC_NAMES.indexOf(cleaned)!==-1)return true;
+  for(var i=0;i<GENERIC_NAMES.length;i++){
+    var g=GENERIC_NAMES[i];
+    if(new RegExp('^'+g+'\\s*[v]?\\d*$','i').test(cleaned))return true;
+    if(new RegExp('^'+g+'\\s*(final|new|test)$','i').test(cleaned))return true;
+  }
+  return false;
+}
+
 function getEmoji(r){return r.type==='redux'?'✨':'💫'}
+function extractYtId(url){
+  if(!url)return '';
+  var m=url.match(/(?:youtu\.be\/|v=|shorts\/)([a-zA-Z0-9_-]{11})/);
+  return m?m[1]:'';
+}
 
 let ST={search:'',color:'all',author:'all',sort:'popular',type:'all'};
 let currentUser=null,favorites=[];
 let userRatings={};
 let authMode='login';
 
-// ============ ЗАГРУЗКА МОДОВ ============
 async function loadMods(){
   if(!sb)return;
   try{
     const {data,error}=await sb.from('mods').select('*').order('created_at',{ascending:false});
     if(error)throw error;
     DB=data.map(function(r){
+      var displayName=r.name;
+      if(r.drive_filename){
+        var cleaned=cleanFilename(r.drive_filename);
+        if(cleaned&&!isGenericName(cleaned))displayName=cleaned;
+      }
       return {
-        id:r.id,type:r.type||'redux',name:r.name,author:r.author,
+        id:r.id,type:r.type||'redux',name:displayName,author:r.author,
         color:r.color,colorName:r.color_name,
         rating:parseFloat(r.rating)||5.0,votes:r.votes||0,dl:r.downloads||0,
         date:r.created_at?r.created_at.split('T')[0]:new Date().toISOString().split('T')[0],
@@ -69,7 +105,7 @@ function setupRealtime(){
     .subscribe();
 }
 
-// ============ CURSOR ============
+// CURSOR
 const cMain=document.getElementById('cursorMain'),cDot=document.getElementById('cursorDot'),cLabel=document.getElementById('cursorLabel');
 let mx=0,my=0,cx=0,cy=0;
 document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cDot.style.left=mx+'px';cDot.style.top=my+'px';cLabel.style.left=mx+'px';cLabel.style.top=my+'px'});
@@ -88,7 +124,7 @@ document.querySelectorAll('.redux-card-wrapper').forEach(function(el){
 });
 }
 
-// ============ BRANCHES ============
+// BRANCHES
 var isLowPerf=navigator.hardwareConcurrency&&navigator.hardwareConcurrency<4;
 function updateBranches(){
 if(isLowPerf)return;
@@ -103,7 +139,7 @@ else{br.style.transform='translate(0,0) rotate(180deg)'}
 }
 if(!isLowPerf)setInterval(updateBranches,50);
 
-// ============ PARTICLES ============
+// PARTICLES
 var pCanvas=document.getElementById('particlesCanvas'),pCtx=pCanvas.getContext('2d');
 var particles=[],pMouse={x:-999,y:-999},particlesRunning=true;
 function resizePCanvas(){pCanvas.width=innerWidth;pCanvas.height=innerHeight}
@@ -147,7 +183,7 @@ requestAnimationFrame(animParticles)}
 animParticles();
 document.addEventListener('visibilitychange',function(){particlesRunning=!document.hidden});
 
-// ============ WIND ============
+// WIND
 function initWind(){
 if(isLowPerf)return;
 var wind=document.getElementById('wind');
@@ -163,7 +199,7 @@ setInterval(makeWind,2500);
 for(var i=0;i<3;i++)setTimeout(makeWind,i*800);
 }
 
-// ============ PETALS ============
+// PETALS
 var petalEmojis=['🌸','🌺','💮'];
 function spawnPetal(){
 var p=document.createElement('div');p.className='petal';
@@ -182,7 +218,6 @@ for(var i=0;i<8;i++)setTimeout(spawnPetal,i*300);
 setInterval(spawnPetal,1200);
 }
 
-// ============ LOADING ============
 function runLoading(){
 var bar=document.getElementById('loadingBar'),text=document.getElementById('loadingText'),sakura=document.getElementById('loadingSakura');
 for(var i=0;i<35;i++){
@@ -299,13 +334,9 @@ document.querySelectorAll('.magnetic').forEach(function(b){
   b.addEventListener('mouseleave',function(){b.style.transform=''});
 });}
 
-// ============ МОД ДНЯ ============
 async function renderDayCard(){
 if(DB.length===0){document.getElementById('reduxDay').innerHTML='';return}
-
 var r=null;
-
-// Проверяем есть ли выбранный админом мод дня
 if(sb){
   try{
     const {data,error}=await sb.from('site_settings').select('value').eq('key','mod_of_day_id').single();
@@ -313,13 +344,10 @@ if(sb){
       var dayId=parseInt(data.value);
       r=DB.find(function(m){return m.id===dayId});
     }
-  }catch(e){/* нет настройки — фолбэк на автовыбор */}
+  }catch(e){}
 }
-
-// Автоматический выбор — мод с макс рейтингом
 if(!r){
   r=DB.reduce(function(a,b){
-    // Приоритет: сначала рейтинг, при равенстве — больше голосов, потом больше скачиваний
     if(b.rating>a.rating)return b;
     if(b.rating===a.rating){
       if(b.votes>a.votes)return b;
@@ -328,13 +356,11 @@ if(!r){
     return a;
   });
 }
-
 var emoji=getEmoji(r);
 document.getElementById('reduxDay').innerHTML=
 '<div class="day-card">'+
 '<div class="day-preview" style="background:linear-gradient(135deg,'+r.color+'11,'+r.color+'33)">'+
 (r.preview?'<img src="'+r.preview+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.7" onerror="this.remove()">':'')+
-'<div class="day-preview-glow" style="background:'+r.color+'"></div>'+
 '<div class="day-preview-icon">'+emoji+'</div></div>'+
 '<div class="day-content">'+
 '<div class="day-badge">⭐ Мод дня</div>'+
@@ -396,9 +422,7 @@ if(cp.children.length===0){
 }
 var dt;
 var searchIn=document.getElementById('searchIn');
-if(searchIn){
-  searchIn.oninput=function(e){clearTimeout(dt);dt=setTimeout(function(){ST.search=e.target.value.toLowerCase().trim();renderGrid()},200)};
-}
+if(searchIn){searchIn.oninput=function(e){clearTimeout(dt);dt=setTimeout(function(){ST.search=e.target.value.toLowerCase().trim();renderGrid()},200)}}
 document.getElementById('authorSel').onchange=function(e){ST.author=e.target.value;renderGrid()};
 var sortSel=document.getElementById('sortSel');
 if(sortSel)sortSel.onchange=function(e){ST.sort=e.target.value;renderGrid()};
@@ -451,12 +475,12 @@ batch.forEach(function(r,i){
   var typeBadge=r.type==='redux'?'<div class="card-type-badge type-redux">✨ Redux</div>':'<div class="card-type-badge type-revik">💫 REV</div>';
   var starsDisplay='';
   for(var si=0;si<5;si++){starsDisplay+='<i class="fas fa-star '+(si<Math.round(r.rating)?'':'empty')+'"></i>'}
-  var previewHTML=r.preview?'<img src="'+r.preview+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6" loading="lazy" onerror="this.remove()">':'';
+  var ytId=extractYtId(r.youtube);
+  var previewHTML=r.preview?'<img class="card-thumb" data-yt="'+ytId+'" src="'+r.preview+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.7" loading="lazy" onerror="this.remove()">':'';
   
   card.innerHTML=
-    '<div class="card-preview" style="background:linear-gradient(135deg,'+r.color+'11,'+r.color+'22)">'+
+    '<div class="card-preview" style="background:linear-gradient(135deg,'+r.color+'08,'+r.color+'15)">'+
     previewHTML+
-    '<div class="card-glow" style="background:'+r.color+'"></div>'+
     '<div class="card-color-bar" style="background:'+r.color+'"></div>'+
     badge+typeBadge+
     '<button class="card-fav '+(isFav?'active':'')+'" data-id="'+r.id+'"><i class="fas fa-heart"></i></button>'+
@@ -496,6 +520,32 @@ document.querySelectorAll('.card-fav').forEach(function(f){
 document.querySelectorAll('.card-author-link').forEach(function(a){
   a.addEventListener('click',function(e){e.stopPropagation();openAuthorPage(a.dataset.author)});
 });
+
+// hover-видео на превьюшках
+document.querySelectorAll('.card-thumb[data-yt]').forEach(function(img){
+  if(img._hoverInit)return;
+  img._hoverInit=true;
+  var timer=null;
+  var parent=img.parentElement;
+  parent.addEventListener('mouseenter',function(){
+    var ytId=img.dataset.yt;
+    if(!ytId)return;
+    timer=setTimeout(function(){
+      var iframe=document.createElement('iframe');
+      iframe.src='https://www.youtube.com/embed/'+ytId+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+ytId+'&modestbranding=1';
+      iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:none;z-index:2';
+      iframe.allow='autoplay';
+      iframe.setAttribute('loading','lazy');
+      parent.appendChild(iframe);
+      parent._iframe=iframe;
+    },2000);
+  });
+  parent.addEventListener('mouseleave',function(){
+    clearTimeout(timer);
+    if(parent._iframe){parent._iframe.remove();parent._iframe=null}
+  });
+});
+
 bindHovers();
 
 if(rendered<list.length){requestAnimationFrame(renderBatch)}
@@ -574,7 +624,7 @@ setTimeout(function(){document.getElementById('catalog').scrollIntoView({behavio
 }
 
 function toggleFav(id){
-if(!currentUser){toast('🌸 Войди чтобы сохранять избранное');document.getElementById('authModal').classList.add('active');renderAuthContent();return}
+if(!currentUser){toast('🌸 Войди в аккаунт чтобы сохранять избранное');return}
 var idx=favorites.indexOf(id);
 if(idx>-1)favorites.splice(idx,1);else favorites.push(id);
 saveUserData();renderGrid();
@@ -583,7 +633,7 @@ if(document.getElementById('authorPage').classList.contains('active'))renderGrid
 }
 
 async function rateRedux(id,star){
-if(!currentUser){toast('🌸 Войди чтобы ставить оценки');return}
+if(!currentUser){toast('🌸 Войди в аккаунт чтобы ставить оценки');return}
 if(!sb)return;
 try{
   const {error}=await sb.rpc('add_rating',{p_mod_id:id,p_user_login:currentUser,p_rating:star});
@@ -620,13 +670,21 @@ var myRating=userRatings[r.id]||0;
 var starsHtml='';
 for(var i=0;i<5;i++){starsHtml+='<i class="fas fa-star '+(i<myRating?'':'empty')+'" data-star="'+(i+1)+'"></i>'}
 var ratingLabel=myRating?'Твоя оценка: '+myRating+'/5':(currentUser?'Поставь оценку!':'Войди чтобы оценить');
-var previewHTML=r.preview?'<img src="'+r.preview+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6" onerror="this.remove()">':'';
+
+// YouTube iframe вместо картинки
+var detailYtId=extractYtId(r.youtube);
+var previewHTML='';
+if(detailYtId){
+  previewHTML='<iframe src="https://www.youtube.com/embed/'+detailYtId+'?rel=0&modestbranding=1" style="position:absolute;inset:0;width:100%;height:100%;border:none;z-index:2" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+}else if(r.preview){
+  previewHTML='<img src="'+r.preview+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6" onerror="this.remove()">';
+}
 
 box.innerHTML=
 '<button class="modal-close" onclick="closeAllModals()"><i class="fas fa-times"></i></button>'+
 '<div class="detail-preview" style="background:linear-gradient(135deg,'+r.color+'22,'+r.color+'44)">'+
 previewHTML+
-'<div class="detail-glow" style="background:'+r.color+'"></div></div>'+
+'</div>'+
 '<div class="detail-body">'+
 '<h2 class="detail-title">'+r.name+'</h2>'+
 '<div class="detail-meta">'+
@@ -680,9 +738,9 @@ document.getElementById('closeAuth').onclick=closeAllModals;
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAllModals()});
 }
 
-// ============ РАНДОМ ============
+// РАНДОМ — точное центрирование
 function startRandom(){
-if(DB.length===0){toast('❌ Пока нет модов');return}
+if(DB.length===0)return;
 var modal=document.getElementById('randomModal');
 modal.classList.add('active');
 document.body.style.overflow='hidden';
@@ -694,37 +752,34 @@ if(!document.getElementById('slotStyles')){
   var st=document.createElement('style');
   st.id='slotStyles';
   st.textContent=`
-    .slot{position:relative;height:180px;overflow:hidden;background:linear-gradient(90deg,var(--bg2),transparent 15%,transparent 85%,var(--bg2));border-radius:16px;border:1px solid var(--glass-border)}
-    .slot-marker{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);width:3px;background:linear-gradient(180deg,transparent,var(--s1),var(--s1),transparent);z-index:10;box-shadow:0 0 20px var(--s1),0 0 40px var(--s1);pointer-events:none}
+    .slot{position:relative;height:180px;overflow:hidden;background:var(--bg2);border-radius:16px;border:1px solid var(--glass-border)}
+    .slot-marker{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);width:3px;background:linear-gradient(180deg,transparent,var(--s1),var(--s1),transparent);z-index:10;box-shadow:0 0 20px var(--s1);pointer-events:none}
     .slot-marker::before,.slot-marker::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent}
     .slot-marker::before{top:-2px;border-top:12px solid var(--s1);filter:drop-shadow(0 0 8px var(--s1))}
     .slot-marker::after{bottom:-2px;border-bottom:12px solid var(--s1);filter:drop-shadow(0 0 8px var(--s1))}
-    .slot-reel{position:absolute;top:50%;left:0;transform:translateY(-50%);display:flex;gap:12px;padding:0 50%;will-change:transform}
-    .slot-item{flex-shrink:0;width:140px;height:140px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;position:relative;overflow:hidden;background:var(--surface);border:2px solid transparent;transition:transform .2s}
-    .slot-item.winner{animation:winnerPulse .6s ease-in-out infinite alternate;transform:scale(1.05);z-index:5}
+    .slot-reel{display:flex;gap:0;will-change:transform;position:absolute;top:50%;transform:translateY(-50%)}
+    .slot-item{flex-shrink:0;width:152px;height:140px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;margin:0 6px;position:relative;overflow:hidden;background:var(--surface);border:2px solid transparent}
+    .slot-item.winner{animation:winnerPulse .6s ease-in-out infinite alternate;z-index:5}
     .slot-item .slot-emoji{font-size:2rem;filter:drop-shadow(0 0 8px currentColor)}
-    .slot-item .slot-name{font-family:var(--font-bold);font-weight:800;font-size:.75rem;text-align:center;line-height:1.2;color:var(--text);text-shadow:0 2px 6px rgba(0,0,0,.5);word-break:break-word}
+    .slot-item .slot-name{font-family:var(--font-bold);font-weight:800;font-size:.7rem;text-align:center;line-height:1.2;color:var(--text);word-break:break-word;max-height:2.4em;overflow:hidden}
     .slot-item .slot-type{font-family:var(--font-bold);font-size:.55rem;letter-spacing:1px;text-transform:uppercase;opacity:.7}
     @keyframes winnerPulse{
-      from{box-shadow:0 0 20px currentColor,0 0 40px currentColor;transform:scale(1.05)}
-      to{box-shadow:0 0 40px currentColor,0 0 80px currentColor,0 0 120px currentColor;transform:scale(1.15)}
+      from{box-shadow:0 0 15px currentColor;transform:scale(1.02)}
+      to{box-shadow:0 0 30px currentColor,0 0 60px currentColor;transform:scale(1.08)}
     }
-    .slot-flash{position:absolute;inset:0;background:radial-gradient(circle,var(--s1),transparent 70%);opacity:0;pointer-events:none;z-index:20;transition:opacity .4s}
-    .slot-flash.active{opacity:.4;animation:flashFade .8s ease-out forwards}
-    @keyframes flashFade{0%{opacity:.8}100%{opacity:0}}
+    .slot-fade-l,.slot-fade-r{position:absolute;top:0;bottom:0;width:80px;z-index:5;pointer-events:none}
+    .slot-fade-l{left:0;background:linear-gradient(to right,var(--bg2),transparent)}
+    .slot-fade-r{right:0;background:linear-gradient(to left,var(--bg2),transparent)}
   `;
   document.head.appendChild(st);
 }
 
-slot.innerHTML='<div class="slot-marker"></div><div class="slot-reel" id="slotReel"></div><div class="slot-flash" id="slotFlash"></div>';
+slot.innerHTML='<div class="slot-fade-l"></div><div class="slot-fade-r"></div><div class="slot-marker"></div><div class="slot-reel" id="slotReel"></div>';
 var reel=document.getElementById('slotReel');
-var flash=document.getElementById('slotFlash');
 
 var winner=DB[Math.floor(Math.random()*DB.length)];
 
-var ITEM_WIDTH=140;
-var GAP=12;
-var STEP=ITEM_WIDTH+GAP;
+var ITEM_TOTAL=164; // width 152 + margin 6*2
 var TOTAL=40;
 var WINNER_POS=TOTAL-6;
 
@@ -733,37 +788,36 @@ for(var i=0;i<TOTAL;i++){
   items.push(i===WINNER_POS?winner:DB[Math.floor(Math.random()*DB.length)]);
 }
 
-var itemsHTML='';
+var html='';
 items.forEach(function(r){
-  var typeLabel=r.type==='redux'?'REDUX':'REV';
-  itemsHTML+='<div class="slot-item" style="color:'+r.color+';background:linear-gradient(135deg,'+r.color+'22,'+r.color+'11);border-color:'+r.color+'44">'+
+  html+='<div class="slot-item" style="color:'+r.color+';background:linear-gradient(135deg,'+r.color+'15,'+r.color+'08);border-color:'+r.color+'33">'+
     '<div class="slot-emoji">'+getEmoji(r)+'</div>'+
     '<div class="slot-name">'+r.name+'</div>'+
-    '<div class="slot-type" style="color:'+r.color+'">'+typeLabel+'</div>'+
+    '<div class="slot-type" style="color:'+r.color+'">'+(r.type==='redux'?'REDUX':'REV')+'</div>'+
   '</div>';
 });
-reel.innerHTML=itemsHTML;
+reel.innerHTML=html;
 
 reel.style.transition='none';
-reel.style.transform='translate(0,-50%)';
-void reel.offsetHeight;
+reel.style.transform='translateY(-50%) translateX(0)';
 
-var slotWidth=slot.offsetWidth;
-var finalX=-(WINNER_POS*STEP)-(ITEM_WIDTH/2)+slotWidth/2;
-var jitter=(Math.random()*40-20);
-finalX+=jitter;
+requestAnimationFrame(function(){
+requestAnimationFrame(function(){
+  var slotW=slot.offsetWidth;
+  // Центр WINNER = WINNER_POS * ITEM_TOTAL + ITEM_TOTAL/2
+  // Он должен оказаться на slotW/2
+  var finalX = slotW/2 - (WINNER_POS * ITEM_TOTAL + ITEM_TOTAL/2);
 
-setTimeout(function(){
-  reel.style.transition='transform 2.8s cubic-bezier(.15,.85,.35,1)';
-  reel.style.transform='translate('+finalX+'px,-50%)';
-  
+  reel.style.transition='transform 3s cubic-bezier(.1,.9,.3,1)';
+  reel.style.transform='translateY(-50%) translateX('+finalX+'px)';
+
   setTimeout(function(){
-    var itemEls=reel.querySelectorAll('.slot-item');
-    if(itemEls[WINNER_POS]){itemEls[WINNER_POS].classList.add('winner')}
-    flash.classList.add('active');
-    setTimeout(function(){showRandom(winner)},700);
-  },2900);
-},30);
+    var els=reel.querySelectorAll('.slot-item');
+    if(els[WINNER_POS])els[WINNER_POS].classList.add('winner');
+    setTimeout(function(){showRandom(winner)},800);
+  },3100);
+});
+});
 }
 
 function showRandom(r){
@@ -854,16 +908,10 @@ err.classList.remove('active');
 if(!login||!pass){err.textContent='Заполни оба поля';err.classList.add('active');return}
 if(login.length<3){err.textContent='Логин слишком короткий (мин. 3)';err.classList.add('active');return}
 if(pass.length<4){err.textContent='Пароль слишком короткий (мин. 4)';err.classList.add('active');return}
-
-// Проверка допустимых символов в логине
-if(!/^[a-zA-Zа-яА-Я0-9_-]+$/.test(login)){
-  err.textContent='Логин может содержать только буквы, цифры, _ и -';
-  err.classList.add('active');return;
-}
+if(!/^[a-zA-Zа-яА-Я0-9_-]+$/.test(login)){err.textContent='Логин может содержать только буквы, цифры, _ и -';err.classList.add('active');return}
 
 try{
   if(authMode==='login'){
-    // ВХОД: регистронезависимый поиск
     const {data,error}=await sb.from('users').select('*').ilike('login',login).eq('password',pass).maybeSingle();
     if(error||!data){err.textContent='Неверный логин или пароль';err.classList.add('active');return}
     currentUser=data.login;
@@ -875,28 +923,14 @@ try{
     closeAllModals();updateAuthUI();renderGrid();
     toast('🌸 С возвращением, '+currentUser+'!');
   }else{
-    // РЕГИСТРАЦИЯ: сначала проверяем регистронезависимо
     const {data:existing}=await sb.from('users').select('id,login').ilike('login',login).maybeSingle();
-    if(existing){
-      err.textContent='Логин "'+existing.login+'" уже занят. Придумай другой';
-      err.classList.add('active');
-      return;
-    }
-    
-    // Пытаемся создать
+    if(existing){err.textContent='Логин "'+existing.login+'" уже занят';err.classList.add('active');return}
     const {error:insertError}=await sb.from('users').insert({login:login,password:pass,favorites:[]});
-    
     if(insertError){
-      // Если БД вернула ошибку уникальности — значит между проверкой и INSERT кто-то успел зарегаться
-      if(insertError.code==='23505'||insertError.message.toLowerCase().includes('duplicate')||insertError.message.toLowerCase().includes('unique')){
-        err.textContent='Логин уже занят. Придумай другой';
-      }else{
-        err.textContent='Ошибка: '+insertError.message;
-      }
-      err.classList.add('active');
-      return;
+      if(insertError.code==='23505'||(insertError.message||'').toLowerCase().indexOf('duplicate')!==-1){err.textContent='Логин уже занят'}
+      else{err.textContent='Ошибка: '+insertError.message}
+      err.classList.add('active');return;
     }
-    
     currentUser=login;favorites=[];userRatings={};
     localStorage.setItem('rdx_current',login);
     closeAllModals();updateAuthUI();renderGrid();
@@ -934,24 +968,22 @@ updateFavBadge();
 
 async function saveUserData(){
 if(!currentUser||!sb)return;
-try{
-  await sb.from('users').update({favorites:favorites}).eq('login',currentUser);
-}catch(e){console.error('save error:',e)}
+try{await sb.from('users').update({favorites:favorites}).eq('login',currentUser)}catch(e){}
 }
 
 async function loadUserData(){
 var cur=localStorage.getItem('rdx_current');
 if(!cur||!sb)return;
 try{
-  const {data,error}=await sb.from('users').select('*').eq('login',cur).single();
+  const {data,error}=await sb.from('users').select('*').ilike('login',cur).maybeSingle();
   if(error||!data){localStorage.removeItem('rdx_current');return}
-  currentUser=cur;
+  currentUser=data.login;
   favorites=data.favorites||[];
-  const {data:ratings}=await sb.from('user_ratings').select('mod_id,rating').eq('user_login',cur);
+  const {data:ratings}=await sb.from('user_ratings').select('mod_id,rating').eq('user_login',currentUser);
   userRatings={};
   if(ratings)ratings.forEach(function(r){userRatings[r.mod_id]=r.rating});
   updateAuthUI();renderGrid();
-}catch(e){console.error('load user error:',e)}
+}catch(e){}
 }
 
 document.addEventListener('DOMContentLoaded',runLoading);
