@@ -497,7 +497,7 @@ document.getElementById('closeAuth').onclick=closeAllModals;
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAllModals()});
 }
 
-ffunction startRandom(){
+function startRandom(){
 var modal=document.getElementById('randomModal');
 modal.classList.add('active');
 document.body.style.overflow='hidden';
