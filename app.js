@@ -1,23 +1,42 @@
-const DB=[
-{id:1,name:"NaturalVision Evolved",author:"Razed",color:"#4CAF50",colorName:"зелёный",cat:"Реализм",rating:4.9,votes:342,dl:125000,date:"2024-01-15",badge:"top",tags:["реализм","4K","HDR"],desc:"Один из самых реалистичных редуксов. Полностью переработанное освещение, текстуры и эффекты погоды.",palette:["#2d5a27","#8bc34a","#c8e6c9","#1b5e20"]},
-{id:2,name:"QuantV",author:"Quant",color:"#4d9fff",colorName:"синий",cat:"Графика",rating:4.8,votes:289,dl:98000,date:"2024-02-20",badge:"hot",tags:["рейтрейсинг","свет"],desc:"Продвинутый графический мод с эффектами рейтрейсинга и реалистичными отражениями.",palette:["#1565c0","#42a5f5","#bbdefb","#0d47a1"]},
-{id:3,name:"Redux Mod",author:"Josh Romito",color:"#ff9800",colorName:"оранжевый",cat:"Комплексный",rating:4.5,votes:456,dl:200000,date:"2023-08-10",badge:"top",tags:["текстуры","погода","звуки"],desc:"Комплексный мод: графика, погода, транспорт и звуки. Классика среди редуксов.",palette:["#e65100","#ff9800","#ffe0b2","#bf360c"]},
-{id:4,name:"VisualV",author:"_CP_",color:"#c04dff",colorName:"фиолетовый",cat:"Графика",rating:4.7,votes:198,dl:85000,date:"2024-03-05",badge:"new",tags:["таймцикл","атмосфера"],desc:"Кинематографическая атмосфера с улучшенным таймциклом и погодой.",palette:["#6a1b9a","#ab47bc","#e1bee7","#4a148c"]},
-{id:5,name:"Pinnacle of V",author:"Pinnacle",color:"#ff4d9d",colorName:"розовый",cat:"Реализм",rating:4.6,votes:167,dl:76000,date:"2023-11-22",badge:null,tags:["реализм","текстуры"],desc:"Реалистичный редукс с акцентом на детали дорог и зданий.",palette:["#c2185b","#f06292","#fce4ec","#880e4f"]},
-{id:6,name:"NVE + QuantV",author:"Community",color:"#00ffcc",colorName:"циан",cat:"Комбо",rating:4.9,votes:234,dl:65000,date:"2024-04-01",badge:"hot",tags:["комбо","максимум"],desc:"Объединение двух лучших модов — максимальное качество графики.",palette:["#00897b","#4db6ac","#b2dfdb","#004d40"]},
-{id:7,name:"Realism Beyond",author:"Tore_",color:"#8d6e63",colorName:"коричневый",cat:"Реализм",rating:4.4,votes:123,dl:42000,date:"2023-09-15",badge:null,tags:["реализм","грязь"],desc:"Реалистичный износ и детали. Мир выглядит живым.",palette:["#4e342e","#8d6e63","#d7ccc8","#3e2723"]},
-{id:8,name:"CinematicFX",author:"PixelKing",color:"#ff9800",colorName:"оранжевый",cat:"Кино",rating:4.3,votes:145,dl:38000,date:"2024-01-30",badge:"new",tags:["кино","DOF"],desc:"Кинематографические эффекты: DOF, lens flare, цветокоррекция.",palette:["#ef6c00","#ffa726","#fff3e0","#e65100"]},
-{id:9,name:"Vice Cry",author:"ViceCry Team",color:"#ff4d9d",colorName:"розовый",cat:"Ретро",rating:4.7,votes:278,dl:55000,date:"2023-12-10",badge:"hot",tags:["vice","ретро","неон"],desc:"Неоновые огни и ретро-атмосфера 80-х.",palette:["#ad1457","#ec407a","#fce4ec","#880e4f"]},
-{id:10,name:"DarkSide",author:"DarkMaster",color:"#37474F",colorName:"тёмный",cat:"Атмосфера",rating:4.2,votes:98,dl:31000,date:"2024-02-14",badge:null,tags:["нуар","контраст"],desc:"Тёмная мрачная атмосфера с высоким контрастом.",palette:["#263238","#546e7a","#cfd8dc","#1a2327"]},
-{id:11,name:"NightCity Neon",author:"CyberMods",color:"#7C4DFF",colorName:"фиолетовый",cat:"Тематический",rating:4.6,votes:201,dl:49000,date:"2024-03-18",badge:"new",tags:["неон","киберпанк"],desc:"Киберпанк: неоновые вывески и яркие отражения.",palette:["#311b92","#7c4dff","#d1c4e9","#1a0063"]},
-{id:12,name:"Golden Hour",author:"SunsetLover",color:"#ffb84d",colorName:"жёлтый",cat:"Освещение",rating:4.6,votes:189,dl:58000,date:"2024-04-15",badge:"hot",tags:["закат","золотой час"],desc:"Вечный золотой час — идеально для скриншотов.",palette:["#f57f17","#ffc107","#fff8e1","#ff6f00"]},
-{id:13,name:"PhotoRealistic",author:"LensGod",color:"#4CAF50",colorName:"зелёный",cat:"Реализм",rating:4.8,votes:312,dl:91000,date:"2024-04-10",badge:"hot",tags:["фото","4K"],desc:"Максимально близко к реальной фотографии.",palette:["#1b5e20","#66bb6a","#c8e6c9","#2e7d32"]},
-{id:14,name:"Anime Shade",author:"OtakuMods",color:"#ff80AB",colorName:"розовый",cat:"Стилизация",rating:4.1,votes:87,dl:25000,date:"2024-01-20",badge:"new",tags:["аниме","cel-shading"],desc:"Аниме-стилизация GTA 5 с cel-shading.",palette:["#c2185b","#ff80ab","#fce4ec","#ad1457"]},
-{id:15,name:"Midnight Club",author:"NightRacer",color:"#4d9fff",colorName:"синий",cat:"Ночной",rating:4.5,votes:156,dl:44000,date:"2024-01-10",badge:null,tags:["ночь","гонки"],desc:"Ночной мод для стрит-рейсинга.",palette:["#0d47a1","#2196f3","#bbdefb","#1565c0"]},
-{id:16,name:"SunnyDay Ultra",author:"SolarMod",color:"#ffeb3b",colorName:"жёлтый",cat:"Погода",rating:4.1,votes:78,dl:28000,date:"2023-07-20",badge:null,tags:["солнце","лето"],desc:"Яркий солнечный мод для летней атмосферы.",palette:["#f9a825","#ffee58","#fff9c4","#f57f17"]},
-{id:17,name:"Winter Wonderland",author:"FrostByte",color:"#B3E5FC",colorName:"голубой",cat:"Сезонный",rating:4.3,votes:134,dl:34000,date:"2023-12-25",badge:null,tags:["зима","снег"],desc:"Зимний мод: снежные улицы и иней.",palette:["#01579b","#4fc3f7","#e1f5fe","#0277bd"]},
-{id:18,name:"Tropical Paradise",author:"IslandVibes",color:"#00E676",colorName:"зелёный",cat:"Тематический",rating:4.2,votes:91,dl:29000,date:"2024-02-05",badge:null,tags:["тропики","океан"],desc:"Тропическая атмосфера: зелень и океан.",palette:["#1b5e20","#00e676","#c8e6c9","#2e7d32"]},
+// ============ DATABASE ============
+// Редуксы
+const REDUXES=[
+{id:1,type:"redux",name:"NaturalVision Evolved",author:"Razed",color:"#4CAF50",colorName:"зелёный",cat:"Реализм",rating:4.9,votes:342,dl:125000,date:"2024-01-15",badge:"top",tags:["реализм","4K","HDR"],desc:"Один из самых реалистичных редуксов. Полностью переработанное освещение, текстуры и эффекты погоды.",palette:["#2d5a27","#8bc34a","#c8e6c9","#1b5e20"]},
+{id:2,type:"redux",name:"QuantV",author:"Quant",color:"#4d9fff",colorName:"синий",cat:"Графика",rating:4.8,votes:289,dl:98000,date:"2024-02-20",badge:"hot",tags:["рейтрейсинг","свет"],desc:"Продвинутый графический мод с эффектами рейтрейсинга и реалистичными отражениями.",palette:["#1565c0","#42a5f5","#bbdefb","#0d47a1"]},
+{id:3,type:"redux",name:"Redux Mod",author:"Josh Romito",color:"#ff9800",colorName:"оранжевый",cat:"Комплексный",rating:4.5,votes:456,dl:200000,date:"2023-08-10",badge:"top",tags:["текстуры","погода","звуки"],desc:"Комплексный мод: графика, погода, транспорт и звуки. Классика среди редуксов.",palette:["#e65100","#ff9800","#ffe0b2","#bf360c"]},
+{id:4,type:"redux",name:"VisualV",author:"_CP_",color:"#c04dff",colorName:"фиолетовый",cat:"Графика",rating:4.7,votes:198,dl:85000,date:"2024-03-05",badge:"new",tags:["таймцикл","атмосфера"],desc:"Кинематографическая атмосфера с улучшенным таймциклом и погодой.",palette:["#6a1b9a","#ab47bc","#e1bee7","#4a148c"]},
+{id:5,type:"redux",name:"Pinnacle of V",author:"Pinnacle",color:"#ff4d9d",colorName:"розовый",cat:"Реализм",rating:4.6,votes:167,dl:76000,date:"2023-11-22",badge:null,tags:["реализм","текстуры"],desc:"Реалистичный редукс с акцентом на детали дорог и зданий.",palette:["#c2185b","#f06292","#fce4ec","#880e4f"]},
+{id:6,type:"redux",name:"NVE + QuantV",author:"Community",color:"#00ffcc",colorName:"циан",cat:"Комбо",rating:4.9,votes:234,dl:65000,date:"2024-04-01",badge:"hot",tags:["комбо","максимум"],desc:"Объединение двух лучших модов — максимальное качество графики.",palette:["#00897b","#4db6ac","#b2dfdb","#004d40"]},
+{id:7,type:"redux",name:"Realism Beyond",author:"Tore_",color:"#8d6e63",colorName:"коричневый",cat:"Реализм",rating:4.4,votes:123,dl:42000,date:"2023-09-15",badge:null,tags:["реализм","грязь"],desc:"Реалистичный износ и детали. Мир выглядит живым.",palette:["#4e342e","#8d6e63","#d7ccc8","#3e2723"]},
+{id:8,type:"redux",name:"CinematicFX",author:"PixelKing",color:"#ff9800",colorName:"оранжевый",cat:"Кино",rating:4.3,votes:145,dl:38000,date:"2024-01-30",badge:"new",tags:["кино","DOF"],desc:"Кинематографические эффекты: DOF, lens flare, цветокоррекция.",palette:["#ef6c00","#ffa726","#fff3e0","#e65100"]},
+{id:9,type:"redux",name:"Vice Cry",author:"ViceCry Team",color:"#ff4d9d",colorName:"розовый",cat:"Ретро",rating:4.7,votes:278,dl:55000,date:"2023-12-10",badge:"hot",tags:["vice","ретро","неон"],desc:"Неоновые огни и ретро-атмосфера 80-х.",palette:["#ad1457","#ec407a","#fce4ec","#880e4f"]},
+{id:10,type:"redux",name:"DarkSide",author:"DarkMaster",color:"#37474F",colorName:"тёмный",cat:"Атмосфера",rating:4.2,votes:98,dl:31000,date:"2024-02-14",badge:null,tags:["нуар","контраст"],desc:"Тёмная мрачная атмосфера с высоким контрастом.",palette:["#263238","#546e7a","#cfd8dc","#1a2327"]},
+{id:11,type:"redux",name:"NightCity Neon",author:"CyberMods",color:"#7C4DFF",colorName:"фиолетовый",cat:"Тематический",rating:4.6,votes:201,dl:49000,date:"2024-03-18",badge:"new",tags:["неон","киберпанк"],desc:"Киберпанк: неоновые вывески и яркие отражения.",palette:["#311b92","#7c4dff","#d1c4e9","#1a0063"]},
+{id:12,type:"redux",name:"Golden Hour",author:"SunsetLover",color:"#ffb84d",colorName:"жёлтый",cat:"Освещение",rating:4.6,votes:189,dl:58000,date:"2024-04-15",badge:"hot",tags:["закат","золотой час"],desc:"Вечный золотой час — идеально для скриншотов.",palette:["#f57f17","#ffc107","#fff8e1","#ff6f00"]},
+{id:13,type:"redux",name:"PhotoRealistic",author:"LensGod",color:"#4CAF50",colorName:"зелёный",cat:"Реализм",rating:4.8,votes:312,dl:91000,date:"2024-04-10",badge:"hot",tags:["фото","4K"],desc:"Максимально близко к реальной фотографии.",palette:["#1b5e20","#66bb6a","#c8e6c9","#2e7d32"]},
+{id:14,type:"redux",name:"Anime Shade",author:"OtakuMods",color:"#ff80AB",colorName:"розовый",cat:"Стилизация",rating:4.1,votes:87,dl:25000,date:"2024-01-20",badge:"new",tags:["аниме","cel-shading"],desc:"Аниме-стилизация GTA 5 с cel-shading.",palette:["#c2185b","#ff80ab","#fce4ec","#ad1457"]},
+{id:15,type:"redux",name:"Midnight Club",author:"NightRacer",color:"#4d9fff",colorName:"синий",cat:"Ночной",rating:4.5,votes:156,dl:44000,date:"2024-01-10",badge:null,tags:["ночь","гонки"],desc:"Ночной мод для стрит-рейсинга.",palette:["#0d47a1","#2196f3","#bbdefb","#1565c0"]},
+{id:16,type:"redux",name:"SunnyDay Ultra",author:"SolarMod",color:"#ffeb3b",colorName:"жёлтый",cat:"Погода",rating:4.1,votes:78,dl:28000,date:"2023-07-20",badge:null,tags:["солнце","лето"],desc:"Яркий солнечный мод для летней атмосферы.",palette:["#f9a825","#ffee58","#fff9c4","#f57f17"]},
+{id:17,type:"redux",name:"Winter Wonderland",author:"FrostByte",color:"#B3E5FC",colorName:"голубой",cat:"Сезонный",rating:4.3,votes:134,dl:34000,date:"2023-12-25",badge:null,tags:["зима","снег"],desc:"Зимний мод: снежные улицы и иней.",palette:["#01579b","#4fc3f7","#e1f5fe","#0277bd"]},
+{id:18,type:"redux",name:"Tropical Paradise",author:"IslandVibes",color:"#00E676",colorName:"зелёный",cat:"Тематический",rating:4.2,votes:91,dl:29000,date:"2024-02-05",badge:null,tags:["тропики","океан"],desc:"Тропическая атмосфера: зелень и океан.",palette:["#1b5e20","#00e676","#c8e6c9","#2e7d32"]},
 ];
+
+// Ревики
+const REVIKS=[
+{id:101,type:"revik",name:"Sharp Revik",author:"SharpMods",color:"#ff4d9d",colorName:"розовый",cat:"Резкость",rating:4.7,votes:189,dl:67000,date:"2024-03-20",badge:"hot",tags:["резкость","чёткость"],desc:"Максимальная резкость и чёткость картинки для капта.",palette:["#c2185b","#ff4d9d","#fce4ec","#880e4f"]},
+{id:102,type:"revik",name:"Neon Revik Pro",author:"CyberMods",color:"#00ffcc",colorName:"циан",cat:"Неон",rating:4.8,votes:234,dl:82000,date:"2024-04-05",badge:"top",tags:["неон","яркость"],desc:"Яркие неоновые оттенки, идеальны для ночных каптов.",palette:["#00897b","#00ffcc","#b2dfdb","#004d40"]},
+{id:103,type:"revik",name:"Contrast Master",author:"DarkMaster",color:"#37474F",colorName:"тёмный",cat:"Контраст",rating:4.5,votes:156,dl:48000,date:"2024-02-10",badge:null,tags:["контраст","чёрный"],desc:"Экстремальный контраст для глубокой картинки.",palette:["#263238","#546e7a","#cfd8dc","#1a2327"]},
+{id:104,type:"revik",name:"Sunset Revik",author:"SunsetLover",color:"#ffb84d",colorName:"жёлтый",cat:"Освещение",rating:4.6,votes:145,dl:55000,date:"2024-03-15",badge:"new",tags:["закат","тепло"],desc:"Тёплая закатная палитра для атмосферных каптов.",palette:["#f57f17","#ffc107","#fff8e1","#ff6f00"]},
+{id:105,type:"revik",name:"Vice Revik",author:"ViceCry Team",color:"#ff4d9d",colorName:"розовый",cat:"Ретро",rating:4.7,votes:198,dl:52000,date:"2024-01-25",badge:"hot",tags:["vice","ретро"],desc:"Ретро-стиль Vice City в форме ревика.",palette:["#ad1457","#ec407a","#fce4ec","#880e4f"]},
+{id:106,type:"revik",name:"Cold Blue",author:"FrostByte",color:"#4d9fff",colorName:"синий",cat:"Холод",rating:4.4,votes:112,dl:38000,date:"2024-02-28",badge:null,tags:["холод","синева"],desc:"Холодные синие тона, зимняя эстетика.",palette:["#0d47a1","#2196f3","#bbdefb","#1565c0"]},
+{id:107,type:"revik",name:"Cinematic Revik",author:"PixelKing",color:"#ff9800",colorName:"оранжевый",cat:"Кино",rating:4.6,votes:167,dl:61000,date:"2024-03-08",badge:"new",tags:["кино","драма"],desc:"Кинематографический ревик для эпичных каптов.",palette:["#ef6c00","#ffa726","#fff3e0","#e65100"]},
+{id:108,type:"revik",name:"Green Machine",author:"Razed",color:"#4CAF50",colorName:"зелёный",cat:"Природа",rating:4.5,votes:143,dl:47000,date:"2024-04-01",badge:null,tags:["зелень","природа"],desc:"Насыщенная зелёная палитра для природных сцен.",palette:["#2d5a27","#8bc34a","#c8e6c9","#1b5e20"]},
+{id:109,type:"revik",name:"Purple Rain",author:"CyberMods",color:"#c04dff",colorName:"фиолетовый",cat:"Тематический",rating:4.8,votes:212,dl:74000,date:"2024-04-12",badge:"hot",tags:["фиолет","дождь"],desc:"Фиолетовый ревик с эффектом дождя.",palette:["#6a1b9a","#ab47bc","#e1bee7","#4a148c"]},
+{id:110,type:"revik",name:"Clean White",author:"MinimalMods",color:"#f5f5f5",colorName:"голубой",cat:"Минимализм",rating:4.3,votes:98,dl:32000,date:"2024-01-05",badge:null,tags:["минимал","белый"],desc:"Чистый минималистичный ревик без лишних эффектов.",palette:["#eeeeee","#f5f5f5","#ffffff","#e0e0e0"]},
+];
+
+// Объединяем в общую БД
+const DB=[...REDUXES,...REVIKS];
 
 const COLORS=[
 {n:"все",v:"all",h:null},{n:"розовый",v:"розовый",h:"#ff4d9d"},{n:"оранжевый",v:"оранжевый",h:"#ff9800"},
@@ -26,12 +45,13 @@ const COLORS=[
 {n:"коричневый",v:"коричневый",h:"#8d6e63"},{n:"тёмный",v:"тёмный",h:"#37474F"},
 ];
 
-const emojiMap={"NaturalVision Evolved":"🌿","QuantV":"💎","Redux Mod":"🎨","VisualV":"👁️","Pinnacle of V":"🏔️","NVE + QuantV":"⚡","Realism Beyond":"🌍","CinematicFX":"🎬","Vice Cry":"🌆","DarkSide":"🌑","NightCity Neon":"🌃","Golden Hour":"🌅","PhotoRealistic":"📸","Anime Shade":"🎌","Midnight Club":"🌙","SunnyDay Ultra":"☀️","Winter Wonderland":"❄️","Tropical Paradise":"🏝️"};
+const emojiMap={"NaturalVision Evolved":"🌿","QuantV":"💎","Redux Mod":"🎨","VisualV":"👁️","Pinnacle of V":"🏔️","NVE + QuantV":"⚡","Realism Beyond":"🌍","CinematicFX":"🎬","Vice Cry":"🌆","DarkSide":"🌑","NightCity Neon":"🌃","Golden Hour":"🌅","PhotoRealistic":"📸","Anime Shade":"🎌","Midnight Club":"🌙","SunnyDay Ultra":"☀️","Winter Wonderland":"❄️","Tropical Paradise":"🏝️","Sharp Revik":"🔪","Neon Revik Pro":"💠","Contrast Master":"⚫","Sunset Revik":"🌇","Vice Revik":"💗","Cold Blue":"🧊","Cinematic Revik":"🎥","Green Machine":"🌱","Purple Rain":"💜","Clean White":"⚪"};
 
-let ST={search:'',color:'all',author:'all',cat:'all',sort:'popular'};
+let ST={search:'',color:'all',author:'all',cat:'all',sort:'popular',type:'all'};
 let currentUser=null,favorites=[];
 let authMode='login';
 
+// ============ CURSOR ============
 const cMain=document.getElementById('cursorMain'),cDot=document.getElementById('cursorDot'),cLabel=document.getElementById('cursorLabel');
 let mx=0,my=0,cx=0,cy=0;
 document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cDot.style.left=mx+'px';cDot.style.top=my+'px';cLabel.style.left=mx+'px';cLabel.style.top=my+'px'});
@@ -39,7 +59,7 @@ function animCursor(){cx+=(mx-cx)*.15;cy+=(my-cy)*.15;cMain.style.left=cx+'px';c
 animCursor();
 
 function bindHovers(){
-document.querySelectorAll('a,button,input,select,.color-pill,.card-fav,.palette-dot,.day-tag,.card-stars i,.detail-stars i,.marquee-item').forEach(function(el){
+document.querySelectorAll('a,button,input,select,.color-pill,.card-fav,.palette-dot,.day-tag,.card-stars i,.detail-stars i,.marquee-item,.type-btn,.card-author-link,.detail-author-link,.day-author').forEach(function(el){
   if(el.classList.contains('redux-card')||el.classList.contains('redux-card-wrapper'))return;
   el.onmouseenter=function(){cMain.classList.add('hover');cMain.classList.remove('card-hover')};
   el.onmouseleave=function(){cMain.classList.remove('hover');cLabel.classList.remove('visible')};
@@ -50,6 +70,7 @@ document.querySelectorAll('.redux-card-wrapper').forEach(function(el){
 });
 }
 
+// ============ BRANCHES ============
 function updateBranches(){
 var tl=document.getElementById('branchTL'),br=document.getElementById('branchBR');
 if(!tl||!br)return;
@@ -72,6 +93,59 @@ if(brDist<maxD){
 }
 setInterval(updateBranches,50);
 
+// ============ FAKE CURSORS других юзеров ============
+const FAKE_NAMES=['SakuraFan','ReduxLover','GtaKing','CaptPro','NightRider','PixelHunter','ColorMaster','ModExpert','ShaderGuru','LightSeeker'];
+let fakeCursorsPool=[];
+
+function spawnFakeCursor(){
+if(fakeCursorsPool.length>=3)return; // не больше 3 одновременно
+
+var container=document.getElementById('fakeCursors');
+var cursor=document.createElement('div');
+cursor.className='fake-cursor';
+var name=FAKE_NAMES[Math.floor(Math.random()*FAKE_NAMES.length)];
+var color=['#e5a4c4','#c4a8d9','#a8b0e0','#a8c0e0','#d9a8c2'][Math.floor(Math.random()*5)];
+cursor.style.color=color;
+cursor.innerHTML='<svg class="fake-cursor-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M5,2l14,7l-6,2l-2,6z"/></svg><div class="fake-cursor-label" style="color:'+color+'">'+name+'</div>';
+cursor.style.left=Math.random()*innerWidth+'px';
+cursor.style.top=Math.random()*innerHeight+'px';
+container.appendChild(cursor);
+fakeCursorsPool.push(cursor);
+
+// Плавно появляется
+setTimeout(function(){cursor.classList.add('visible')},50);
+
+// Двигается несколько раз
+var movements=Math.floor(Math.random()*3)+2;
+var moveIdx=0;
+function moveNext(){
+  if(moveIdx>=movements){
+    // Исчезает
+    cursor.classList.remove('visible');
+    setTimeout(function(){
+      cursor.remove();
+      fakeCursorsPool=fakeCursorsPool.filter(function(c){return c!==cursor});
+    },1000);
+    return;
+  }
+  cursor.style.left=Math.random()*innerWidth+'px';
+  cursor.style.top=Math.random()*innerHeight+'px';
+  moveIdx++;
+  setTimeout(moveNext,3200+Math.random()*2000);
+}
+setTimeout(moveNext,500);
+}
+
+function initFakeCursors(){
+// Первый курсор через 3 секунды
+setTimeout(spawnFakeCursor,3000);
+// Потом периодически
+setInterval(function(){
+  if(Math.random()>0.5)spawnFakeCursor();
+},6000);
+}
+
+// ============ PARTICLES ============
 var pCanvas=document.getElementById('particlesCanvas'),pCtx=pCanvas.getContext('2d');
 var particles=[],pMouse={x:-999,y:-999};
 function resizePCanvas(){pCanvas.width=innerWidth;pCanvas.height=innerHeight}
@@ -115,6 +189,7 @@ for(i=0;i<particles.length;i++)for(j=i+1;j<particles.length;j++){
 requestAnimationFrame(animParticles)}
 animParticles();
 
+// ============ WIND ============
 function initWind(){
 var wind=document.getElementById('wind');
 function makeWind(){
@@ -129,6 +204,7 @@ setInterval(makeWind,2500);
 for(var i=0;i<3;i++)setTimeout(makeWind,i*800);
 }
 
+// ============ PETALS ============
 var petalEmojis=['🌸','🌺','💮'];
 function spawnPetal(){
 var p=document.createElement('div');p.className='petal';
@@ -146,6 +222,7 @@ for(var i=0;i<8;i++)setTimeout(spawnPetal,i*300);
 setInterval(spawnPetal,1200);
 }
 
+// ============ LOADING ============
 function runLoading(){
 var bar=document.getElementById('loadingBar'),text=document.getElementById('loadingText'),sakura=document.getElementById('loadingSakura');
 var i,p,side;
@@ -176,14 +253,15 @@ var ids=['navbar','hero','reduxDay','trendingMarquee','catalog','about','footer'
 ids.forEach(function(id,i){
   setTimeout(function(){var el=document.getElementById(id);if(el){el.style.opacity='1';el.style.transition='opacity .8s'}},i*150);
 });
-startPetals();initWind();
+startPetals();initWind();initFakeCursors();
 setupNavbar();setupTheme();
-renderDayCard();renderMarquee();initFilters();renderGrid();
+renderDayCard();renderMarquee();initFilters();initTypeSwitcher();renderGrid();
 setupModals();setupAuth();bindHovers();animateStats();
 setupMagnetic();setupPages();setupTelegram();loadUserData();
 setTimeout(function(){toast('🌸 Добро пожаловать в Redux Picker')},800);
 }
 
+// ============ TOAST ============
 function toast(msg){
 var c=document.getElementById('toastContainer'),t=document.createElement('div');
 t.className='toast';t.innerHTML=msg;c.appendChild(t);
@@ -214,12 +292,33 @@ var saved=localStorage.getItem('rdx_theme');
 if(saved)document.documentElement.dataset.theme=saved;
 }
 
+// ============ РЕАЛЬНЫЕ СЧЁТЧИКИ ============
 function animateStats(){
-document.querySelectorAll('.stat-num').forEach(function(el){
-  var target=parseInt(el.dataset.target),start=performance.now();
-  function upd(t){var p=Math.min((t-start)/1500,1);el.textContent=Math.floor((1-Math.pow(1-p,3))*target);if(p<1)requestAnimationFrame(upd)}
-  requestAnimationFrame(upd);
-});}
+// Реальные значения!
+var totalMods=DB.length; // всего модов = редуксы + ревики
+var uniqueAuthors=[];
+DB.forEach(function(r){if(uniqueAuthors.indexOf(r.author)===-1)uniqueAuthors.push(r.author)});
+var totalAuthors=uniqueAuthors.length;
+var totalDownloads=DB.reduce(function(sum,r){return sum+r.dl},0);
+
+animateNum('statMods',totalMods);
+animateNum('statAuthors',totalAuthors);
+animateNum('statDownloads',totalDownloads);
+}
+
+function animateNum(id,target){
+var el=document.getElementById(id);
+if(!el)return;
+var start=performance.now();
+var dur=1500;
+function upd(t){
+  var p=Math.min((t-start)/dur,1);
+  var val=Math.floor((1-Math.pow(1-p,3))*target);
+  el.textContent=val>=1000?val.toLocaleString('ru'):val;
+  if(p<1)requestAnimationFrame(upd);
+}
+requestAnimationFrame(upd);
+}
 
 function setupMagnetic(){
 document.querySelectorAll('.magnetic').forEach(function(b){
@@ -230,23 +329,24 @@ document.querySelectorAll('.magnetic').forEach(function(b){
 function renderDayCard(){
 var r=DB.reduce(function(a,b){return a.rating>b.rating?a:b});
 var emoji=emojiMap[r.name]||'🌸';
-var idx=DB.indexOf(r);
 document.getElementById('reduxDay').innerHTML=
 '<div class="day-card">'+
 '<div class="day-preview" style="background:linear-gradient(135deg,'+r.color+'11,'+r.color+'33)">'+
 '<div class="day-preview-glow" style="background:'+r.color+'"></div>'+
 '<div class="day-preview-icon">'+emoji+'</div></div>'+
 '<div class="day-content">'+
-'<div class="day-badge">⭐ Редукс дня</div>'+
+'<div class="day-badge">⭐ Мод дня</div>'+
 '<h2 class="day-title">'+r.name+'</h2>'+
-'<div class="day-author"><i class="fas fa-user" style="color:var(--s2)"></i> '+r.author+' · <i class="fas fa-star" style="color:var(--s1)"></i> '+r.rating+'</div>'+
+'<div class="day-author" onclick="openAuthorPage(\''+r.author.replace(/'/g,"\\'")+'\')"><i class="fas fa-user" style="color:var(--s2)"></i> '+r.author+' · <i class="fas fa-star" style="color:var(--s1)"></i> '+r.rating+'</div>'+
 '<p class="day-desc">'+r.desc+'</p>'+
 '<div class="day-actions">'+
-'<button class="day-btn" onclick="openDetail(DB['+idx+'])"><i class="fas fa-eye"></i> Подробнее</button>'+
+'<button class="day-btn" onclick="openDetail(getReduxById('+r.id+'))"><i class="fas fa-eye"></i> Подробнее</button>'+
 '<div class="day-tags-inline">'+r.tags.slice(0,3).map(function(t){return '<span class="day-tag">'+t+'</span>'}).join('')+'</div>'+
 '</div></div></div>';
 bindHovers();
 }
+
+function getReduxById(id){return DB.find(function(r){return r.id===id})}
 
 function renderMarquee(){
 var sorted=DB.slice().sort(function(a,b){return b.dl-a.dl}).slice(0,10);
@@ -259,6 +359,18 @@ document.querySelectorAll('.marquee-item').forEach(function(el){
   el.addEventListener('click',function(){var r=DB.find(function(x){return x.id==el.dataset.id});if(r)openDetail(r)});
 });
 bindHovers();
+}
+
+// ============ TYPE SWITCHER ============
+function initTypeSwitcher(){
+document.querySelectorAll('.type-btn').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.type-btn').forEach(function(x){x.classList.remove('active')});
+    b.classList.add('active');
+    ST.type=b.dataset.type;
+    renderGrid();
+  });
+});
 }
 
 function initFilters(){
@@ -285,7 +397,9 @@ document.getElementById('sortSel').onchange=function(e){ST.sort=e.target.value;r
 function renderGrid(target){
 if(!target)target='bentoGrid';
 var list=DB.slice();
+
 if(target==='bentoGrid'){
+  if(ST.type!=='all')list=list.filter(function(r){return r.type===ST.type});
   if(ST.search)list=list.filter(function(r){return r.name.toLowerCase().indexOf(ST.search)!==-1||r.author.toLowerCase().indexOf(ST.search)!==-1||r.tags.some(function(t){return t.indexOf(ST.search)!==-1})});
   if(ST.color!=='all')list=list.filter(function(r){return r.colorName===ST.color});
   if(ST.author!=='all')list=list.filter(function(r){return r.author===ST.author});
@@ -296,15 +410,18 @@ if(target==='bentoGrid'){
     case'new':list.sort(function(a,b){return new Date(b.date)-new Date(a.date)});break;
     case'name':list.sort(function(a,b){return a.name.localeCompare(b.name)});break;
   }
-}else{
+}else if(target==='favGrid'){
   list=DB.filter(function(r){return favorites.indexOf(r.id)!==-1});
+}else if(target==='authorGrid'){
+  // authorGrid уже отфильтрован в openAuthorPage
+  list=window._authorGridList||[];
 }
 
 var grid=document.getElementById(target);grid.innerHTML='';
 
 if(list.length===0){
   if(target==='favGrid'){
-    grid.innerHTML='<div class="fav-empty" style="grid-column:1/-1"><div class="fav-empty-icon">💔</div><h3>Пусто</h3><p>'+(currentUser?'Ты ещё не добавил ничего в избранное':'Войди в аккаунт чтобы сохранять редуксы')+'</p>'+(!currentUser?'<button class="btn-primary" onclick="document.getElementById(\'authBtn\').click()"><i class="fas fa-user"></i> Войти</button>':'<button class="btn-primary" onclick="goToCatalog()"><i class="fas fa-th-large"></i> К каталогу</button>')+'</div>';
+    grid.innerHTML='<div class="fav-empty" style="grid-column:1/-1"><div class="fav-empty-icon">💔</div><h3>Пусто</h3><p>'+(currentUser?'Ты ещё не добавил ничего в избранное':'Войди в аккаунт чтобы сохранять моды')+'</p>'+(!currentUser?'<button class="btn-primary" onclick="document.getElementById(\'authBtn\').click()"><i class="fas fa-user"></i> Войти</button>':'<button class="btn-primary" onclick="goToCatalog()"><i class="fas fa-th-large"></i> К каталогу</button>')+'</div>';
   }else{
     grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🔍</div><h3>Ничего не найдено</h3><p>Попробуй изменить фильтры</p></div>';
   }
@@ -320,6 +437,7 @@ list.forEach(function(r,i){
   card.className='redux-card';
   var isFav=favorites.indexOf(r.id)!==-1;
   var badge=r.badge?'<div class="card-badge badge-'+r.badge+'">'+(r.badge==='new'?'✨ new':r.badge==='hot'?'🔥 hot':'⭐ top')+'</div>':'';
+  var typeBadge=r.type==='redux'?'<div class="card-type-badge type-redux">✨ Redux</div>':'<div class="card-type-badge type-revik">💫 Revik</div>';
   var stars='';
   for(var si=0;si<5;si++){stars+='<i class="fas fa-star '+(si<Math.round(r.rating)?'':'empty')+'" data-star="'+(si+1)+'" data-id="'+r.id+'"></i>'}
   
@@ -328,12 +446,13 @@ list.forEach(function(r,i){
     '<div class="card-glow" style="background:'+r.color+'"></div>'+
     '<div class="card-color-bar" style="background:'+r.color+'"></div>'+
     badge+
+    typeBadge+
     '<button class="card-fav '+(isFav?'active':'')+'" data-id="'+r.id+'"><i class="fas fa-heart"></i></button>'+
     '</div>'+
     '<div class="card-body">'+
     '<div class="card-name">'+r.name+'</div>'+
     '<div class="card-meta">'+
-    '<span><i class="fas fa-user"></i>'+r.author+'</span>'+
+    '<span class="card-author-link" data-author="'+r.author+'"><i class="fas fa-user"></i>'+r.author+'</span>'+
     '<span><i class="fas fa-download"></i>'+(r.dl/1000|0)+'k</span>'+
     '<span><i class="fas fa-tag"></i>'+r.cat+'</span>'+
     '</div>'+
@@ -363,7 +482,7 @@ list.forEach(function(r,i){
   });
   
   card.addEventListener('click',function(e){
-    if(e.target.closest('.card-fav')||e.target.closest('.card-stars')||e.target.closest('.palette-dot'))return;
+    if(e.target.closest('.card-fav')||e.target.closest('.card-stars')||e.target.closest('.palette-dot')||e.target.closest('.card-author-link'))return;
     openDetail(r);
   });
   grid.appendChild(wrapper);
@@ -375,6 +494,9 @@ document.querySelectorAll('.card-fav').forEach(function(f){
 document.querySelectorAll('.card-stars i').forEach(function(s){
   s.addEventListener('click',function(e){e.stopPropagation();rateRedux(parseInt(s.dataset.id),parseInt(s.dataset.star))});
 });
+document.querySelectorAll('.card-author-link').forEach(function(a){
+  a.addEventListener('click',function(e){e.stopPropagation();openAuthorPage(a.dataset.author)});
+});
 bindHovers();updateFavBadge();
 }
 
@@ -384,6 +506,43 @@ if(favorites.length>0){b.style.display='inline-block';b.textContent=favorites.le
 else b.style.display='none';
 }
 
+// ============ AUTHOR PAGE ============
+function openAuthorPage(authorName){
+var authorMods=DB.filter(function(r){return r.author===authorName});
+if(authorMods.length===0)return;
+
+closeAllModals();
+
+var totalDl=authorMods.reduce(function(s,r){return s+r.dl},0);
+var avgRating=(authorMods.reduce(function(s,r){return s+r.rating},0)/authorMods.length).toFixed(1);
+var reduxCount=authorMods.filter(function(r){return r.type==='redux'}).length;
+var revikCount=authorMods.filter(function(r){return r.type==='revik'}).length;
+
+document.getElementById('authorAvatar').textContent=authorName.charAt(0).toUpperCase();
+document.getElementById('authorName').textContent=authorName;
+document.getElementById('authorStats').innerHTML=
+  '<span><i class="fas fa-cubes"></i> '+authorMods.length+' модов</span>'+
+  (reduxCount>0?'<span><i class="fas fa-sparkles"></i> '+reduxCount+' редуксов</span>':'')+
+  (revikCount>0?'<span><i class="fas fa-star"></i> '+revikCount+' ревиков</span>':'')+
+  '<span><i class="fas fa-download"></i> '+totalDl.toLocaleString('ru')+' скачиваний</span>'+
+  '<span><i class="fas fa-star"></i> '+avgRating+' средний рейтинг</span>';
+
+document.getElementById('homePage').style.display='none';
+document.getElementById('favoritesPage').classList.remove('active');
+document.getElementById('authorPage').classList.add('active');
+
+window._authorGridList=authorMods;
+renderGrid('authorGrid');
+window.scrollTo({top:0,behavior:'smooth'});
+bindHovers();
+}
+
+function closeAuthorPage(){
+document.getElementById('authorPage').classList.remove('active');
+document.getElementById('homePage').style.display='block';
+}
+
+// ============ PAGES ============
 function setupPages(){
 document.querySelectorAll('[data-page]').forEach(function(a){
   a.addEventListener('click',function(e){
@@ -397,10 +556,12 @@ document.querySelectorAll('[data-page]').forEach(function(a){
     }
   });
 });
+document.getElementById('authorBack').addEventListener('click',closeAuthorPage);
 }
 
 function switchPage(page){
 document.querySelectorAll('[data-page]').forEach(function(a){a.classList.toggle('active',a.dataset.page===page)});
+document.getElementById('authorPage').classList.remove('active');
 if(page==='favorites'){
   document.getElementById('homePage').style.display='none';
   document.getElementById('favoritesPage').classList.add('active');
@@ -426,6 +587,7 @@ var idx=favorites.indexOf(id);
 if(idx>-1)favorites.splice(idx,1);else favorites.push(id);
 saveUserData();renderGrid();
 if(document.getElementById('favoritesPage').classList.contains('active'))renderGrid('favGrid');
+if(document.getElementById('authorPage').classList.contains('active'))renderGrid('authorGrid');
 toast(idx>-1?'💔 Удалено из избранного':'💖 Добавлено в избранное');
 }
 
@@ -440,6 +602,7 @@ var modal=document.getElementById('detailModal'),box=document.getElementById('de
 var isFav=favorites.indexOf(r.id)!==-1;
 var stars='';
 for(var i=0;i<5;i++)stars+='<i class="fas fa-star '+(i<Math.round(r.rating)?'':'empty')+'"></i>';
+var typeLabel=r.type==='redux'?'✨ Redux':'💫 Revik';
 box.innerHTML=
 '<button class="modal-close" onclick="closeAllModals()"><i class="fas fa-times"></i></button>'+
 '<div class="detail-preview" style="background:linear-gradient(135deg,'+r.color+'22,'+r.color+'44)">'+
@@ -447,8 +610,8 @@ box.innerHTML=
 '<div class="detail-body">'+
 '<h2 class="detail-title">'+r.name+'</h2>'+
 '<div class="detail-meta">'+
-'<span><i class="fas fa-user"></i>'+r.author+'</span>'+
-'<span><i class="fas fa-tag"></i>'+r.cat+'</span>'+
+'<span class="detail-author-link" onclick="openAuthorPage(\''+r.author.replace(/'/g,"\\'")+'\')"><i class="fas fa-user"></i>'+r.author+'</span>'+
+'<span><i class="fas fa-tag"></i>'+typeLabel+'</span>'+
 '<span><i class="fas fa-download"></i>'+r.dl.toLocaleString()+'</span>'+
 '<span><i class="fas fa-calendar"></i>'+r.date+'</span></div>'+
 '<p class="detail-desc">'+r.desc+'</p>'+
@@ -462,8 +625,8 @@ box.innerHTML=
 '<button class="btn-primary"><i class="fas fa-download"></i> Скачать</button>'+
 '<button class="btn-secondary" onclick="toggleFav('+r.id+');closeAllModals();"><i class="fas fa-heart"></i> '+(isFav?'В избранном':'В избранное')+'</button></div>'+
 '<div class="detail-share">'+
-'<div class="detail-share-url">reduxpicker.com/redux/'+r.id+'</div>'+
-'<button class="detail-share-copy" onclick="navigator.clipboard.writeText(\'reduxpicker.com/redux/'+r.id+'\');toast(\'📋 Скопировано!\')">Copy</button></div></div>';
+'<div class="detail-share-url">reduxpicker.com/mod/'+r.id+'</div>'+
+'<button class="detail-share-copy" onclick="navigator.clipboard.writeText(\'reduxpicker.com/mod/'+r.id+'\');toast(\'📋 Скопировано!\')">Copy</button></div></div>';
 modal.classList.add('active');document.body.style.overflow='hidden';bindHovers();
 document.querySelectorAll('.blob').forEach(function(b,i){if(i===0)b.style.background=r.color;if(i===2)b.style.background=r.palette[1]||r.color});
 }
@@ -479,7 +642,7 @@ document.getElementById('closeAuth').onclick=closeAllModals;
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAllModals()});
 }
 
-// ============ РАНДОМ (простая надёжная версия) ============
+// ============ РАНДОМ 3D РУЛЕТКА ============
 function startRandom(){
 var modal=document.getElementById('randomModal');
 modal.classList.add('active');
@@ -487,59 +650,72 @@ document.body.style.overflow='hidden';
 document.getElementById('rollingView').style.display='block';
 document.getElementById('resultView').style.display='none';
 
-var display=document.getElementById('slotDisplay');
-display.classList.remove('pop');
+var slot=document.getElementById('slotBox');
+slot.innerHTML='<div class="slot-marker"></div><div class="slot-reel" id="slotReel"></div>';
+var reel=document.getElementById('slotReel');
 
-// Выбираем победителя ЗАРАНЕЕ — он будет и в анимации, и в результате
 var winner=DB[Math.floor(Math.random()*DB.length)];
+var TOTAL=60;
+var WINNER_POS=TOTAL-5;
 
-var iterations=0;
-var maxIterations=20;
-var currentDelay=60;
-
-function tick(){
-  iterations++;
-  
-  // Замедление
-  if(iterations>10)currentDelay+=25;
-  if(iterations>15)currentDelay+=40;
-  
-  if(iterations>=maxIterations){
-    // ФИНАЛ — показываем ТОЧНО победителя
-    display.textContent=winner.name;
-    display.style.color=winner.color;
-    display.classList.add('pop');
-    setTimeout(function(){
-      showRandom(winner);
-    },500);
-    return;
-  }
-  
-  // Промежуточный кадр — случайный редукс
-  var rnd=DB[Math.floor(Math.random()*DB.length)];
-  display.textContent=rnd.name;
-  display.style.color=rnd.color;
-  
-  setTimeout(tick,currentDelay);
+var items=[];
+for(var i=0;i<TOTAL;i++){
+  if(i===WINNER_POS)items.push(winner);
+  else items.push(DB[Math.floor(Math.random()*DB.length)]);
 }
 
-// Стартуем сразу
-display.textContent='?';
-display.style.color='var(--s1)';
-setTimeout(tick,200);
+var itemsHTML='';
+items.forEach(function(r){
+  var emoji=emojiMap[r.name]||'🎨';
+  itemsHTML+='<div class="slot-item" style="color:'+r.color+'"><span class="emoji">'+emoji+'</span><span class="name">'+r.name+'</span></div>';
+});
+reel.innerHTML=itemsHTML;
+
+requestAnimationFrame(function(){
+  requestAnimationFrame(function(){
+    var slotHeight=slot.offsetHeight;
+    var itemHeight=60;
+    var finalY=(slotHeight/2)-(WINNER_POS*itemHeight+itemHeight/2);
+    
+    reel.style.transform='translateY(0)';
+    reel.classList.add('spinning');
+    
+    requestAnimationFrame(function(){
+      reel.style.transition='transform 4.5s cubic-bezier(0.17,0.67,0.32,1)';
+      reel.style.transform='translateY('+finalY+'px)';
+      
+      setTimeout(function(){
+        reel.classList.remove('spinning');
+        reel.classList.add('slowing');
+      },3800);
+      
+      setTimeout(function(){
+        reel.classList.remove('slowing');
+        var itemEls=reel.querySelectorAll('.slot-item');
+        if(itemEls[WINNER_POS]){
+          itemEls[WINNER_POS].classList.add('winner');
+        }
+        setTimeout(function(){
+          showRandom(winner);
+        },800);
+      },4600);
+    });
+  });
+});
 }
 
 function showRandom(r){
 document.getElementById('rollingView').style.display='none';
 document.getElementById('resultView').style.display='block';
 var emoji=emojiMap[r.name]||'🌸';
+var typeLabel=r.type==='redux'?'✨ Redux':'💫 Revik';
 document.getElementById('resultCard').innerHTML=
 '<div style="background:var(--glass);backdrop-filter:blur(30px);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:24px;text-align:left;position:relative;overflow:hidden">'+
 '<div style="position:absolute;top:-40px;right:-40px;width:150px;height:150px;background:'+r.color+';border-radius:50%;filter:blur(60px);opacity:.4"></div>'+
 '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;position:relative">'+
 '<div style="font-size:2rem">'+emoji+'</div>'+
 '<div><div style="font-family:var(--font-bold);font-weight:800;font-size:1.15rem">'+r.name+'</div>'+
-'<div style="font-family:var(--font-body);font-size:.75rem;color:var(--text2);font-weight:500">'+r.author+' · '+r.cat+'</div></div></div>'+
+'<div style="font-family:var(--font-body);font-size:.75rem;color:var(--text2);font-weight:500">'+r.author+' · '+typeLabel+'</div></div></div>'+
 '<div style="font-size:.85rem;color:var(--text2);font-weight:500;position:relative;line-height:1.5">'+r.desc.slice(0,120)+'...</div>'+
 '<div style="margin-top:12px;display:flex;gap:15px;align-items:center;font-family:var(--font-bold);font-size:.75rem;color:var(--s1);position:relative">'+
 '<span><i class="fas fa-star"></i> '+r.rating+'</span>'+
