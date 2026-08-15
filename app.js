@@ -521,30 +521,51 @@ document.querySelectorAll('.card-author-link').forEach(function(a){
   a.addEventListener('click',function(e){e.stopPropagation();openAuthorPage(a.dataset.author)});
 });
 
-// hover-видео на превьюшках
-document.querySelectorAll('.card-thumb[data-yt]').forEach(function(img){
-  if(img._hoverInit)return;
-  img._hoverInit=true;
-  var timer=null;
-  var parent=img.parentElement;
-  parent.addEventListener('mouseenter',function(){
-    var ytId=img.dataset.yt;
+// hover-видео на превьюшках (через единый обработчик на document)
+if(!window._hoverInit){
+  window._hoverInit=true;
+  var hoverTimer=null;
+  var hoverEl=null;
+  var currentIframe=null;
+  var HOVER_DELAY=2500; // задержка в мс — меняй здесь
+  
+  function stopHoverVideo(){
+    if(hoverTimer){clearTimeout(hoverTimer);hoverTimer=null}
+    if(currentIframe){currentIframe.remove();currentIframe=null}
+    hoverEl=null;
+  }
+  
+  document.addEventListener('mouseover',function(e){
+    var thumb=e.target.closest('.card-thumb[data-yt]');
+    if(!thumb){return}
+    if(thumb===hoverEl){return} // уже висим — игнор
+    stopHoverVideo();
+    hoverEl=thumb;
+    var ytId=thumb.dataset.yt;
     if(!ytId)return;
-    timer=setTimeout(function(){
+    hoverTimer=setTimeout(function(){
+      if(hoverEl!==thumb)return; // за это время увели мышь
       var iframe=document.createElement('iframe');
-      iframe.src='https://www.youtube.com/embed/'+ytId+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+ytId+'&modestbranding=1';
-      iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:none;z-index:2';
+      iframe.src='https://www.youtube-nocookie.com/embed/'+ytId+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+ytId+'&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1';
+      iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:none;z-index:2;pointer-events:none';
       iframe.allow='autoplay';
-      iframe.setAttribute('loading','lazy');
-      parent.appendChild(iframe);
-      parent._iframe=iframe;
-    },2.500);
+      thumb.parentElement.appendChild(iframe);
+      currentIframe=iframe;
+      hoverTimer=null;
+    },HOVER_DELAY);
   });
-  parent.addEventListener('mouseleave',function(){
-    clearTimeout(timer);
-    if(parent._iframe){parent._iframe.remove();parent._iframe=null}
+  
+  document.addEventListener('mouseout',function(e){
+    var thumb=e.target.closest('.card-thumb[data-yt]');
+    if(!thumb)return;
+    // Проверяем что мышь действительно ушла с элемента (не на дочерний)
+    var to=e.relatedTarget;
+    if(to&&thumb.parentElement.contains(to))return;
+    if(thumb===hoverEl){
+      stopHoverVideo();
+    }
   });
-});
+}
 
 bindHovers();
 
