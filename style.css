@@ -324,7 +324,6 @@ justify-content:center;
 .slot-pointer::before,.slot-pointer::after{content:'▼';position:absolute;left:50%;transform:translateX(-50%);color:var(--s1);font-size:.7rem;text-shadow:0 0 8px var(--s1)}
 .slot-pointer::before{top:-2px}
 .slot-pointer::after{content:'▲';bottom:-2px}
-.slot-pointer{display:none}
 .slot-reel{display:flex;flex-direction:row;height:100%;align-items:center;will-change:transform}
 .slot-item{
 width:100%;
