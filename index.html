@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REDUX PICKER</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=Unbounded:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="cursor cursor-main" id="cursorMain"></div>
+<div class="cursor cursor-dot" id="cursorDot"></div>
+<div class="cursor-label" id="cursorLabel"></div>
+
+<div class="noise"></div>
+
+<div class="branch branch-tl" id="branchTL">
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4a2c3a" stop-opacity="0.9"/><stop offset="100%" stop-color="#2a1a25" stop-opacity="0.6"/></linearGradient></defs>
+<path d="M0,0 Q80,60 150,80 Q200,90 250,100 Q290,110 320,140" stroke="url(#bg1)" stroke-width="4" fill="none" stroke-linecap="round"/>
+<path d="M60,50 Q90,40 130,30" stroke="url(#bg1)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M120,70 Q140,90 160,120" stroke="url(#bg1)" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M180,85 Q210,70 240,50" stroke="url(#bg1)" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M220,95 Q240,130 260,170" stroke="url(#bg1)" stroke-width="2" fill="none" stroke-linecap="round"/>
+<g fill="#e5a4c4" opacity="0.9">
+<circle cx="130" cy="30" r="8"/><circle cx="125" cy="25" r="6"/><circle cx="135" cy="25" r="6"/><circle cx="128" cy="35" r="6"/><circle cx="132" cy="35" r="6"/>
+<circle cx="240" cy="50" r="8"/><circle cx="235" cy="45" r="6"/><circle cx="245" cy="45" r="6"/><circle cx="238" cy="55" r="6"/><circle cx="242" cy="55" r="6"/>
+<circle cx="160" cy="120" r="7"/><circle cx="155" cy="116" r="5"/><circle cx="165" cy="116" r="5"/><circle cx="158" cy="124" r="5"/><circle cx="162" cy="124" r="5"/>
+<circle cx="260" cy="170" r="7"/><circle cx="255" cy="166" r="5"/><circle cx="265" cy="166" r="5"/><circle cx="258" cy="174" r="5"/><circle cx="262" cy="174" r="5"/>
+<circle cx="320" cy="140" r="8"/><circle cx="315" cy="135" r="6"/><circle cx="325" cy="135" r="6"/><circle cx="318" cy="145" r="6"/><circle cx="322" cy="145" r="6"/>
+<circle cx="50" cy="20" r="6"/><circle cx="46" cy="17" r="4"/><circle cx="54" cy="17" r="4"/>
+<circle cx="200" cy="90" r="6"/><circle cx="196" cy="87" r="4"/><circle cx="204" cy="87" r="4"/></g>
+</svg>
+</div>
+<div class="branch branch-br" id="branchBR">
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4a2c3a" stop-opacity="0.9"/><stop offset="100%" stop-color="#2a1a25" stop-opacity="0.6"/></linearGradient></defs>
+<path d="M0,0 Q80,60 150,80 Q200,90 250,100 Q290,110 320,140" stroke="url(#bg2)" stroke-width="4" fill="none" stroke-linecap="round"/>
+<path d="M60,50 Q90,40 130,30" stroke="url(#bg2)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M120,70 Q140,90 160,120" stroke="url(#bg2)" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M180,85 Q210,70 240,50" stroke="url(#bg2)" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M220,95 Q240,130 260,170" stroke="url(#bg2)" stroke-width="2" fill="none" stroke-linecap="round"/>
+<g fill="#e5a4c4" opacity="0.9">
+<circle cx="130" cy="30" r="8"/><circle cx="125" cy="25" r="6"/><circle cx="135" cy="25" r="6"/><circle cx="128" cy="35" r="6"/><circle cx="132" cy="35" r="6"/>
+<circle cx="240" cy="50" r="8"/><circle cx="235" cy="45" r="6"/><circle cx="245" cy="45" r="6"/><circle cx="238" cy="55" r="6"/><circle cx="242" cy="55" r="6"/>
+<circle cx="160" cy="120" r="7"/><circle cx="155" cy="116" r="5"/><circle cx="165" cy="116" r="5"/><circle cx="158" cy="124" r="5"/><circle cx="162" cy="124" r="5"/>
+<circle cx="260" cy="170" r="7"/><circle cx="255" cy="166" r="5"/><circle cx="265" cy="166" r="5"/><circle cx="258" cy="174" r="5"/><circle cx="262" cy="174" r="5"/>
+<circle cx="320" cy="140" r="8"/><circle cx="315" cy="135" r="6"/><circle cx="325" cy="135" r="6"/><circle cx="318" cy="145" r="6"/><circle cx="322" cy="145" r="6"/>
+<circle cx="50" cy="20" r="6"/><circle cx="46" cy="17" r="4"/><circle cx="54" cy="17" r="4"/>
+<circle cx="200" cy="90" r="6"/><circle cx="196" cy="87" r="4"/><circle cx="204" cy="87" r="4"/></g>
+</svg>
+</div>
+
+<div class="aurora" id="aurora">
+<div class="blob"></div><div class="blob"></div><div class="blob"></div><div class="blob"></div><div class="blob"></div>
+</div>
+
+<div class="wind" id="wind"></div>
+<canvas id="particlesCanvas"></canvas>
+
+<div class="loading-screen" id="loadingScreen">
+<div class="loading-sakura" id="loadingSakura"></div>
+<div class="loading-logo">REDUX PICKER</div>
+<div class="loading-bar-wrap"><div class="loading-bar" id="loadingBar"></div></div>
+<div class="loading-text" id="loadingText">initializing...</div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<nav class="navbar" id="navbar" style="opacity:0">
+<div class="nav-inner">
+  <div class="nav-left">
+    <a class="nav-logo" href="#" id="mainLogo"><span class="nav-logo-petal">🌸</span><span>REDUX PICKER</span></a>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#" data-page="home" class="active">Главная</a></li>
+    <li><a href="#" data-page="favorites">Избранное <span class="fav-badge" id="favBadge" style="display:none">0</span></a></li>
+    <li><a href="#" data-page="home-about">О нас</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-btn theme-toggle" id="themeBtn" title="Тема">
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+    <button class="nav-user-btn" id="authBtn"><i class="fas fa-user"></i> <span id="authBtnText">Войти</span></button>
+  </div>
+</div>
+</nav>
+
+<div id="homePage">
+<section class="hero" id="hero" style="opacity:0">
+<div class="hero-inner">
+  <h1 class="hero-title">Find your<br><span class="g">perfect redux</span></h1>
+  <p class="hero-desc">Открой для себя лучшие редуксы GTA 5 RP. Фильтруй по цветам, авторам и настроению — или доверься судьбе</p>
+  <div class="hero-actions">
+    <button class="btn-primary magnetic" id="randomHeroBtn"><i class="fas fa-dice-d20"></i> Случайный редукс</button>
+    <a href="#catalog" class="btn-secondary"><i class="fas fa-th-large"></i> Каталог</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num" data-target="24">0</div><div class="stat-label">Редуксов</div></div>
+    <div class="stat"><div class="stat-num" data-target="18">0</div><div class="stat-label">Авторов</div></div>
+    <div class="stat"><div class="stat-num" data-target="847">0</div><div class="stat-label">Скачиваний</div></div>
+  </div>
+</div>
+</section>
+
+<div class="redux-day" id="reduxDay" style="opacity:0"></div>
+
+<div class="trending-wrap" id="trendingMarquee" style="opacity:0">
+<div class="trending-marquee">
+<div class="marquee-label">🔥 Trending</div>
+<div class="marquee-track" id="marqueeTrack"></div>
+</div>
+</div>
+
+<section class="section" id="catalog" style="opacity:0">
+<div class="section-label">🌸 каталог</div>
+<div class="section-title"><span class="g">Все</span> редуксы</div>
+<div class="section-desc">Выбери свой стиль игры</div>
+<div class="filters-wrap">
+  <div class="filters-inner">
+    <div class="filter-search"><i class="fas fa-search"></i><input id="searchIn" placeholder="Поиск..." type="text"></div>
+    <select class="filter-select" id="authorSel"><option value="all">Все авторы</option></select>
+    <select class="filter-select" id="catSel"><option value="all">Все категории</option></select>
+    <select class="filter-select" id="sortSel">
+      <option value="popular">Популярные</option>
+      <option value="rating">По рейтингу</option>
+      <option value="new">Новые</option>
+      <option value="name">По имени</option>
+    </select>
+    <div class="color-pills" id="colorPills"></div>
+  </div>
+</div>
+<div class="bento-grid" id="bentoGrid"></div>
+</section>
+
+<section class="about" id="about" style="opacity:0">
+<div class="section-label">🌸 о нас</div>
+<div class="section-title"><span class="g">Redux</span> Picker</div>
+<p class="about-desc">Мы создаём лучший каталог редуксов для GTA 5 RP. Присоединяйся к нашему сообществу в Telegram!</p>
+<div class="tg-wrap">
+  <a href="https://t.me/reduxpicker" target="_blank" class="tg-link" id="tgLink">
+    <div class="tg-icon"><i class="fab fa-telegram-plane"></i></div>
+    <span>Наш Telegram</span>
+  </a>
+</div>
+</section>
+</div>
+
+<div class="favorites-page" id="favoritesPage">
+<div class="fav-hero">
+  <div class="section-label">💖 избранное</div>
+  <h1 class="fav-hero-title">Твои <span class="g">любимые</span></h1>
+  <p class="fav-hero-desc">Все редуксы, которые тебе понравились</p>
+</div>
+<div class="bento-grid" id="favGrid"></div>
+</div>
+
+<footer class="footer" id="footer" style="opacity:0">
+<p>© 2024 REDUX PICKER</p>
+<p>🌸 Все редуксы принадлежат их авторам</p>
+</footer>
+
+<div class="modal-overlay" id="detailModal"><div class="modal-box" id="detailBox"></div></div>
+
+<div class="modal-overlay" id="randomModal">
+<div class="modal-box">
+  <button class="modal-close" id="closeRandom"><i class="fas fa-times"></i></button>
+  <div class="random-box">
+    <div id="rollingView">
+      <div class="random-title"><span class="g">Рандом</span></div>
+      <div class="random-sub">выбираем идеальный редукс...</div>
+      <div class="slot"><div class="slot-pointer"></div><div class="slot-reel" id="slotReel"></div></div>
+    </div>
+    <div id="resultView" style="display:none">
+      <div class="random-title">✨ <span class="g">Твой редукс</span> ✨</div>
+      <div id="resultCard" style="margin:20px 0"></div>
+      <div class="random-actions">
+        <button class="btn-primary" id="rerollBtn"><i class="fas fa-dice"></i> Ещё раз</button>
+        <button class="btn-secondary" id="viewResultBtn"><i class="fas fa-eye"></i> Подробнее</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal-overlay" id="authModal">
+<div class="modal-box">
+  <button class="modal-close" id="closeAuth"><i class="fas fa-times"></i></button>
+  <div class="auth-box" id="authContent"></div>
+</div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
