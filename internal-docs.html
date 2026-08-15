@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internal Docs</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+--bg:#0a0510;--bg2:#100818;--surface:#160d1c;--surface2:#1e1226;
+--border:rgba(255,255,255,.08);--border-h:rgba(255,255,255,.15);
+--text:#f5f0f5;--text2:#a09098;--text3:#605058;
+--s1:#e5a4c4;--s3:#c4a8d9;--s5:#a8c0e0;
+--green:#a3e635;--red:#f472b6;--yellow:#facc15;--gold:#ffd700;
+--grad:linear-gradient(120deg,#e5a4c4,#c4a8d9,#a8b0e0);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:4px}
+a{color:var(--s1);text-decoration:none}
+button{cursor:pointer;font-family:inherit}
+
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;max-width:400px;width:100%}
+.login-title{font-family:'Unbounded',sans-serif;font-size:1.6rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.login-sub{color:var(--text2);font-size:.85rem;margin-bottom:24px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.7rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:600;font-family:'Unbounded',sans-serif}
+.field input,.field select,.field textarea{width:100%;padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:.9rem}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--s1);box-shadow:0 0 0 3px rgba(229,164,196,.15)}
+.field textarea{min-height:60px;resize:vertical}
+.btn{padding:14px 28px;background:var(--grad);color:#000;font-weight:800;font-size:.8rem;letter-spacing:1.5px;text-transform:uppercase;border:none;border-radius:10px;transition:all .3s;font-family:'Unbounded',sans-serif}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(229,164,196,.4)}
+.btn-sec{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-sec:hover{border-color:var(--s1);color:var(--s1);box-shadow:none}
+.btn-danger{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);color:#ef4444}
+.btn-danger:hover{background:rgba(239,68,68,.25);box-shadow:none}
+.btn-gold{background:linear-gradient(135deg,#ffd700,#ffb000);color:#000}
+.btn-gold:hover{box-shadow:0 8px 25px rgba(255,215,0,.4)}
+.msg{padding:12px 16px;border-radius:10px;font-size:.85rem;margin-top:14px;display:none;font-weight:600}
+.msg.show{display:block}
+.msg.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444}
+.msg.ok{background:rgba(163,230,53,.1);border:1px solid rgba(163,230,53,.3);color:#a3e635}
+
+.admin{display:none}
+.admin.active{display:block}
+.top{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+.top-title{font-family:'Unbounded',sans-serif;font-size:1.2rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800}
+.top-right{display:flex;align-items:center;gap:15px}
+.top-user{font-size:.85rem;color:var(--text2)}
+.top-user b{color:var(--s1)}
+.top-btn{padding:8px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:.75rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;transition:all .3s;font-family:'Unbounded',sans-serif}
+.top-btn:hover{border-color:var(--s1);color:var(--s1)}
+
+.tabs{display:flex;gap:6px;padding:20px 30px 0;border-bottom:1px solid var(--border);background:var(--surface);overflow-x:auto}
+.tab{padding:12px 20px;background:transparent;border:none;color:var(--text2);font-family:'Unbounded',sans-serif;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid transparent;transition:all .3s;white-space:nowrap}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--s1);border-bottom-color:var(--s1)}
+.tab-badge{background:var(--s1);color:#000;font-size:.6rem;padding:2px 6px;border-radius:10px;margin-left:6px;font-weight:800}
+
+.main{padding:30px;max-width:1400px;margin:0 auto}
+.page{display:none}
+.page.active{display:block}
+.section-head{margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.section-title{font-family:'Unbounded',sans-serif;font-size:1.4rem;font-weight:700}
+.section-desc{color:var(--text2);font-size:.85rem;margin-top:4px}
+
+.pending-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;transition:border-color .3s}
+.pending-card:hover{border-color:var(--s3)}
+.pending-header{padding:14px 20px;background:var(--surface2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border)}
+.pending-meta{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:.75rem;color:var(--text2)}
+.pending-meta i{color:var(--s1);margin-right:4px}
+.pending-status{padding:4px 12px;border-radius:20px;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;background:rgba(250,204,21,.15);color:var(--yellow);border:1px solid rgba(250,204,21,.3);font-family:'Unbounded',sans-serif}
+.pending-body{padding:20px}
+
+.pending-videos{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:20px}
+.pending-video{background:var(--bg);border:2px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .3s;position:relative}
+.pending-video:hover{border-color:var(--s3)}
+.pending-video.selected{border-color:var(--s1);box-shadow:0 0 0 3px rgba(229,164,196,.2)}
+.pending-video img{width:100%;height:160px;object-fit:cover;display:block}
+.pending-video-info{padding:10px}
+.pending-video-title{font-size:.85rem;font-weight:700;margin-bottom:4px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pending-video-author{font-size:.7rem;color:var(--text2)}
+.pending-video-check{position:absolute;top:8px;right:8px;width:24px;height:24px;background:var(--s1);border-radius:50%;display:none;align-items:center;justify-content:center;color:#000;font-size:.7rem;font-weight:800}
+.pending-video.selected .pending-video-check{display:flex}
+
+.pending-drive{padding:12px 16px;background:var(--bg);border-radius:10px;font-size:.8rem;color:var(--text2);margin-bottom:20px;display:flex;align-items:center;gap:10px;word-break:break-all}
+.pending-drive i{color:#4285f4;font-size:1rem;flex-shrink:0}
+
+.edit-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.edit-form .full{grid-column:span 2}
+
+.type-row{display:flex;gap:8px}
+.type-opt{flex:1;padding:12px;background:var(--bg);border:2px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;font-weight:700;font-size:.85rem;transition:all .2s;font-family:'Unbounded',sans-serif}
+.type-opt.active{border-color:var(--s1);background:rgba(229,164,196,.1);color:var(--s1)}
+
+.color-row{display:flex;gap:8px;flex-wrap:wrap;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:10px}
+.color-opt{width:32px;height:32px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .2s;position:relative}
+.color-opt:hover{transform:scale(1.15)}
+.color-opt.active{border-color:#fff;box-shadow:0 0 12px currentColor;transform:scale(1.15)}
+
+.pending-actions{display:flex;gap:10px;flex-wrap:wrap;padding-top:15px;border-top:1px solid var(--border)}
+
+.approved-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.approved-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .3s;position:relative}
+.approved-card:hover{border-color:var(--s1)}
+.approved-card.is-day{border-color:var(--gold);box-shadow:0 0 30px rgba(255,215,0,.3)}
+.approved-card.is-day::before{content:'⭐ МОД ДНЯ';position:absolute;top:8px;left:8px;background:var(--gold);color:#000;font-size:.6rem;font-weight:800;padding:4px 10px;border-radius:20px;z-index:5;font-family:'Unbounded',sans-serif}
+.approved-preview{height:140px;position:relative;overflow:hidden;background:var(--bg2)}
+.approved-preview img{width:100%;height:100%;object-fit:cover;opacity:.7}
+.approved-color-bar{position:absolute;bottom:0;left:0;right:0;height:3px}
+.approved-body{padding:14px}
+.approved-name{font-weight:700;margin-bottom:4px;font-size:.95rem}
+.approved-meta{font-size:.7rem;color:var(--text2);margin-bottom:10px}
+.approved-stats{display:flex;gap:10px;font-size:.7rem;color:var(--text3);margin-bottom:10px}
+.approved-stats i{color:var(--s1);margin-right:3px}
+.approved-buttons{display:flex;flex-direction:column;gap:6px}
+
+.empty{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty i{font-size:4rem;opacity:.3;margin-bottom:16px;display:block}
+.empty h3{color:var(--text2);margin-bottom:8px;font-family:'Unbounded',sans-serif}
+.empty p{font-size:.85rem}
+
+.toast{position:fixed;top:20px;right:20px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--s1);padding:14px 20px;border-radius:10px;font-size:.85rem;z-index:9999;animation:slideIn .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 10px 30px rgba(0,0,0,.4);font-weight:600;max-width:350px}
+@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+.loading{text-align:center;padding:40px;color:var(--text2)}
+.loading i{font-size:2rem;color:var(--s1);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.back-link{position:fixed;top:16px;left:20px;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:.75rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;transition:all .3s;font-family:'Unbounded',sans-serif;z-index:200}
+.back-link:hover{border-color:var(--s1);color:var(--s1)}
+
+/* MOD OF DAY page */
+.day-current{background:var(--surface);border:2px solid var(--gold);border-radius:16px;padding:24px;margin-bottom:30px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.day-current-icon{font-size:3rem}
+.day-current-info{flex:1;min-width:200px}
+.day-current-label{font-family:'Unbounded',sans-serif;font-size:.7rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;font-weight:700}
+.day-current-name{font-family:'Unbounded',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:4px}
+.day-current-meta{font-size:.85rem;color:var(--text2)}
+.day-current-actions{display:flex;gap:8px;flex-wrap:wrap}
+.day-search{margin-bottom:20px}
+.day-search input{width:100%;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:.9rem}
+.day-search input:focus{outline:none;border-color:var(--s1)}
+
+@media(max-width:768px){
+.top,.tabs{padding-left:15px;padding-right:15px}
+.main{padding:20px 15px}
+.edit-form{grid-template-columns:1fr}
+.edit-form .full{grid-column:span 1}
+.pending-videos{grid-template-columns:1fr}
+.back-link{display:none}
+.day-current{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<a href="/" class="back-link"><i class="fas fa-arrow-left"></i> На сайт</a>
+
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div class="login-title">🌸 Panel</div>
+    <div class="login-sub">Внутренняя панель управления</div>
+    <div class="field">
+      <label>Логин</label>
+      <input type="text" id="loginUser" placeholder="admin" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Пароль</label>
+      <input type="password" id="loginPass" placeholder="********" autocomplete="off">
+    </div>
+    <button class="btn" style="width:100%" onclick="doLogin()">Войти</button>
+    <div class="msg err" id="loginErr"></div>
+  </div>
+</div>
+
+<div class="admin" id="adminPanel">
+  <div class="top">
+    <div class="top-title">🌸 REDUX ADMIN</div>
+    <div class="top-right">
+      <span class="top-user">👤 <b id="userName">admin</b></span>
+      <button class="top-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+    </div>
+  </div>
+  
+  <div class="tabs">
+    <button class="tab active" data-tab="pending">⏳ Заявки <span class="tab-badge" id="pendingBadge">0</span></button>
+    <button class="tab" data-tab="approved">✅ Опубликовано <span class="tab-badge" id="approvedBadge">0</span></button>
+    <button class="tab" data-tab="modofday">⭐ Мод дня</button>
+  </div>
+  
+  <div class="main">
+    <div class="page active" id="pendingPage">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Заявки на модерацию</div>
+          <div class="section-desc">Одобри или отклони заявки от Discord бота</div>
+        </div>
+        <button class="top-btn" onclick="loadPending()"><i class="fas fa-sync"></i> Обновить</button>
+      </div>
+      <div id="pendingList"></div>
+    </div>
+    
+    <div class="page" id="approvedPage">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Опубликованные моды</div>
+          <div class="section-desc">Все моды видны на сайте</div>
+        </div>
+        <button class="top-btn" onclick="loadApproved()"><i class="fas fa-sync"></i> Обновить</button>
+      </div>
+      <div id="approvedList"></div>
+    </div>
+    
+    <div class="page" id="modofdayPage">
+      <div class="section-head">
+        <div>
+          <div class="section-title">⭐ Мод дня</div>
+          <div class="section-desc">Выбери мод который будет отображаться на главной сайта</div>
+        </div>
+        <button class="top-btn" onclick="loadModOfDay()"><i class="fas fa-sync"></i> Обновить</button>
+      </div>
+      <div id="dayCurrentBox"></div>
+      <div class="day-search"><input type="text" id="daySearch" placeholder="🔍 Поиск мода..."></div>
+      <div id="dayModList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://pdpmorawwynhkoxunzyn.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkcG1vcmF3d3luaGtveHVuenluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MzkzNTQsImV4cCI6MjEwMjMxNTM1NH0.HiV97Jc5iIsdWn7RxBLSee9KhUwClc2qzxHBRZKJ8zU';
+
+const COLORS = [
+  {n:'красный', h:'#ff4d6d'},{n:'оранжевый', h:'#ff9800'},{n:'жёлтый', h:'#ffeb3b'},
+  {n:'зелёный', h:'#4CAF50'},{n:'циан', h:'#00ffcc'},{n:'голубой', h:'#B3E5FC'},
+  {n:'синий', h:'#4d9fff'},{n:'фиолетовый', h:'#c04dff'},{n:'розовый', h:'#ff4d9d'},
+  {n:'коричневый', h:'#8d6e63'},{n:'тёмный', h:'#37474F'},{n:'белый', h:'#f5f5f5'},
+];
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let currentAdmin = null;
+let allApprovedMods = [];
+let currentDayModId = null;
+
+async function doLogin() {
+  const login = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+  const err = document.getElementById('loginErr');
+  err.classList.remove('show');
+  if (!login || !pass) { err.textContent = 'Заполни оба поля'; err.classList.add('show'); return; }
+  try {
+    const {data, error} = await sb.from('admins').select('*').eq('login', login).eq('password', pass).single();
+    if (error || !data) { err.textContent = 'Неверный логин или пароль'; err.classList.add('show'); return; }
+    currentAdmin = data;
+    localStorage.setItem('rdx_admin', JSON.stringify(data));
+    showAdmin();
+  } catch(e) { err.textContent = 'Ошибка: ' + e.message; err.classList.add('show'); }
+}
+
+document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function showAdmin() {
+  document.getElementById('loginWrap').style.display = 'none';
+  document.getElementById('adminPanel').classList.add('active');
+  document.getElementById('userName').textContent = currentAdmin.login;
+  loadPending();
+  loadApprovedCount();
+}
+
+function logout() { localStorage.removeItem('rdx_admin'); location.reload(); }
+
+const saved = localStorage.getItem('rdx_admin');
+if (saved) { currentAdmin = JSON.parse(saved); showAdmin(); }
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.tab + 'Page').classList.add('active');
+    if (t.dataset.tab === 'pending') loadPending();
+    if (t.dataset.tab === 'approved') loadApproved();
+    if (t.dataset.tab === 'modofday') loadModOfDay();
+  });
+});
+
+function toast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast'; t.innerHTML = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(100px)'; t.style.transition='all .3s'; setTimeout(() => t.remove(), 300); }, 3000);
+}
+
+// ============ PENDING ============
+async function loadPending() {
+  const box = document.getElementById('pendingList');
+  box.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+  const {data, error} = await sb.from('pending_mods').select('*').eq('status', 'pending').order('created_at', {ascending: false});
+  if (error) { box.innerHTML = '<div class="empty"><i class="fas fa-triangle-exclamation"></i><h3>Ошибка</h3><p>'+error.message+'</p></div>'; return; }
+  document.getElementById('pendingBadge').textContent = data.length;
+  if (data.length === 0) { box.innerHTML = '<div class="empty"><i class="fas fa-inbox"></i><h3>Пусто</h3><p>Жду когда бот подкинет что-то 🤖</p></div>'; return; }
+  box.innerHTML = '';
+  data.forEach(item => box.appendChild(makePendingCard(item)));
+}
+
+async function loadApprovedCount() {
+  const {count} = await sb.from('mods').select('*', {count: 'exact', head: true});
+  document.getElementById('approvedBadge').textContent = count || 0;
+}
+
+function makePendingCard(item) {
+  const card = document.createElement('div');
+  card.className = 'pending-card';
+  const date = new Date(item.created_at).toLocaleString('ru');
+  const videos = item.youtube_urls || [];
+  const titles = item.video_titles || [];
+  const authors = item.video_authors || [];
+  const previews = item.preview_images || [];
+  let videosHTML = '';
+  videos.forEach((url, i) => {
+    videosHTML += `<div class="pending-video ${i===0?'selected':''}" data-idx="${i}"><img src="${previews[i]}" onerror="this.style.display='none'"><div class="pending-video-info"><div class="pending-video-title">${titles[i]||'Без названия'}</div><div class="pending-video-author">👤 ${authors[i]||'?'}</div></div><div class="pending-video-check"><i class="fas fa-check"></i></div></div>`;
+  });
+  let colorsHTML = '';
+  COLORS.forEach(c => { colorsHTML += `<div class="color-opt" style="background:${c.h}" data-color="${c.n}" data-hex="${c.h}" title="${c.n}"></div>`; });
+  card.innerHTML = `
+    <div class="pending-header">
+      <div class="pending-meta">
+        <span><i class="fas fa-user"></i>${item.discord_author}</span>
+        <span><i class="fas fa-hashtag"></i>${item.discord_channel}</span>
+        <span><i class="fas fa-clock"></i>${date}</span>
+      </div>
+      <div class="pending-status">⏳ На модерации</div>
+    </div>
+    <div class="pending-body">
+      <div class="pending-videos">${videosHTML}</div>
+      <div class="pending-drive"><i class="fab fa-google-drive"></i><a href="${item.drive_url}" target="_blank">${item.drive_url}</a></div>
+      <div class="edit-form">
+        <div class="field"><label>📛 Название</label><input type="text" class="edit-name" value="${(titles[0]||'').replace(/"/g,'&quot;')}"></div>
+        <div class="field"><label>👤 Автор</label><input type="text" class="edit-author" value="${(authors[0]||'').replace(/"/g,'&quot;')}"></div>
+        <div class="field"><label>✨ Тип</label><div class="type-row"><div class="type-opt active" data-type="redux">✨ Redux</div><div class="type-opt" data-type="revik">💫 REV</div></div></div>
+        <div class="field"><label>🏆 Бейдж</label><select class="edit-badge"><option value="">— нет —</option><option value="new">✨ New</option><option value="hot">🔥 Hot</option><option value="top">⭐ Top</option></select></div>
+        <div class="field full"><label>🎨 Цвет</label><div class="color-row">${colorsHTML}</div></div>
+        <div class="field full"><label>🏷️ Теги (через запятую)</label><input type="text" class="edit-tags" placeholder="капт, топ, яркий"></div>
+        <div class="field full"><label>✍️ Описание</label><textarea class="edit-desc" placeholder="Короткое описание..."></textarea></div>
+      </div>
+      <div class="pending-actions">
+        <button class="btn" style="background:linear-gradient(135deg,#a3e635,#84cc16);color:#000"><i class="fas fa-check"></i> Одобрить</button>
+        <button class="btn btn-danger"><i class="fas fa-times"></i> Отклонить</button>
+      </div>
+    </div>`;
+  card.querySelectorAll('.pending-video').forEach(v => {
+    v.addEventListener('click', () => {
+      card.querySelectorAll('.pending-video').forEach(x => x.classList.remove('selected'));
+      v.classList.add('selected');
+      const idx = parseInt(v.dataset.idx);
+      card.querySelector('.edit-name').value = titles[idx] || '';
+      card.querySelector('.edit-author').value = authors[idx] || '';
+    });
+  });
+  card.querySelectorAll('.type-opt').forEach(t => {
+    t.addEventListener('click', () => { card.querySelectorAll('.type-opt').forEach(x => x.classList.remove('active')); t.classList.add('active'); });
+  });
+  card.querySelectorAll('.color-opt').forEach(c => {
+    c.addEventListener('click', () => { card.querySelectorAll('.color-opt').forEach(x => x.classList.remove('active')); c.classList.add('active'); });
+  });
+  card.querySelector('.pending-actions .btn').addEventListener('click', () => approveMod(item, card));
+  card.querySelector('.pending-actions .btn-danger').addEventListener('click', () => rejectMod(item.id));
+  return card;
+}
+
+async function approveMod(item, card) {
+  const selectedVideo = card.querySelector('.pending-video.selected');
+  const idx = parseInt(selectedVideo.dataset.idx);
+  const selectedType = card.querySelector('.type-opt.active').dataset.type;
+  const selectedColor = card.querySelector('.color-opt.active');
+  if (!selectedColor) { toast('❌ Выбери цвет!'); return; }
+  const name = card.querySelector('.edit-name').value.trim();
+  const author = card.querySelector('.edit-author').value.trim();
+  const badge = card.querySelector('.edit-badge').value || null;
+  const desc = card.querySelector('.edit-desc').value.trim() || 'Описание скоро появится.';
+  const tags = card.querySelector('.edit-tags').value.split(',').map(t => t.trim()).filter(t => t);
+  if (!name || !author) { toast('❌ Заполни название и автора!'); return; }
+  const ytUrl = item.youtube_urls[idx];
+  const ytIdMatch = ytUrl.match(/(?:youtu\.be\/|v=)([a-zA-Z0-9_-]{11})/);
+  const preview = item.preview_images[idx];
+  const hex = selectedColor.dataset.hex;
+  try {
+    const {error: e1} = await sb.from('mods').insert({
+      type: selectedType, name: name, author: author, color: hex, color_name: selectedColor.dataset.color,
+      youtube_url: ytUrl, youtube_id: ytIdMatch ? ytIdMatch[1] : '', drive_url: item.drive_url,
+      preview_image: preview, description: desc, tags: tags, badge: badge, palette: [hex, hex, hex, hex]
+    });
+    if (e1) throw e1;
+    await sb.from('pending_mods').delete().eq('id', item.id);
+    toast('✅ Мод "'+name+'" опубликован!');
+    loadPending(); loadApprovedCount();
+  } catch(e) { toast('❌ Ошибка: ' + e.message); }
+}
+
+async function rejectMod(id) {
+  if (!confirm('Отклонить заявку?')) return;
+  await sb.from('pending_mods').delete().eq('id', id);
+  toast('❌ Отклонено'); loadPending();
+}
+
+// ============ APPROVED ============
+async function loadApproved() {
+  const box = document.getElementById('approvedList');
+  box.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+  const {data, error} = await sb.from('mods').select('*').order('created_at', {ascending: false});
+  if (error) { box.innerHTML = '<div class="empty"><i class="fas fa-triangle-exclamation"></i><h3>Ошибка</h3></div>'; return; }
+  
+  // Загружаем текущий "мод дня"
+  const {data: settingData} = await sb.from('site_settings').select('value').eq('key', 'mod_of_day_id').single();
+  const dayId = settingData ? parseInt(settingData.value) : null;
+  
+  document.getElementById('approvedBadge').textContent = data.length;
+  if (data.length === 0) { box.innerHTML = '<div class="empty"><i class="fas fa-folder-open"></i><h3>Нет модов</h3><p>Одобри первую заявку!</p></div>'; return; }
+  box.className = 'approved-grid'; box.innerHTML = '';
+  data.forEach(r => {
+    const isDay = r.id === dayId;
+    const card = document.createElement('div');
+    card.className = 'approved-card' + (isDay ? ' is-day' : '');
+    card.innerHTML = `
+      <div class="approved-preview"><img src="${r.preview_image||''}" onerror="this.style.display='none'"><div class="approved-color-bar" style="background:${r.color}"></div></div>
+      <div class="approved-body">
+        <div class="approved-name">${r.name}</div>
+        <div class="approved-meta">👤 ${r.author} · ${r.type==='redux'?'✨ Redux':'💫 REV'} · 🎨 ${r.color_name}</div>
+        <div class="approved-stats"><span><i class="fas fa-star"></i>${r.rating||5}</span><span><i class="fas fa-download"></i>${r.downloads||0}</span></div>
+        <div class="approved-buttons">
+          <button class="btn btn-danger" style="width:100%;padding:8px" onclick="deleteMod(${r.id},'${r.name.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i> Удалить</button>
+        </div>
+      </div>`;
+    box.appendChild(card);
+  });
+}
+
+async function deleteMod(id, name) {
+  if (!confirm('Удалить "'+name+'" с сайта?')) return;
+  await sb.from('mods').delete().eq('id', id);
+  toast('🗑️ Удалено'); loadApproved();
+}
+
+// ============ MOD OF DAY ============
+async function loadModOfDay() {
+  const currentBox = document.getElementById('dayCurrentBox');
+  const listBox = document.getElementById('dayModList');
+  currentBox.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+  listBox.innerHTML = '';
+  
+  try {
+    // Загружаем все моды и текущую настройку
+    const [{data: mods}, {data: setting}] = await Promise.all([
+      sb.from('mods').select('*').order('name', {ascending: true}),
+      sb.from('site_settings').select('value').eq('key', 'mod_of_day_id').single()
+    ]);
+    
+    allApprovedMods = mods || [];
+    currentDayModId = setting && setting.value ? parseInt(setting.value) : null;
+    
+    // Показываем текущий мод дня
+    renderDayCurrent();
+    // Показываем список для выбора
+    renderDayModList('');
+  } catch(e) {
+    currentBox.innerHTML = '<div class="empty"><i class="fas fa-triangle-exclamation"></i><h3>Ошибка</h3></div>';
+  }
+}
+
+function renderDayCurrent() {
+  const box = document.getElementById('dayCurrentBox');
+  if (!currentDayModId) {
+    box.innerHTML = `
+      <div class="day-current">
+        <div class="day-current-icon">🎲</div>
+        <div class="day-current-info">
+          <div class="day-current-label">⭐ мод дня</div>
+          <div class="day-current-name">Автоматически (по рейтингу)</div>
+          <div class="day-current-meta">Сайт сам выбирает мод с самым высоким рейтингом</div>
+        </div>
+      </div>`;
+    return;
+  }
+  
+  const mod = allApprovedMods.find(m => m.id === currentDayModId);
+  if (!mod) {
+    box.innerHTML = `
+      <div class="day-current">
+        <div class="day-current-icon">⚠️</div>
+        <div class="day-current-info">
+          <div class="day-current-label">⭐ мод дня</div>
+          <div class="day-current-name">Не найден</div>
+          <div class="day-current-meta">Мод был удалён — вернись к автоматическому режиму</div>
+        </div>
+        <div class="day-current-actions">
+          <button class="btn btn-sec" onclick="clearDayMod()"><i class="fas fa-times"></i> Сбросить</button>
+        </div>
+      </div>`;
+    return;
+  }
+  
+  box.innerHTML = `
+    <div class="day-current">
+      <div class="day-current-icon">${mod.type==='redux'?'✨':'💫'}</div>
+      <div class="day-current-info">
+        <div class="day-current-label">⭐ сейчас на главной</div>
+        <div class="day-current-name">${mod.name}</div>
+        <div class="day-current-meta">👤 ${mod.author} · 🎨 ${mod.color_name} · ⭐ ${mod.rating}</div>
+      </div>
+      <div class="day-current-actions">
+        <button class="btn btn-sec" onclick="clearDayMod()"><i class="fas fa-magic"></i> Автовыбор</button>
+      </div>
+    </div>`;
+}
+
+function renderDayModList(query) {
+  const box = document.getElementById('dayModList');
+  if (allApprovedMods.length === 0) {
+    box.innerHTML = '<div class="empty"><i class="fas fa-folder-open"></i><h3>Нет модов</h3><p>Сначала опубликуй хотя бы один мод</p></div>';
+    return;
+  }
+  
+  let filtered = allApprovedMods;
+  if (query) {
+    const q = query.toLowerCase();
+    filtered = allApprovedMods.filter(m => m.name.toLowerCase().includes(q) || m.author.toLowerCase().includes(q));
+  }
+  
+  if (filtered.length === 0) {
+    box.innerHTML = '<div class="empty"><i class="fas fa-search"></i><h3>Ничего не найдено</h3></div>';
+    return;
+  }
+  
+  box.className = 'approved-grid';
+  box.innerHTML = '';
+  filtered.forEach(r => {
+    const isDay = r.id === currentDayModId;
+    const card = document.createElement('div');
+    card.className = 'approved-card' + (isDay ? ' is-day' : '');
+    card.innerHTML = `
+      <div class="approved-preview"><img src="${r.preview_image||''}" onerror="this.style.display='none'"><div class="approved-color-bar" style="background:${r.color}"></div></div>
+      <div class="approved-body">
+        <div class="approved-name">${r.name}</div>
+        <div class="approved-meta">👤 ${r.author} · ${r.type==='redux'?'✨ Redux':'💫 REV'} · 🎨 ${r.color_name}</div>
+        <div class="approved-stats"><span><i class="fas fa-star"></i>${r.rating||5}</span><span><i class="fas fa-download"></i>${r.downloads||0}</span></div>
+        ${isDay ? 
+          '<button class="btn btn-sec" style="width:100%;padding:8px" disabled><i class="fas fa-check"></i> Уже мод дня</button>' :
+          `<button class="btn btn-gold" style="width:100%;padding:8px" onclick="setDayMod(${r.id},'${r.name.replace(/'/g,"\\'")}')"><i class="fas fa-star"></i> Сделать модом дня</button>`
+        }
+      </div>`;
+    box.appendChild(card);
+  });
+}
+
+async function setDayMod(id, name) {
+  try {
+    await sb.from('site_settings').upsert({key: 'mod_of_day_id', value: String(id), updated_at: new Date().toISOString()}, {onConflict: 'key'});
+    currentDayModId = id;
+    toast('⭐ "'+name+'" теперь мод дня!');
+    renderDayCurrent();
+    renderDayModList(document.getElementById('daySearch').value);
+  } catch(e) {
+    toast('❌ Ошибка: ' + e.message);
+  }
+}
+
+async function clearDayMod() {
+  if (!confirm('Вернуть автовыбор (по рейтингу)?')) return;
+  try {
+    await sb.from('site_settings').upsert({key: 'mod_of_day_id', value: '', updated_at: new Date().toISOString()}, {onConflict: 'key'});
+    currentDayModId = null;
+    toast('🎲 Автовыбор включён');
+    renderDayCurrent();
+    renderDayModList(document.getElementById('daySearch').value);
+  } catch(e) {
+    toast('❌ Ошибка: ' + e.message);
+  }
+}
+
+document.getElementById('daySearch').addEventListener('input', e => {
+  renderDayModList(e.target.value);
+});
+
+sb.channel('pending_changes').on('postgres_changes', {event:'INSERT', schema:'public', table:'pending_mods'}, () => {
+  if (currentAdmin) { toast('🔔 Новая заявка!'); loadPending(); }
+}).subscribe();
+</script>
+</body>
+</html>
