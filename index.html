@@ -13,6 +13,7 @@
 <div class="cursor cursor-dot" id="cursorDot"></div>
 <div class="cursor-label" id="cursorLabel"></div>
 
+<div id="fakeCursors"></div>
 <div class="noise"></div>
 
 <div class="branch branch-tl" id="branchTL">
@@ -91,16 +92,16 @@
 <div id="homePage">
 <section class="hero" id="hero" style="opacity:0">
 <div class="hero-inner">
-  <h1 class="hero-title">Find your<br><span class="g">perfect redux</span></h1>
-  <p class="hero-desc">Открой для себя лучшие редуксы GTA 5 RP. Фильтруй по цветам, авторам и настроению — или доверься судьбе</p>
+  <h1 class="hero-title">Find your<br><span class="g">perfect mod</span></h1>
+  <p class="hero-desc">Открой для себя лучшие редуксы и ревики для GTA 5 RP. Фильтруй по цветам, авторам и настроению — или доверься судьбе</p>
   <div class="hero-actions">
-    <button class="btn-primary magnetic" id="randomHeroBtn"><i class="fas fa-dice-d20"></i> Случайный редукс</button>
+    <button class="btn-primary magnetic" id="randomHeroBtn"><i class="fas fa-dice-d20"></i> Случайный мод</button>
     <a href="#catalog" class="btn-secondary"><i class="fas fa-th-large"></i> Каталог</a>
   </div>
   <div class="hero-stats">
-    <div class="stat"><div class="stat-num" data-target="24">0</div><div class="stat-label">Редуксов</div></div>
-    <div class="stat"><div class="stat-num" data-target="18">0</div><div class="stat-label">Авторов</div></div>
-    <div class="stat"><div class="stat-num" data-target="847">0</div><div class="stat-label">Скачиваний</div></div>
+    <div class="stat"><div class="stat-num" id="statMods">0</div><div class="stat-label">Модов</div></div>
+    <div class="stat"><div class="stat-num" id="statAuthors">0</div><div class="stat-label">Авторов</div></div>
+    <div class="stat"><div class="stat-num" id="statDownloads">0</div><div class="stat-label">Скачиваний</div></div>
   </div>
 </div>
 </section>
@@ -116,8 +117,15 @@
 
 <section class="section" id="catalog" style="opacity:0">
 <div class="section-label">🌸 каталог</div>
-<div class="section-title"><span class="g">Все</span> редуксы</div>
+<div class="section-title"><span class="g">Все</span> моды</div>
 <div class="section-desc">Выбери свой стиль игры</div>
+
+<div class="type-switcher">
+  <button class="type-btn active" data-type="all">🎨 Все</button>
+  <button class="type-btn" data-type="redux">✨ Редуксы</button>
+  <button class="type-btn" data-type="revik">💫 Ревики</button>
+</div>
+
 <div class="filters-wrap">
   <div class="filters-inner">
     <div class="filter-search"><i class="fas fa-search"></i><input id="searchIn" placeholder="Поиск..." type="text"></div>
@@ -138,7 +146,7 @@
 <section class="about" id="about" style="opacity:0">
 <div class="section-label">🌸 о нас</div>
 <div class="section-title"><span class="g">Redux</span> Picker</div>
-<p class="about-desc">Мы создаём лучший каталог редуксов для GTA 5 RP. Присоединяйся к нашему сообществу в Telegram!</p>
+<p class="about-desc">Мы создаём лучший каталог редуксов и ревиков для GTA 5 RP. Присоединяйся к нашему сообществу в Telegram!</p>
 <div class="tg-wrap">
   <a href="https://t.me/reduxpicker" target="_blank" class="tg-link" id="tgLink">
     <div class="tg-icon"><i class="fab fa-telegram-plane"></i></div>
@@ -152,14 +160,27 @@
 <div class="fav-hero">
   <div class="section-label">💖 избранное</div>
   <h1 class="fav-hero-title">Твои <span class="g">любимые</span></h1>
-  <p class="fav-hero-desc">Все редуксы, которые тебе понравились</p>
+  <p class="fav-hero-desc">Все моды, которые тебе понравились</p>
 </div>
 <div class="bento-grid" id="favGrid"></div>
 </div>
 
+<div class="author-page" id="authorPage">
+<div class="author-hero">
+  <button class="author-back" id="authorBack"><i class="fas fa-arrow-left"></i> Назад</button>
+  <div class="author-avatar" id="authorAvatar"></div>
+  <div class="author-info">
+    <div class="section-label">👤 автор</div>
+    <h1 class="author-name" id="authorName"></h1>
+    <div class="author-stats" id="authorStats"></div>
+  </div>
+</div>
+<div class="bento-grid" id="authorGrid"></div>
+</div>
+
 <footer class="footer" id="footer" style="opacity:0">
 <p>© 2024 REDUX PICKER</p>
-<p>🌸 Все редуксы принадлежат их авторам</p>
+<p>🌸 Все моды принадлежат их авторам</p>
 </footer>
 
 <div class="modal-overlay" id="detailModal"><div class="modal-box" id="detailBox"></div></div>
@@ -170,11 +191,11 @@
   <div class="random-box">
     <div id="rollingView">
       <div class="random-title"><span class="g">Рандом</span></div>
-      <div class="random-sub">выбираем идеальный редукс...</div>
-      <div class="slot"><div id="slotDisplay">?</div></div>
+      <div class="random-sub">выбираем идеальный мод...</div>
+      <div class="slot" id="slotBox"></div>
     </div>
     <div id="resultView" style="display:none">
-      <div class="random-title">✨ <span class="g">Твой редукс</span> ✨</div>
+      <div class="random-title">✨ <span class="g">Твой мод</span> ✨</div>
       <div id="resultCard" style="margin:20px 0"></div>
       <div class="random-actions">
         <button class="btn-primary" id="rerollBtn"><i class="fas fa-dice"></i> Ещё раз</button>
