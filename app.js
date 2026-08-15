@@ -855,23 +855,48 @@ if(!login||!pass){err.textContent='Заполни оба поля';err.classList
 if(login.length<3){err.textContent='Логин слишком короткий (мин. 3)';err.classList.add('active');return}
 if(pass.length<4){err.textContent='Пароль слишком короткий (мин. 4)';err.classList.add('active');return}
 
+// Проверка допустимых символов в логине
+if(!/^[a-zA-Zа-яА-Я0-9_-]+$/.test(login)){
+  err.textContent='Логин может содержать только буквы, цифры, _ и -';
+  err.classList.add('active');return;
+}
+
 try{
   if(authMode==='login'){
-    const {data,error}=await sb.from('users').select('*').eq('login',login).eq('password',pass).single();
+    // ВХОД: регистронезависимый поиск
+    const {data,error}=await sb.from('users').select('*').ilike('login',login).eq('password',pass).maybeSingle();
     if(error||!data){err.textContent='Неверный логин или пароль';err.classList.add('active');return}
-    currentUser=login;
+    currentUser=data.login;
     favorites=data.favorites||[];
-    const {data:ratings}=await sb.from('user_ratings').select('mod_id,rating').eq('user_login',login);
+    const {data:ratings}=await sb.from('user_ratings').select('mod_id,rating').eq('user_login',currentUser);
     userRatings={};
     if(ratings)ratings.forEach(function(r){userRatings[r.mod_id]=r.rating});
-    localStorage.setItem('rdx_current',login);
+    localStorage.setItem('rdx_current',currentUser);
     closeAllModals();updateAuthUI();renderGrid();
-    toast('🌸 С возвращением, '+login+'!');
+    toast('🌸 С возвращением, '+currentUser+'!');
   }else{
-    const {data:exists}=await sb.from('users').select('id').eq('login',login).single();
-    if(exists){err.textContent='Логин уже занят';err.classList.add('active');return}
-    const {error}=await sb.from('users').insert({login:login,password:pass,favorites:[]});
-    if(error)throw error;
+    // РЕГИСТРАЦИЯ: сначала проверяем регистронезависимо
+    const {data:existing}=await sb.from('users').select('id,login').ilike('login',login).maybeSingle();
+    if(existing){
+      err.textContent='Логин "'+existing.login+'" уже занят. Придумай другой';
+      err.classList.add('active');
+      return;
+    }
+    
+    // Пытаемся создать
+    const {error:insertError}=await sb.from('users').insert({login:login,password:pass,favorites:[]});
+    
+    if(insertError){
+      // Если БД вернула ошибку уникальности — значит между проверкой и INSERT кто-то успел зарегаться
+      if(insertError.code==='23505'||insertError.message.toLowerCase().includes('duplicate')||insertError.message.toLowerCase().includes('unique')){
+        err.textContent='Логин уже занят. Придумай другой';
+      }else{
+        err.textContent='Ошибка: '+insertError.message;
+      }
+      err.classList.add('active');
+      return;
+    }
+    
     currentUser=login;favorites=[];userRatings={};
     localStorage.setItem('rdx_current',login);
     closeAllModals();updateAuthUI();renderGrid();
