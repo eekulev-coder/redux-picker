@@ -1,5 +1,5 @@
 // ============================================================
-// REDUX PICKER — app.js (Supabase, hover-видео, YouTube плеер)
+// REDUX PICKER — app.js (Supabase + трекинг сессий)
 // ============================================================
 
 const SUPABASE_URL = 'https://pdpmorawwynhkoxunzyn.supabase.co';
@@ -272,16 +272,17 @@ async function showMain(){
   setupModals();setupAuth();bindHovers();animateStats();
   setupMagnetic();setupPages();setupTelegram();loadUserData();
   initHoverVideo();
+  initSessionTracking();
 }
 
-// ============ HOVER-ВИДЕО (инициализируется один раз) ============
+// ============ HOVER-ВИДЕО ============
 function initHoverVideo(){
   if(window._hoverInit)return;
   window._hoverInit=true;
   var hoverTimer=null;
   var hoverEl=null;
   var currentIframe=null;
-  var HOVER_DELAY=0.500;
+  var HOVER_DELAY=2500;
   
   function stopHoverVideo(){
     if(hoverTimer){clearTimeout(hoverTimer);hoverTimer=null}
@@ -324,6 +325,55 @@ function initHoverVideo(){
     stopHoverVideo();
   });
 }
+
+// ============ ТРЕКИНГ СЕССИЙ ============
+var SESSION_ID = localStorage.getItem('rdx_session_id');
+if(!SESSION_ID){
+  SESSION_ID = 'sess_' + Math.random().toString(36).substr(2, 16) + '_' + Date.now();
+  localStorage.setItem('rdx_session_id', SESSION_ID);
+}
+
+async function pingSession(){
+  if(!sb)return;
+  try{
+    await sb.from('active_sessions').upsert({
+      session_id: SESSION_ID,
+      user_login: currentUser || null,
+      last_seen: new Date().toISOString()
+    }, {onConflict: 'session_id'});
+    await sb.rpc('update_peak_online');
+  }catch(e){}
+}
+
+async function trackFirstVisit(){
+  if(!sb)return;
+  var today = new Date().toISOString().split('T')[0];
+  var lastVisit = localStorage.getItem('rdx_last_visit');
+  if(lastVisit !== today){
+    localStorage.setItem('rdx_last_visit', today);
+    try{ await sb.rpc('track_visit'); }catch(e){}
+  }
+}
+
+function initSessionTracking(){
+  pingSession();
+  trackFirstVisit();
+  setInterval(pingSession, 30000);
+  
+  // Очистка старых сессий раз в 2 минуты
+  setInterval(async function(){
+    if(sb){try{await sb.rpc('cleanup_sessions')}catch(e){}}
+  }, 120000);
+}
+
+window.addEventListener('beforeunload', function(){
+  if(SESSION_ID){
+    navigator.sendBeacon(
+      SUPABASE_URL + '/rest/v1/active_sessions?session_id=eq.' + SESSION_ID,
+      new Blob([JSON.stringify({})], {type: 'application/json'})
+    );
+  }
+});
 
 function toast(msg){
 var c=document.getElementById('toastContainer'),t=document.createElement('div');
@@ -544,7 +594,7 @@ batch.forEach(function(r,i){
     '<span><i class="fas fa-download"></i>'+r.dl+'</span>'+
     '</div>'+
     '<div class="card-tags">'+r.tags.map(function(t){return '<span class="card-tag">'+t+'</span>'}).join('')+'</div>'+
-    '<div class="card-palette">'+r.palette.map(function(c){return '<div class="palette-dot" style="background:'+c+'" title="'+c+'"></div>'}).join('')+'</div>'+
+    '<div class="card-palette"><div class="palette-dot" style="background:'+r.color+';width:20px;height:20px" title="'+r.colorName+'"></div></div>'+
     '<div class="card-foot">'+
     '<div class="card-stars">'+starsDisplay+'</div>'+
     '<span class="card-rating-num">'+r.rating+'</span>'+
@@ -722,7 +772,7 @@ previewHTML+
 '<div class="detail-info">'+
 '<div class="detail-info-item"><div class="detail-info-label">Рейтинг</div><div class="detail-info-value" style="color:var(--s1)"><i class="fas fa-star"></i>'+r.rating+' ('+r.votes+' голосов)</div></div>'+
 '<div class="detail-info-item"><div class="detail-info-label">Цвет</div><div class="detail-info-value"><span style="display:inline-block;width:12px;height:12px;background:'+r.color+';border-radius:50%"></span>'+r.colorName+'</div></div>'+
-'<div class="detail-info-item" style="grid-column:span 2"><div class="detail-info-label">Палитра</div><div class="detail-info-value">'+r.palette.map(function(c){return '<span style="display:inline-block;width:18px;height:18px;background:'+c+';border-radius:50%;border:2px solid var(--glass-border);margin-right:2px"></span>'}).join('')+'</div></div></div>'+
+'</div>'+
 '<div class="detail-tags-wrap">'+r.tags.map(function(t){return '<span class="day-tag">'+t+'</span>'}).join('')+'</div>'+
 '<div style="margin-bottom:8px;font-family:var(--font-bold);font-size:.7rem;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase">'+ratingLabel+'</div>'+
 '<div class="detail-stars" data-id="'+r.id+'">'+starsHtml+'</div>'+
@@ -945,6 +995,7 @@ try{
     localStorage.setItem('rdx_current',currentUser);
     closeAllModals();updateAuthUI();renderGrid();
     toast('🌸 С возвращением, '+currentUser+'!');
+    pingSession();
   }else{
     const {data:existing}=await sb.from('users').select('id,login').ilike('login',login).maybeSingle();
     if(existing){err.textContent='Логин "'+existing.login+'" уже занят';err.classList.add('active');return}
@@ -958,6 +1009,8 @@ try{
     localStorage.setItem('rdx_current',login);
     closeAllModals();updateAuthUI();renderGrid();
     spawnConfetti();toast('✨ Добро пожаловать, '+login+'!');
+    try{await sb.rpc('track_registration')}catch(e){}
+    pingSession();
   }
 }catch(e){
   err.textContent='Ошибка: '+e.message;err.classList.add('active');
@@ -982,6 +1035,7 @@ function logoutUser(){
 currentUser=null;favorites=[];userRatings={};
 localStorage.removeItem('rdx_current');
 updateAuthUI();renderGrid();closeAllModals();
+pingSession();
 }
 
 function updateAuthUI(){
