@@ -1,5 +1,5 @@
 // ============================================================
-// REDUX PICKER — app.js (Supabase, YouTube плеер, hover-видео)
+// REDUX PICKER — app.js (Supabase, hover-видео, YouTube плеер)
 // ============================================================
 
 const SUPABASE_URL = 'https://pdpmorawwynhkoxunzyn.supabase.co';
@@ -271,6 +271,58 @@ async function showMain(){
   renderDayCard();renderMarquee();initFilters();initTypeSwitcher();renderGrid();
   setupModals();setupAuth();bindHovers();animateStats();
   setupMagnetic();setupPages();setupTelegram();loadUserData();
+  initHoverVideo();
+}
+
+// ============ HOVER-ВИДЕО (инициализируется один раз) ============
+function initHoverVideo(){
+  if(window._hoverInit)return;
+  window._hoverInit=true;
+  var hoverTimer=null;
+  var hoverEl=null;
+  var currentIframe=null;
+  var HOVER_DELAY=2500;
+  
+  function stopHoverVideo(){
+    if(hoverTimer){clearTimeout(hoverTimer);hoverTimer=null}
+    if(currentIframe){currentIframe.remove();currentIframe=null}
+    hoverEl=null;
+  }
+  
+  document.addEventListener('mousemove',function(e){
+    var thumb=null;
+    var el=e.target;
+    while(el&&el!==document){
+      if(el.classList&&el.classList.contains('card-thumb')&&el.dataset&&el.dataset.yt){
+        thumb=el;
+        break;
+      }
+      el=el.parentElement;
+    }
+    if(!thumb){
+      if(hoverEl)stopHoverVideo();
+      return;
+    }
+    if(thumb===hoverEl)return;
+    stopHoverVideo();
+    hoverEl=thumb;
+    var ytId=thumb.dataset.yt;
+    if(!ytId)return;
+    hoverTimer=setTimeout(function(){
+      if(hoverEl!==thumb)return;
+      var iframe=document.createElement('iframe');
+      iframe.src='https://www.youtube-nocookie.com/embed/'+ytId+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+ytId+'&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1';
+      iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:none;z-index:2;pointer-events:none';
+      iframe.allow='autoplay';
+      thumb.parentElement.appendChild(iframe);
+      currentIframe=iframe;
+      hoverTimer=null;
+    },HOVER_DELAY);
+  });
+  
+  document.addEventListener('mouseleave',function(){
+    stopHoverVideo();
+  });
 }
 
 function toast(msg){
@@ -521,78 +573,6 @@ document.querySelectorAll('.card-author-link').forEach(function(a){
   a.addEventListener('click',function(e){e.stopPropagation();openAuthorPage(a.dataset.author)});
 });
 
-// hover-видео на превьюшках (через единый обработчик на document)
-if(!window._hoverInit){
-  window._hoverInit=true;
-  var hoverTimer=null;
-  var hoverEl=null;
-  var currentIframe=null;
-  var HOVER_DELAY=0.600; // задержка в мс — меняй здесь
-  
-  function stopHoverVideo(){
-    if(hoverTimer){clearTimeout(hoverTimer);hoverTimer=null}
-    if(currentIframe){currentIframe.remove();currentIframe=null}
-    hoverEl=null;
-  }
-  
-  // Отслеживаем движение мыши глобально
-  document.addEventListener('mousemove',function(e){
-    // Находим карточку под курсором
-    var thumb=null;
-    var el=e.target;
-    while(el&&el!==document){
-      if(el.classList&&el.classList.contains('card-thumb')&&el.dataset.yt){
-        thumb=el;
-        break;
-      }
-      el=el.parentElement;
-    }
-    
-    // Если под курсором нет карточки-превью — стопим видео
-    if(!thumb){
-      if(hoverEl){stopHoverVideo()}
-      return;
-    }
-    
-    // Если под курсором ТА ЖЕ карточка что и раньше — ничего не делаем
-    if(thumb===hoverEl)return;
-    
-    // Новая карточка — стопим старое видео и запускаем новое
-    stopHoverVideo();
-    hoverEl=thumb;
-    var ytId=thumb.dataset.yt;
-    if(!ytId)return;
-    
-    hoverTimer=setTimeout(function(){
-      if(hoverEl!==thumb)return; // за это время увели мышь
-      var iframe=document.createElement('iframe');
-      iframe.src='https://www.youtube-nocookie.com/embed/'+ytId+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+ytId+'&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1';
-      iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:none;z-index:2;pointer-events:none';
-      iframe.allow='autoplay';
-      thumb.parentElement.appendChild(iframe);
-      currentIframe=iframe;
-      hoverTimer=null;
-    },HOVER_DELAY);
-  });
-  
-  // Стопим когда мышь ушла из окна вообще
-  document.addEventListener('mouseleave',function(){
-    stopHoverVideo();
-  });
-}
-  
-  document.addEventListener('mouseout',function(e){
-    var thumb=e.target.closest('.card-thumb[data-yt]');
-    if(!thumb)return;
-    // Проверяем что мышь действительно ушла с элемента (не на дочерний)
-    var to=e.relatedTarget;
-    if(to&&thumb.parentElement.contains(to))return;
-    if(thumb===hoverEl){
-      stopHoverVideo();
-    }
-  });
-}
-
 bindHovers();
 
 if(rendered<list.length){requestAnimationFrame(renderBatch)}
@@ -718,7 +698,6 @@ var starsHtml='';
 for(var i=0;i<5;i++){starsHtml+='<i class="fas fa-star '+(i<myRating?'':'empty')+'" data-star="'+(i+1)+'"></i>'}
 var ratingLabel=myRating?'Твоя оценка: '+myRating+'/5':(currentUser?'Поставь оценку!':'Войди чтобы оценить');
 
-// YouTube iframe вместо картинки
 var detailYtId=extractYtId(r.youtube);
 var previewHTML='';
 if(detailYtId){
@@ -785,7 +764,6 @@ document.getElementById('closeAuth').onclick=closeAllModals;
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAllModals()});
 }
 
-// РАНДОМ — точное центрирование
 function startRandom(){
 if(DB.length===0)return;
 var modal=document.getElementById('randomModal');
@@ -826,7 +804,7 @@ var reel=document.getElementById('slotReel');
 
 var winner=DB[Math.floor(Math.random()*DB.length)];
 
-var ITEM_TOTAL=164; // width 152 + margin 6*2
+var ITEM_TOTAL=164;
 var TOTAL=40;
 var WINNER_POS=TOTAL-6;
 
@@ -851,8 +829,6 @@ reel.style.transform='translateY(-50%) translateX(0)';
 requestAnimationFrame(function(){
 requestAnimationFrame(function(){
   var slotW=slot.offsetWidth;
-  // Центр WINNER = WINNER_POS * ITEM_TOTAL + ITEM_TOTAL/2
-  // Он должен оказаться на slotW/2
   var finalX = slotW/2 - (WINNER_POS * ITEM_TOTAL + ITEM_TOTAL/2);
 
   reel.style.transition='transform 3s cubic-bezier(.1,.9,.3,1)';
