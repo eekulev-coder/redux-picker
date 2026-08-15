@@ -497,27 +497,60 @@ document.getElementById('closeAuth').onclick=closeAllModals;
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAllModals()});
 }
 
-function startRandom(){
-var modal=document.getElementById('randomModal');modal.classList.add('active');document.body.style.overflow='hidden';
-document.getElementById('rollingView').style.display='block';document.getElementById('resultView').style.display='none';
+ffunction startRandom(){
+var modal=document.getElementById('randomModal');
+modal.classList.add('active');
+document.body.style.overflow='hidden';
+document.getElementById('rollingView').style.display='block';
+document.getElementById('resultView').style.display='none';
+
 var reel=document.getElementById('slotReel');
-reel.innerHTML='';reel.style.transition='none';reel.style.transform='translateX(0)';
+reel.innerHTML='';
+reel.style.transition='none';
+reel.style.transform='translateX(0)';
+
+// Выбираем победителя
 var winner=DB[Math.floor(Math.random()*DB.length)];
-var shuffled=[],ii;
-for(ii=0;ii<40;ii++)shuffled.push(DB[Math.floor(Math.random()*DB.length)]);
-shuffled[35]=winner;
-shuffled.forEach(function(r){
-  var item=document.createElement('div');item.className='slot-item';
-  item.textContent=r.name;item.style.color=r.color;
-  reel.appendChild(item);
-});
-var itemWidth=200,slotWidth=400;
-var finalX=-(35*itemWidth)+(slotWidth/2)-(itemWidth/2);
-requestAnimationFrame(function(){
-  reel.style.transition='transform 4s cubic-bezier(0.15,0.65,0.35,1)';
-  reel.style.transform='translateX('+finalX+'px)';
-});
-setTimeout(function(){showRandom(winner)},4200);
+
+// Быстрая смена случайных названий — эффект "прокрутки"
+var iterations=25;
+var currentIteration=0;
+var interval=50; // начальная скорость (быстро)
+
+// Показываем один элемент по центру
+reel.innerHTML='<div class="slot-item" id="slotCurrent">?</div>';
+var slotCurrent=document.getElementById('slotCurrent');
+
+function tick(){
+  currentIteration++;
+  
+  // Замедление к концу
+  if(currentIteration>15){
+    interval+=30;
+  }
+  
+  // Последняя итерация — показываем победителя
+  if(currentIteration>=iterations){
+    slotCurrent.textContent=winner.name;
+    slotCurrent.style.color=winner.color;
+    slotCurrent.style.transition='transform 0.3s';
+    slotCurrent.style.transform='scale(1.15)';
+    setTimeout(function(){
+      slotCurrent.style.transform='scale(1)';
+      setTimeout(function(){showRandom(winner)},400);
+    },200);
+    return;
+  }
+  
+  // Показываем случайный редукс
+  var random=DB[Math.floor(Math.random()*DB.length)];
+  slotCurrent.textContent=random.name;
+  slotCurrent.style.color=random.color;
+  
+  setTimeout(tick, interval);
+}
+
+setTimeout(tick, 100);
 }
 
 function showRandom(r){
