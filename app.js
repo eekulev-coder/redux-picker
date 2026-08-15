@@ -1,5 +1,4 @@
 // ============ DATABASE ============
-// Редуксы
 const REDUXES=[
 {id:1,type:"redux",name:"NaturalVision Evolved",author:"Razed",color:"#4CAF50",colorName:"зелёный",cat:"Реализм",rating:4.9,votes:342,dl:125000,date:"2024-01-15",badge:"top",tags:["реализм","4K","HDR"],desc:"Один из самых реалистичных редуксов. Полностью переработанное освещение, текстуры и эффекты погоды.",palette:["#2d5a27","#8bc34a","#c8e6c9","#1b5e20"]},
 {id:2,type:"redux",name:"QuantV",author:"Quant",color:"#4d9fff",colorName:"синий",cat:"Графика",rating:4.8,votes:289,dl:98000,date:"2024-02-20",badge:"hot",tags:["рейтрейсинг","свет"],desc:"Продвинутый графический мод с эффектами рейтрейсинга и реалистичными отражениями.",palette:["#1565c0","#42a5f5","#bbdefb","#0d47a1"]},
@@ -21,7 +20,6 @@ const REDUXES=[
 {id:18,type:"redux",name:"Tropical Paradise",author:"IslandVibes",color:"#00E676",colorName:"зелёный",cat:"Тематический",rating:4.2,votes:91,dl:29000,date:"2024-02-05",badge:null,tags:["тропики","океан"],desc:"Тропическая атмосфера: зелень и океан.",palette:["#1b5e20","#00e676","#c8e6c9","#2e7d32"]},
 ];
 
-// Ревики
 const REVIKS=[
 {id:101,type:"revik",name:"Sharp Revik",author:"SharpMods",color:"#ff4d9d",colorName:"розовый",cat:"Резкость",rating:4.7,votes:189,dl:67000,date:"2024-03-20",badge:"hot",tags:["резкость","чёткость"],desc:"Максимальная резкость и чёткость картинки для капта.",palette:["#c2185b","#ff4d9d","#fce4ec","#880e4f"]},
 {id:102,type:"revik",name:"Neon Revik Pro",author:"CyberMods",color:"#00ffcc",colorName:"циан",cat:"Неон",rating:4.8,votes:234,dl:82000,date:"2024-04-05",badge:"top",tags:["неон","яркость"],desc:"Яркие неоновые оттенки, идеальны для ночных каптов.",palette:["#00897b","#00ffcc","#b2dfdb","#004d40"]},
@@ -35,7 +33,6 @@ const REVIKS=[
 {id:110,type:"revik",name:"Clean White",author:"MinimalMods",color:"#f5f5f5",colorName:"голубой",cat:"Минимализм",rating:4.3,votes:98,dl:32000,date:"2024-01-05",badge:null,tags:["минимал","белый"],desc:"Чистый минималистичный ревик без лишних эффектов.",palette:["#eeeeee","#f5f5f5","#ffffff","#e0e0e0"]},
 ];
 
-// Объединяем в общую БД
 const DB=[...REDUXES,...REVIKS];
 
 const COLORS=[
@@ -49,6 +46,7 @@ const emojiMap={"NaturalVision Evolved":"🌿","QuantV":"💎","Redux Mod":"🎨
 
 let ST={search:'',color:'all',author:'all',cat:'all',sort:'popular',type:'all'};
 let currentUser=null,favorites=[];
+let userRatings={}; // {reduxId: userRating}
 let authMode='login';
 
 // ============ CURSOR ============
@@ -59,7 +57,7 @@ function animCursor(){cx+=(mx-cx)*.15;cy+=(my-cy)*.15;cMain.style.left=cx+'px';c
 animCursor();
 
 function bindHovers(){
-document.querySelectorAll('a,button,input,select,.color-pill,.card-fav,.palette-dot,.day-tag,.card-stars i,.detail-stars i,.marquee-item,.type-btn,.card-author-link,.detail-author-link,.day-author').forEach(function(el){
+document.querySelectorAll('a,button,input,select,.color-pill,.card-fav,.palette-dot,.day-tag,.detail-stars i,.marquee-item,.type-btn,.card-author-link,.detail-author-link,.day-author').forEach(function(el){
   if(el.classList.contains('redux-card')||el.classList.contains('redux-card-wrapper'))return;
   el.onmouseenter=function(){cMain.classList.add('hover');cMain.classList.remove('card-hover')};
   el.onmouseleave=function(){cMain.classList.remove('hover');cLabel.classList.remove('visible')};
@@ -93,14 +91,15 @@ if(brDist<maxD){
 }
 setInterval(updateBranches,50);
 
-// ============ FAKE CURSORS других юзеров ============
+// ============ FAKE CURSORS ============
 const FAKE_NAMES=['SakuraFan','ReduxLover','GtaKing','CaptPro','NightRider','PixelHunter','ColorMaster','ModExpert','ShaderGuru','LightSeeker'];
 let fakeCursorsPool=[];
 
 function spawnFakeCursor(){
-if(fakeCursorsPool.length>=3)return; // не больше 3 одновременно
+if(fakeCursorsPool.length>=3)return;
 
 var container=document.getElementById('fakeCursors');
+if(!container)return;
 var cursor=document.createElement('div');
 cursor.className='fake-cursor';
 var name=FAKE_NAMES[Math.floor(Math.random()*FAKE_NAMES.length)];
@@ -112,15 +111,12 @@ cursor.style.top=Math.random()*innerHeight+'px';
 container.appendChild(cursor);
 fakeCursorsPool.push(cursor);
 
-// Плавно появляется
 setTimeout(function(){cursor.classList.add('visible')},50);
 
-// Двигается несколько раз
 var movements=Math.floor(Math.random()*3)+2;
 var moveIdx=0;
 function moveNext(){
   if(moveIdx>=movements){
-    // Исчезает
     cursor.classList.remove('visible');
     setTimeout(function(){
       cursor.remove();
@@ -137,9 +133,7 @@ setTimeout(moveNext,500);
 }
 
 function initFakeCursors(){
-// Первый курсор через 3 секунды
 setTimeout(spawnFakeCursor,3000);
-// Потом периодически
 setInterval(function(){
   if(Math.random()>0.5)spawnFakeCursor();
 },6000);
@@ -253,6 +247,11 @@ var ids=['navbar','hero','reduxDay','trendingMarquee','catalog','about','footer'
 ids.forEach(function(id,i){
   setTimeout(function(){var el=document.getElementById(id);if(el){el.style.opacity='1';el.style.transition='opacity .8s'}},i*150);
 });
+// ФИКС ФУТЕРА
+var footer=document.getElementById('footer');
+if(footer){
+  footer.innerHTML='<p>© 2026 REDUX PICKER by <a href="https://www.youtube.com/@thagreatest" target="_blank" style="color:var(--s1);font-weight:700">@thagreatest</a></p><p>🌸 Все моды принадлежат их авторам</p>';
+}
 startPetals();initWind();initFakeCursors();
 setupNavbar();setupTheme();
 renderDayCard();renderMarquee();initFilters();initTypeSwitcher();renderGrid();
@@ -261,7 +260,6 @@ setupMagnetic();setupPages();setupTelegram();loadUserData();
 setTimeout(function(){toast('🌸 Добро пожаловать в Redux Picker')},800);
 }
 
-// ============ TOAST ============
 function toast(msg){
 var c=document.getElementById('toastContainer'),t=document.createElement('div');
 t.className='toast';t.innerHTML=msg;c.appendChild(t);
@@ -294,8 +292,7 @@ if(saved)document.documentElement.dataset.theme=saved;
 
 // ============ РЕАЛЬНЫЕ СЧЁТЧИКИ ============
 function animateStats(){
-// Реальные значения!
-var totalMods=DB.length; // всего модов = редуксы + ревики
+var totalMods=DB.length;
 var uniqueAuthors=[];
 DB.forEach(function(r){if(uniqueAuthors.indexOf(r.author)===-1)uniqueAuthors.push(r.author)});
 var totalAuthors=uniqueAuthors.length;
@@ -337,12 +334,18 @@ document.getElementById('reduxDay').innerHTML=
 '<div class="day-content">'+
 '<div class="day-badge">⭐ Мод дня</div>'+
 '<h2 class="day-title">'+r.name+'</h2>'+
-'<div class="day-author" onclick="openAuthorPage(\''+r.author.replace(/'/g,"\\'")+'\')"><i class="fas fa-user" style="color:var(--s2)"></i> '+r.author+' · <i class="fas fa-star" style="color:var(--s1)"></i> '+r.rating+'</div>'+
+'<div class="day-author" data-author="'+r.author+'"><i class="fas fa-user" style="color:var(--s2)"></i> '+r.author+' · <i class="fas fa-star" style="color:var(--s1)"></i> '+r.rating+'</div>'+
 '<p class="day-desc">'+r.desc+'</p>'+
 '<div class="day-actions">'+
-'<button class="day-btn" onclick="openDetail(getReduxById('+r.id+'))"><i class="fas fa-eye"></i> Подробнее</button>'+
+'<button class="day-btn" data-id="'+r.id+'"><i class="fas fa-eye"></i> Подробнее</button>'+
 '<div class="day-tags-inline">'+r.tags.slice(0,3).map(function(t){return '<span class="day-tag">'+t+'</span>'}).join('')+'</div>'+
 '</div></div></div>';
+
+// Bind клики
+var dayAuthorEl=document.querySelector('.day-author[data-author]');
+if(dayAuthorEl)dayAuthorEl.addEventListener('click',function(){openAuthorPage(dayAuthorEl.dataset.author)});
+var dayBtn=document.querySelector('.day-btn[data-id]');
+if(dayBtn)dayBtn.addEventListener('click',function(){openDetail(getReduxById(parseInt(dayBtn.dataset.id)))});
 bindHovers();
 }
 
@@ -361,14 +364,17 @@ document.querySelectorAll('.marquee-item').forEach(function(el){
 bindHovers();
 }
 
-// ============ TYPE SWITCHER ============
+// ============ TYPE SWITCHER (ФИКС!) ============
 function initTypeSwitcher(){
 document.querySelectorAll('.type-btn').forEach(function(b){
-  b.addEventListener('click',function(){
+  b.addEventListener('click',function(e){
+    e.preventDefault();
+    e.stopPropagation();
     document.querySelectorAll('.type-btn').forEach(function(x){x.classList.remove('active')});
     b.classList.add('active');
     ST.type=b.dataset.type;
     renderGrid();
+    toast('🎨 Показываю: '+(ST.type==='all'?'все моды':ST.type==='redux'?'редуксы':'ревики'));
   });
 });
 }
@@ -413,7 +419,6 @@ if(target==='bentoGrid'){
 }else if(target==='favGrid'){
   list=DB.filter(function(r){return favorites.indexOf(r.id)!==-1});
 }else if(target==='authorGrid'){
-  // authorGrid уже отфильтрован в openAuthorPage
   list=window._authorGridList||[];
 }
 
@@ -438,8 +443,9 @@ list.forEach(function(r,i){
   var isFav=favorites.indexOf(r.id)!==-1;
   var badge=r.badge?'<div class="card-badge badge-'+r.badge+'">'+(r.badge==='new'?'✨ new':r.badge==='hot'?'🔥 hot':'⭐ top')+'</div>':'';
   var typeBadge=r.type==='redux'?'<div class="card-type-badge type-redux">✨ Redux</div>':'<div class="card-type-badge type-revik">💫 Revik</div>';
-  var stars='';
-  for(var si=0;si<5;si++){stars+='<i class="fas fa-star '+(si<Math.round(r.rating)?'':'empty')+'" data-star="'+(si+1)+'" data-id="'+r.id+'"></i>'}
+  // БЕЗ кликабельных звёзд — только показ рейтинга
+  var starsDisplay='';
+  for(var si=0;si<5;si++){starsDisplay+='<i class="fas fa-star '+(si<Math.round(r.rating)?'':'empty')+'"></i>'}
   
   card.innerHTML=
     '<div class="card-preview" style="background:linear-gradient(135deg,'+r.color+'11,'+r.color+'22)">'+
@@ -459,7 +465,7 @@ list.forEach(function(r,i){
     '<div class="card-tags">'+r.tags.map(function(t){return '<span class="card-tag">'+t+'</span>'}).join('')+'</div>'+
     '<div class="card-palette">'+r.palette.map(function(c){return '<div class="palette-dot" style="background:'+c+'" title="'+c+'"></div>'}).join('')+'</div>'+
     '<div class="card-foot">'+
-    '<div class="card-stars">'+stars+'</div>'+
+    '<div class="card-stars">'+starsDisplay+'</div>'+
     '<span class="card-rating-num">'+r.rating+'</span>'+
     '</div></div>';
   
@@ -482,7 +488,7 @@ list.forEach(function(r,i){
   });
   
   card.addEventListener('click',function(e){
-    if(e.target.closest('.card-fav')||e.target.closest('.card-stars')||e.target.closest('.palette-dot')||e.target.closest('.card-author-link'))return;
+    if(e.target.closest('.card-fav')||e.target.closest('.palette-dot')||e.target.closest('.card-author-link'))return;
     openDetail(r);
   });
   grid.appendChild(wrapper);
@@ -490,9 +496,6 @@ list.forEach(function(r,i){
 
 document.querySelectorAll('.card-fav').forEach(function(f){
   f.addEventListener('click',function(e){e.stopPropagation();toggleFav(parseInt(f.dataset.id))});
-});
-document.querySelectorAll('.card-stars i').forEach(function(s){
-  s.addEventListener('click',function(e){e.stopPropagation();rateRedux(parseInt(s.dataset.id),parseInt(s.dataset.star))});
 });
 document.querySelectorAll('.card-author-link').forEach(function(a){
   a.addEventListener('click',function(e){e.stopPropagation();openAuthorPage(a.dataset.author)});
@@ -506,10 +509,11 @@ if(favorites.length>0){b.style.display='inline-block';b.textContent=favorites.le
 else b.style.display='none';
 }
 
-// ============ AUTHOR PAGE ============
+// ============ AUTHOR PAGE (ФИКС!) ============
 function openAuthorPage(authorName){
+if(!authorName)return;
 var authorMods=DB.filter(function(r){return r.author===authorName});
-if(authorMods.length===0)return;
+if(authorMods.length===0){toast('❌ Нет модов у этого автора');return}
 
 closeAllModals();
 
@@ -522,8 +526,8 @@ document.getElementById('authorAvatar').textContent=authorName.charAt(0).toUpper
 document.getElementById('authorName').textContent=authorName;
 document.getElementById('authorStats').innerHTML=
   '<span><i class="fas fa-cubes"></i> '+authorMods.length+' модов</span>'+
-  (reduxCount>0?'<span><i class="fas fa-sparkles"></i> '+reduxCount+' редуксов</span>':'')+
-  (revikCount>0?'<span><i class="fas fa-star"></i> '+revikCount+' ревиков</span>':'')+
+  (reduxCount>0?'<span>✨ '+reduxCount+' редуксов</span>':'')+
+  (revikCount>0?'<span>💫 '+revikCount+' ревиков</span>':'')+
   '<span><i class="fas fa-download"></i> '+totalDl.toLocaleString('ru')+' скачиваний</span>'+
   '<span><i class="fas fa-star"></i> '+avgRating+' средний рейтинг</span>';
 
@@ -542,7 +546,6 @@ document.getElementById('authorPage').classList.remove('active');
 document.getElementById('homePage').style.display='block';
 }
 
-// ============ PAGES ============
 function setupPages(){
 document.querySelectorAll('[data-page]').forEach(function(a){
   a.addEventListener('click',function(e){
@@ -591,18 +594,42 @@ if(document.getElementById('authorPage').classList.contains('active'))renderGrid
 toast(idx>-1?'💔 Удалено из избранного':'💖 Добавлено в избранное');
 }
 
+// Рейтинг через МОДАЛКУ
 function rateRedux(id,star){
-var r=DB.find(function(x){return x.id===id});if(!r)return;
-r.rating=Math.round(((r.rating*r.votes+star)/(r.votes+1))*10)/10;r.votes++;
-renderGrid();toast('⭐ Твоя оценка: '+star+'/5 для '+r.name);
+if(!currentUser){toast('🌸 Войди чтобы ставить оценки');return}
+var r=DB.find(function(x){return x.id===id});
+if(!r)return;
+
+var oldRating=userRatings[id];
+userRatings[id]=star;
+saveUserData();
+
+if(oldRating){
+  // Пересчёт: убираем старую оценку и добавляем новую
+  r.rating=parseFloat((((r.rating*r.votes)-oldRating+star)/r.votes).toFixed(1));
+}else{
+  r.rating=parseFloat((((r.rating*r.votes)+star)/(r.votes+1)).toFixed(1));
+  r.votes++;
+}
+
+// Обновляем модалку
+openDetail(r);
+toast('⭐ Твоя оценка: '+star+'/5 для '+r.name);
 }
 
 function openDetail(r){
 var modal=document.getElementById('detailModal'),box=document.getElementById('detailBox');
 var isFav=favorites.indexOf(r.id)!==-1;
-var stars='';
-for(var i=0;i<5;i++)stars+='<i class="fas fa-star '+(i<Math.round(r.rating)?'':'empty')+'"></i>';
 var typeLabel=r.type==='redux'?'✨ Redux':'💫 Revik';
+
+// Оценка юзера
+var myRating=userRatings[r.id]||0;
+var starsHtml='';
+for(var i=0;i<5;i++){
+  starsHtml+='<i class="fas fa-star '+(i<myRating?'':'empty')+'" data-star="'+(i+1)+'"></i>';
+}
+var ratingLabel=myRating?'Твоя оценка: '+myRating+'/5':(currentUser?'Поставь оценку!':'Войди чтобы оценить');
+
 box.innerHTML=
 '<button class="modal-close" onclick="closeAllModals()"><i class="fas fa-times"></i></button>'+
 '<div class="detail-preview" style="background:linear-gradient(135deg,'+r.color+'22,'+r.color+'44)">'+
@@ -610,24 +637,44 @@ box.innerHTML=
 '<div class="detail-body">'+
 '<h2 class="detail-title">'+r.name+'</h2>'+
 '<div class="detail-meta">'+
-'<span class="detail-author-link" onclick="openAuthorPage(\''+r.author.replace(/'/g,"\\'")+'\')"><i class="fas fa-user"></i>'+r.author+'</span>'+
+'<span class="detail-author-link" data-author="'+r.author+'"><i class="fas fa-user"></i>'+r.author+'</span>'+
 '<span><i class="fas fa-tag"></i>'+typeLabel+'</span>'+
 '<span><i class="fas fa-download"></i>'+r.dl.toLocaleString()+'</span>'+
 '<span><i class="fas fa-calendar"></i>'+r.date+'</span></div>'+
 '<p class="detail-desc">'+r.desc+'</p>'+
 '<div class="detail-info">'+
-'<div class="detail-info-item"><div class="detail-info-label">Рейтинг</div><div class="detail-info-value" style="color:var(--s1)"><i class="fas fa-star"></i>'+r.rating+' ('+r.votes+')</div></div>'+
+'<div class="detail-info-item"><div class="detail-info-label">Рейтинг</div><div class="detail-info-value" style="color:var(--s1)"><i class="fas fa-star"></i>'+r.rating+' ('+r.votes+' голосов)</div></div>'+
 '<div class="detail-info-item"><div class="detail-info-label">Цвет</div><div class="detail-info-value"><span style="display:inline-block;width:12px;height:12px;background:'+r.color+';border-radius:50%"></span>'+r.colorName+'</div></div>'+
 '<div class="detail-info-item" style="grid-column:span 2"><div class="detail-info-label">Палитра</div><div class="detail-info-value">'+r.palette.map(function(c){return '<span style="display:inline-block;width:18px;height:18px;background:'+c+';border-radius:50%;border:2px solid var(--glass-border);margin-right:2px"></span>'}).join('')+'</div></div></div>'+
 '<div class="detail-tags-wrap">'+r.tags.map(function(t){return '<span class="day-tag">'+t+'</span>'}).join('')+'</div>'+
-'<div class="detail-stars">'+stars+'<span style="margin-left:8px;font-family:var(--font-bold);font-weight:700;color:var(--s1);font-size:1rem">'+r.rating+'/5</span></div>'+
+'<div style="margin-bottom:8px;font-family:var(--font-bold);font-size:.7rem;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase">'+ratingLabel+'</div>'+
+'<div class="detail-stars" data-id="'+r.id+'">'+starsHtml+'</div>'+
 '<div class="detail-actions">'+
 '<button class="btn-primary"><i class="fas fa-download"></i> Скачать</button>'+
 '<button class="btn-secondary" onclick="toggleFav('+r.id+');closeAllModals();"><i class="fas fa-heart"></i> '+(isFav?'В избранном':'В избранное')+'</button></div>'+
 '<div class="detail-share">'+
 '<div class="detail-share-url">reduxpicker.com/mod/'+r.id+'</div>'+
 '<button class="detail-share-copy" onclick="navigator.clipboard.writeText(\'reduxpicker.com/mod/'+r.id+'\');toast(\'📋 Скопировано!\')">Copy</button></div></div>';
-modal.classList.add('active');document.body.style.overflow='hidden';bindHovers();
+
+modal.classList.add('active');
+document.body.style.overflow='hidden';
+
+// Клик на автора внутри модалки
+var authorLink=box.querySelector('.detail-author-link');
+if(authorLink){
+  authorLink.addEventListener('click',function(){
+    openAuthorPage(authorLink.dataset.author);
+  });
+}
+
+// Клики на звёзды рейтинга
+box.querySelectorAll('.detail-stars i').forEach(function(s){
+  s.addEventListener('click',function(){
+    rateRedux(r.id,parseInt(s.dataset.star));
+  });
+});
+
+bindHovers();
 document.querySelectorAll('.blob').forEach(function(b,i){if(i===0)b.style.background=r.color;if(i===2)b.style.background=r.palette[1]||r.color});
 }
 
@@ -642,7 +689,7 @@ document.getElementById('closeAuth').onclick=closeAllModals;
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAllModals()});
 }
 
-// ============ РАНДОМ 3D РУЛЕТКА ============
+// ============ РАНДОМ 3D РУЛЕТКА (ФИКС!) ============
 function startRandom(){
 var modal=document.getElementById('randomModal');
 modal.classList.add('active');
@@ -652,8 +699,8 @@ document.getElementById('resultView').style.display='none';
 
 var slot=document.getElementById('slotBox');
 slot.innerHTML='<div class="slot-marker"></div><div class="slot-reel" id="slotReel"></div>';
-var reel=document.getElementById('slotReel');
 
+var reel=document.getElementById('slotReel');
 var winner=DB[Math.floor(Math.random()*DB.length)];
 var TOTAL=60;
 var WINNER_POS=TOTAL-5;
@@ -671,37 +718,44 @@ items.forEach(function(r){
 });
 reel.innerHTML=itemsHTML;
 
-requestAnimationFrame(function(){
-  requestAnimationFrame(function(){
-    var slotHeight=slot.offsetHeight;
-    var itemHeight=60;
-    var finalY=(slotHeight/2)-(WINNER_POS*itemHeight+itemHeight/2);
+// ФИКС: даём время на рендер и запускаем анимацию через 3 фрейма
+setTimeout(function(){
+  var slotHeight=slot.offsetHeight || 180;
+  var itemHeight=60;
+  var finalY=(slotHeight/2)-(WINNER_POS*itemHeight+itemHeight/2);
+  
+  // Стартовая позиция
+  reel.style.transition='none';
+  reel.style.transform='translateY(0)';
+  reel.classList.add('spinning');
+  
+  // Форсируем reflow
+  void reel.offsetHeight;
+  
+  // Запускаем анимацию
+  setTimeout(function(){
+    reel.style.transition='transform 4.5s cubic-bezier(0.17,0.67,0.32,1)';
+    reel.style.transform='translateY('+finalY+'px)';
     
-    reel.style.transform='translateY(0)';
-    reel.classList.add('spinning');
+    // Убираем сильный блюр
+    setTimeout(function(){
+      reel.classList.remove('spinning');
+      reel.classList.add('slowing');
+    },3800);
     
-    requestAnimationFrame(function(){
-      reel.style.transition='transform 4.5s cubic-bezier(0.17,0.67,0.32,1)';
-      reel.style.transform='translateY('+finalY+'px)';
-      
+    // Показываем результат
+    setTimeout(function(){
+      reel.classList.remove('slowing');
+      var itemEls=reel.querySelectorAll('.slot-item');
+      if(itemEls[WINNER_POS]){
+        itemEls[WINNER_POS].classList.add('winner');
+      }
       setTimeout(function(){
-        reel.classList.remove('spinning');
-        reel.classList.add('slowing');
-      },3800);
-      
-      setTimeout(function(){
-        reel.classList.remove('slowing');
-        var itemEls=reel.querySelectorAll('.slot-item');
-        if(itemEls[WINNER_POS]){
-          itemEls[WINNER_POS].classList.add('winner');
-        }
-        setTimeout(function(){
-          showRandom(winner);
-        },800);
-      },4600);
-    });
-  });
-});
+        showRandom(winner);
+      },800);
+    },4600);
+  },50);
+},100);
 }
 
 function showRandom(r){
@@ -808,15 +862,17 @@ var users=JSON.parse(localStorage.getItem('rdx_users')||'{}');
 if(authMode==='login'){
   if(!users[login]){err.textContent='Аккаунт не найден. Создай новый!';err.classList.add('active');return}
   if(users[login].pass!==pass){err.textContent='Неверный пароль';err.classList.add('active');return}
-  currentUser=login;favorites=users[login].favorites||[];
+  currentUser=login;
+  favorites=users[login].favorites||[];
+  userRatings=users[login].ratings||{};
   localStorage.setItem('rdx_current',login);
   closeAllModals();updateAuthUI();renderGrid();
   toast('🌸 С возвращением, '+login+'!');
 }else{
   if(users[login]){err.textContent='Логин уже занят';err.classList.add('active');return}
-  users[login]={pass:pass,favorites:[]};
+  users[login]={pass:pass,favorites:[],ratings:{}};
   localStorage.setItem('rdx_users',JSON.stringify(users));
-  currentUser=login;favorites=[];
+  currentUser=login;favorites=[];userRatings={};
   localStorage.setItem('rdx_current',login);
   closeAllModals();updateAuthUI();renderGrid();
   spawnConfetti();toast('✨ Аккаунт создан! Добро пожаловать, '+login);
@@ -825,11 +881,12 @@ if(authMode==='login'){
 
 function renderUserProfile(){
 var c=document.getElementById('authContent');
+var ratedCount=Object.keys(userRatings).length;
 c.innerHTML=
   '<div class="auth-user-panel">'+
   '<div class="auth-user-avatar">'+currentUser.charAt(0).toUpperCase()+'</div>'+
   '<div class="auth-user-name">'+currentUser+'</div>'+
-  '<div class="auth-user-stats">💖 В избранном: <b style="color:var(--s1)">'+favorites.length+'</b></div>'+
+  '<div class="auth-user-stats">💖 В избранном: <b style="color:var(--s1)">'+favorites.length+'</b> · ⭐ Оценок: <b style="color:var(--s1)">'+ratedCount+'</b></div>'+
   '<button class="btn-secondary" style="width:100%;margin-bottom:10px" onclick="closeAllModals();switchPage(\'favorites\')"><i class="fas fa-heart"></i> Открыть избранное</button>'+
   '<button class="auth-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Выйти</button>'+
   '</div>';
@@ -838,7 +895,8 @@ bindHovers();
 }
 
 function logoutUser(){
-currentUser=null;favorites=[];localStorage.removeItem('rdx_current');
+currentUser=null;favorites=[];userRatings={};
+localStorage.removeItem('rdx_current');
 updateAuthUI();renderGrid();closeAllModals();
 toast('👋 Ты вышел из аккаунта');
 }
@@ -851,14 +909,23 @@ updateFavBadge();
 function saveUserData(){
 if(!currentUser)return;
 var users=JSON.parse(localStorage.getItem('rdx_users')||'{}');
-if(users[currentUser]){users[currentUser].favorites=favorites;localStorage.setItem('rdx_users',JSON.stringify(users))}
+if(users[currentUser]){
+  users[currentUser].favorites=favorites;
+  users[currentUser].ratings=userRatings;
+  localStorage.setItem('rdx_users',JSON.stringify(users));
+}
 }
 
 function loadUserData(){
 var cur=localStorage.getItem('rdx_current');
 if(cur){
   var users=JSON.parse(localStorage.getItem('rdx_users')||'{}');
-  if(users[cur]){currentUser=cur;favorites=users[cur].favorites||[];updateAuthUI();renderGrid()}
+  if(users[cur]){
+    currentUser=cur;
+    favorites=users[cur].favorites||[];
+    userRatings=users[cur].ratings||{};
+    updateAuthUI();renderGrid();
+  }
 }
 }
 
