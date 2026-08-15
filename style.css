@@ -311,7 +311,10 @@ background:var(--bg);
 margin:0 auto;
 max-width:400px;
 position:relative;
-box-shadow:0 0 30px var(--glow),inset 0 0 20px rgba(0,0,0,.3)
+box-shadow:0 0 30px var(--glow),inset 0 0 20px rgba(0,0,0,.3);
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
 [data-theme="light"] .slot{background:#fff}
