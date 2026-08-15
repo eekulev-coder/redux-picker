@@ -14,7 +14,7 @@
 --border:rgba(255,255,255,.08);--border-h:rgba(255,255,255,.15);
 --text:#f5f0f5;--text2:#a09098;--text3:#605058;
 --s1:#e5a4c4;--s3:#c4a8d9;--s5:#a8c0e0;
---green:#a3e635;--red:#f472b6;--yellow:#facc15;--gold:#ffd700;
+--green:#a3e635;--red:#f472b6;--yellow:#facc15;--gold:#ffd700;--blue:#60a5fa;
 --grad:linear-gradient(120deg,#e5a4c4,#c4a8d9,#a8b0e0);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -54,6 +54,9 @@ button{cursor:pointer;font-family:inherit}
 .top-right{display:flex;align-items:center;gap:15px}
 .top-user{font-size:.85rem;color:var(--text2)}
 .top-user b{color:var(--s1)}
+.online-admins{display:flex;gap:6px;align-items:center;padding:6px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;font-size:.7rem;color:var(--text2);font-family:'Unbounded',sans-serif;font-weight:600}
+.online-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .top-btn{padding:8px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:.75rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;transition:all .3s;font-family:'Unbounded',sans-serif}
 .top-btn:hover{border-color:var(--s1);color:var(--s1)}
 
@@ -70,27 +73,45 @@ button{cursor:pointer;font-family:inherit}
 .section-title{font-family:'Unbounded',sans-serif;font-size:1.4rem;font-weight:700}
 .section-desc{color:var(--text2);font-size:.85rem;margin-top:4px}
 
-.pending-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;transition:border-color .3s}
+.pending-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;transition:border-color .3s;position:relative}
 .pending-card:hover{border-color:var(--s3)}
+.pending-card.locked-by-other{opacity:.7;pointer-events:none}
+.pending-card.locked-by-other::after{content:'';position:absolute;inset:0;background:rgba(10,5,16,.4);z-index:5;pointer-events:none;border-radius:16px}
+.lock-badge{position:absolute;top:14px;right:14px;background:rgba(96,165,250,.2);color:var(--blue);border:1px solid rgba(96,165,250,.4);padding:6px 12px;border-radius:20px;font-size:.7rem;font-weight:700;letter-spacing:.5px;z-index:10;font-family:'Unbounded',sans-serif;display:flex;align-items:center;gap:6px}
 .pending-header{padding:14px 20px;background:var(--surface2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border)}
 .pending-meta{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:.75rem;color:var(--text2)}
 .pending-meta i{color:var(--s1);margin-right:4px}
 .pending-status{padding:4px 12px;border-radius:20px;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;background:rgba(250,204,21,.15);color:var(--yellow);border:1px solid rgba(250,204,21,.3);font-family:'Unbounded',sans-serif}
 .pending-body{padding:20px}
 
-.pending-videos{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:20px}
+.pending-videos{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin-bottom:20px}
 .pending-video{background:var(--bg);border:2px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .3s;position:relative}
 .pending-video:hover{border-color:var(--s3)}
 .pending-video.selected{border-color:var(--s1);box-shadow:0 0 0 3px rgba(229,164,196,.2)}
-.pending-video img{width:100%;height:160px;object-fit:cover;display:block}
+
+/* YouTube плеер */
+.pending-video-thumb{position:relative;width:100%;padding-top:56.25%;background:var(--bg2);cursor:pointer;overflow:hidden}
+.pending-video-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pending-video-thumb iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;background:rgba(0,0,0,.7);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;transition:all .2s;z-index:2;border:none;cursor:pointer}
+.play-btn:hover{background:var(--s1);color:#000;transform:translate(-50%,-50%) scale(1.1)}
+.play-btn i{margin-left:4px}
+
 .pending-video-info{padding:10px}
 .pending-video-title{font-size:.85rem;font-weight:700;margin-bottom:4px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pending-video-author{font-size:.7rem;color:var(--text2)}
-.pending-video-check{position:absolute;top:8px;right:8px;width:24px;height:24px;background:var(--s1);border-radius:50%;display:none;align-items:center;justify-content:center;color:#000;font-size:.7rem;font-weight:800}
+.pending-video-check{position:absolute;top:8px;right:8px;width:28px;height:28px;background:var(--s1);border-radius:50%;display:none;align-items:center;justify-content:center;color:#000;font-size:.75rem;font-weight:800;z-index:3;box-shadow:0 4px 12px rgba(229,164,196,.5)}
 .pending-video.selected .pending-video-check{display:flex}
 
-.pending-drive{padding:12px 16px;background:var(--bg);border-radius:10px;font-size:.8rem;color:var(--text2);margin-bottom:20px;display:flex;align-items:center;gap:10px;word-break:break-all}
+.pending-drive{padding:12px 16px;background:var(--bg);border-radius:10px;font-size:.8rem;color:var(--text2);margin-bottom:20px;display:flex;align-items:center;gap:10px;word-break:break-all;flex-wrap:wrap}
 .pending-drive i{color:#4285f4;font-size:1rem;flex-shrink:0}
+.drive-filename{margin-left:auto;background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.3);padding:4px 10px;border-radius:8px;color:var(--blue);font-size:.75rem;font-weight:600;font-family:'Unbounded',sans-serif}
+
+.name-suggestions{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.name-suggestion{padding:5px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;font-size:.7rem;color:var(--text2);cursor:pointer;transition:all .2s;font-family:'Space Grotesk',sans-serif}
+.name-suggestion:hover{border-color:var(--s1);color:var(--s1);background:var(--surface)}
+.name-suggestion.from-gdrive{color:var(--blue);border-color:rgba(96,165,250,.3)}
+.name-suggestion.from-gdrive:hover{border-color:var(--blue);color:var(--blue);background:rgba(96,165,250,.1)}
 
 .edit-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
 .edit-form .full{grid-column:span 2}
@@ -103,6 +124,22 @@ button{cursor:pointer;font-family:inherit}
 .color-opt{width:32px;height:32px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .2s;position:relative}
 .color-opt:hover{transform:scale(1.15)}
 .color-opt.active{border-color:#fff;box-shadow:0 0 12px currentColor;transform:scale(1.15)}
+
+/* УМНЫЕ ТЕГИ с автодополнением */
+.tags-input-wrap{position:relative}
+.tags-container{display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:10px;min-height:44px;align-items:center;cursor:text}
+.tags-container:focus-within{border-color:var(--s1);box-shadow:0 0 0 3px rgba(229,164,196,.15)}
+.tag-chip{display:inline-flex;align-items:center;gap:6px;background:var(--s1);color:#000;padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:700;font-family:'Unbounded',sans-serif}
+.tag-chip button{background:none;border:none;color:#000;cursor:pointer;padding:0;font-size:.85rem;line-height:1;opacity:.7;transition:opacity .2s}
+.tag-chip button:hover{opacity:1}
+.tags-input{flex:1;min-width:100px;background:transparent;border:none;outline:none;color:var(--text);font-family:inherit;font-size:.85rem;padding:4px}
+
+.tag-dropdown{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-top:4px;max-height:200px;overflow-y:auto;z-index:100;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.tag-dropdown.show{display:block}
+.tag-dropdown-item{padding:10px 14px;cursor:pointer;font-size:.85rem;color:var(--text);display:flex;justify-content:space-between;align-items:center;transition:background .2s}
+.tag-dropdown-item:hover,.tag-dropdown-item.highlighted{background:var(--surface2);color:var(--s1)}
+.tag-count{color:var(--text3);font-size:.7rem}
+.tag-new{color:var(--green);font-size:.65rem;font-weight:700}
 
 .pending-actions{display:flex;gap:10px;flex-wrap:wrap;padding-top:15px;border-top:1px solid var(--border)}
 
@@ -136,7 +173,6 @@ button{cursor:pointer;font-family:inherit}
 .back-link{position:fixed;top:16px;left:20px;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:.75rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;transition:all .3s;font-family:'Unbounded',sans-serif;z-index:200}
 .back-link:hover{border-color:var(--s1);color:var(--s1)}
 
-/* MOD OF DAY page */
 .day-current{background:var(--surface);border:2px solid var(--gold);border-radius:16px;padding:24px;margin-bottom:30px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .day-current-icon{font-size:3rem}
 .day-current-info{flex:1;min-width:200px}
@@ -156,6 +192,7 @@ button{cursor:pointer;font-family:inherit}
 .pending-videos{grid-template-columns:1fr}
 .back-link{display:none}
 .day-current{flex-direction:column;text-align:center}
+.online-admins{display:none}
 }
 </style>
 </head>
@@ -184,6 +221,10 @@ button{cursor:pointer;font-family:inherit}
   <div class="top">
     <div class="top-title">🌸 REDUX ADMIN</div>
     <div class="top-right">
+      <span class="online-admins" id="onlineAdmins" style="display:none">
+        <span class="online-dot"></span>
+        <span id="onlineAdminsText">1 online</span>
+      </span>
       <span class="top-user">👤 <b id="userName">admin</b></span>
       <button class="top-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Выйти</button>
     </div>
@@ -248,7 +289,11 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentAdmin = null;
 let allApprovedMods = [];
 let currentDayModId = null;
+let allExistingTags = []; // все теги из БД для автодополнения
+let myLocks = new Set(); // мои блокировки
+let othersLocks = new Map(); // блокировки других: pending_id -> admin_login
 
+// ============ LOGIN ============
 async function doLogin() {
   const login = document.getElementById('loginUser').value.trim();
   const pass = document.getElementById('loginPass').value.trim();
@@ -263,7 +308,6 @@ async function doLogin() {
     showAdmin();
   } catch(e) { err.textContent = 'Ошибка: ' + e.message; err.classList.add('show'); }
 }
-
 document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
 function showAdmin() {
@@ -272,9 +316,16 @@ function showAdmin() {
   document.getElementById('userName').textContent = currentAdmin.login;
   loadPending();
   loadApprovedCount();
+  loadAllTags();
+  initLockSystem();
 }
 
-function logout() { localStorage.removeItem('rdx_admin'); location.reload(); }
+function logout() {
+  // Снимаем все свои локи перед выходом
+  myLocks.forEach(id => releaseLock(id));
+  localStorage.removeItem('rdx_admin');
+  location.reload();
+}
 
 const saved = localStorage.getItem('rdx_admin');
 if (saved) { currentAdmin = JSON.parse(saved); showAdmin(); }
@@ -298,6 +349,147 @@ function toast(msg) {
   setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(100px)'; t.style.transition='all .3s'; setTimeout(() => t.remove(), 300); }, 3000);
 }
 
+// ============ ЗАГРУЗКА ВСЕХ ТЕГОВ (для автодополнения) ============
+async function loadAllTags() {
+  try {
+    const {data} = await sb.from('mods').select('tags');
+    const tagCounts = {};
+    if (data) {
+      data.forEach(m => {
+        (m.tags || []).forEach(t => {
+          const tag = t.toLowerCase().trim();
+          if (tag) tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+        });
+      });
+    }
+    allExistingTags = Object.keys(tagCounts).map(name => ({name, count: tagCounts[name]}))
+                                              .sort((a,b) => b.count - a.count);
+  } catch(e) {
+    console.error('Ошибка загрузки тегов:', e);
+    allExistingTags = [];
+  }
+}
+
+// ============ СИСТЕМА ЛОКОВ (совместная работа) ============
+async function initLockSystem() {
+  // Каждые 5 сек обновляем свои локи чтобы они не сгорели
+  setInterval(refreshMyLocks, 5000);
+  // Каждые 3 сек проверяем чужие локи
+  setInterval(checkAllLocks, 3000);
+  // Каждые 10 сек чистим старые локи
+  setInterval(async () => { try { await sb.rpc('cleanup_old_locks'); } catch(e){} }, 10000);
+  
+  // При закрытии вкладки — отпускаем все свои локи
+  window.addEventListener('beforeunload', () => {
+    myLocks.forEach(id => {
+      navigator.sendBeacon(`${SUPABASE_URL}/rest/v1/admin_locks?pending_id=eq.${id}&admin_login=eq.${encodeURIComponent(currentAdmin.login)}`,
+        new Blob([JSON.stringify({})], {type:'application/json'}));
+    });
+  });
+  
+  // Подписка на изменения локов в реалтайме
+  sb.channel('locks_changes').on('postgres_changes', {event:'*', schema:'public', table:'admin_locks'}, () => {
+    checkAllLocks();
+    updateOnlineCount();
+  }).subscribe();
+  
+  await checkAllLocks();
+}
+
+async function acquireLock(pendingId) {
+  try {
+    // Сначала проверяем нет ли уже чужого лока
+    const {data: existing} = await sb.from('admin_locks').select('*').eq('pending_id', pendingId).single();
+    if (existing && existing.admin_login !== currentAdmin.login) {
+      const age = (Date.now() - new Date(existing.locked_at).getTime()) / 1000;
+      if (age < 30) {
+        return false; // чужой лок ещё живой
+      }
+      // Старый лок — удаляем
+      await sb.from('admin_locks').delete().eq('pending_id', pendingId);
+    }
+    // Ставим свой лок
+    await sb.from('admin_locks').upsert({pending_id: pendingId, admin_login: currentAdmin.login, locked_at: new Date().toISOString()}, {onConflict: 'pending_id'});
+    myLocks.add(pendingId);
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+async function releaseLock(pendingId) {
+  myLocks.delete(pendingId);
+  try {
+    await sb.from('admin_locks').delete().eq('pending_id', pendingId).eq('admin_login', currentAdmin.login);
+  } catch(e) {}
+}
+
+async function refreshMyLocks() {
+  if (myLocks.size === 0) return;
+  const ids = Array.from(myLocks);
+  try {
+    for (const id of ids) {
+      await sb.from('admin_locks').update({locked_at: new Date().toISOString()})
+        .eq('pending_id', id).eq('admin_login', currentAdmin.login);
+    }
+  } catch(e) {}
+}
+
+async function checkAllLocks() {
+  try {
+    const {data} = await sb.from('admin_locks').select('*');
+    othersLocks.clear();
+    if (data) {
+      data.forEach(lock => {
+        if (lock.admin_login !== currentAdmin.login) {
+          const age = (Date.now() - new Date(lock.locked_at).getTime()) / 1000;
+          if (age < 30) {
+            othersLocks.set(lock.pending_id, lock.admin_login);
+          }
+        }
+      });
+    }
+    // Обновляем визуал карточек
+    document.querySelectorAll('.pending-card').forEach(card => {
+      const id = parseInt(card.dataset.pendingId);
+      if (!id) return;
+      const lockedBy = othersLocks.get(id);
+      card.classList.toggle('locked-by-other', !!lockedBy);
+      let lockBadge = card.querySelector('.lock-badge');
+      if (lockedBy) {
+        if (!lockBadge) {
+          lockBadge = document.createElement('div');
+          lockBadge.className = 'lock-badge';
+          card.appendChild(lockBadge);
+        }
+        lockBadge.innerHTML = `<i class="fas fa-lock"></i> Редактирует ${lockedBy}`;
+      } else if (lockBadge) {
+        lockBadge.remove();
+      }
+    });
+  } catch(e) {}
+}
+
+async function updateOnlineCount() {
+  try {
+    const {data} = await sb.from('admin_locks').select('admin_login');
+    const unique = new Set([currentAdmin.login]);
+    if (data) data.forEach(l => {
+      const age = (Date.now() - new Date(l.locked_at || Date.now()).getTime()) / 1000;
+      if (age < 60) unique.add(l.admin_login);
+    });
+    const count = unique.size;
+    const el = document.getElementById('onlineAdmins');
+    const txt = document.getElementById('onlineAdminsText');
+    if (count > 1) {
+      el.style.display = 'flex';
+      txt.textContent = `${count} онлайн`;
+    } else {
+      el.style.display = 'none';
+    }
+  } catch(e) {}
+}
+
 // ============ PENDING ============
 async function loadPending() {
   const box = document.getElementById('pendingList');
@@ -308,6 +500,7 @@ async function loadPending() {
   if (data.length === 0) { box.innerHTML = '<div class="empty"><i class="fas fa-inbox"></i><h3>Пусто</h3><p>Жду когда бот подкинет что-то 🤖</p></div>'; return; }
   box.innerHTML = '';
   data.forEach(item => box.appendChild(makePendingCard(item)));
+  checkAllLocks();
 }
 
 async function loadApprovedCount() {
@@ -318,17 +511,50 @@ async function loadApprovedCount() {
 function makePendingCard(item) {
   const card = document.createElement('div');
   card.className = 'pending-card';
+  card.dataset.pendingId = item.id;
   const date = new Date(item.created_at).toLocaleString('ru');
   const videos = item.youtube_urls || [];
   const titles = item.video_titles || [];
   const authors = item.video_authors || [];
   const previews = item.preview_images || [];
+  const driveFilename = item.drive_filename || '';
+  
   let videosHTML = '';
   videos.forEach((url, i) => {
-    videosHTML += `<div class="pending-video ${i===0?'selected':''}" data-idx="${i}"><img src="${previews[i]}" onerror="this.style.display='none'"><div class="pending-video-info"><div class="pending-video-title">${titles[i]||'Без названия'}</div><div class="pending-video-author">👤 ${authors[i]||'?'}</div></div><div class="pending-video-check"><i class="fas fa-check"></i></div></div>`;
+    const ytIdMatch = url.match(/(?:youtu\.be\/|v=)([a-zA-Z0-9_-]{11})/);
+    const ytId = ytIdMatch ? ytIdMatch[1] : '';
+    videosHTML += `
+      <div class="pending-video ${i===0?'selected':''}" data-idx="${i}" data-yt-id="${ytId}">
+        <div class="pending-video-thumb" data-yt-id="${ytId}">
+          <img src="${previews[i]}" onerror="this.style.display='none'">
+          <button class="play-btn" title="Смотреть"><i class="fas fa-play"></i></button>
+        </div>
+        <div class="pending-video-info">
+          <div class="pending-video-title">${titles[i]||'Без названия'}</div>
+          <div class="pending-video-author">👤 ${authors[i]||'?'}</div>
+        </div>
+        <div class="pending-video-check"><i class="fas fa-check"></i></div>
+      </div>
+    `;
   });
+  
   let colorsHTML = '';
   COLORS.forEach(c => { colorsHTML += `<div class="color-opt" style="background:${c.h}" data-color="${c.n}" data-hex="${c.h}" title="${c.n}"></div>`; });
+  
+  // Кандидаты названий
+  const nameCandidates = [];
+  if (driveFilename) nameCandidates.push({text: driveFilename, source: 'gdrive'});
+  titles.forEach(t => { if (t && !nameCandidates.find(c=>c.text===t)) nameCandidates.push({text: t, source: 'yt'}); });
+  
+  const suggestionsHTML = nameCandidates.length > 1 ? `
+    <div class="name-suggestions">
+      ${nameCandidates.map(c => 
+        `<span class="name-suggestion ${c.source==='gdrive'?'from-gdrive':''}" data-text="${c.text.replace(/"/g,'&quot;')}">${c.source==='gdrive'?'📁 ':'📺 '}${c.text.length>40?c.text.slice(0,40)+'...':c.text}</span>`
+      ).join('')}
+    </div>` : '';
+  
+  const defaultName = driveFilename || titles[0] || '';
+  
   card.innerHTML = `
     <div class="pending-header">
       <div class="pending-meta">
@@ -340,14 +566,30 @@ function makePendingCard(item) {
     </div>
     <div class="pending-body">
       <div class="pending-videos">${videosHTML}</div>
-      <div class="pending-drive"><i class="fab fa-google-drive"></i><a href="${item.drive_url}" target="_blank">${item.drive_url}</a></div>
+      <div class="pending-drive">
+        <i class="fab fa-google-drive"></i>
+        <a href="${item.drive_url}" target="_blank">${item.drive_url}</a>
+        ${driveFilename ? `<span class="drive-filename">📁 ${driveFilename}</span>` : ''}
+      </div>
       <div class="edit-form">
-        <div class="field"><label>📛 Название</label><input type="text" class="edit-name" value="${(titles[0]||'').replace(/"/g,'&quot;')}"></div>
+        <div class="field full">
+          <label>📛 Название</label>
+          <input type="text" class="edit-name" value="${defaultName.replace(/"/g,'&quot;')}">
+          ${suggestionsHTML}
+        </div>
         <div class="field"><label>👤 Автор</label><input type="text" class="edit-author" value="${(authors[0]||'').replace(/"/g,'&quot;')}"></div>
-        <div class="field"><label>✨ Тип</label><div class="type-row"><div class="type-opt active" data-type="redux">✨ Redux</div><div class="type-opt" data-type="revik">💫 REV</div></div></div>
         <div class="field"><label>🏆 Бейдж</label><select class="edit-badge"><option value="">— нет —</option><option value="new">✨ New</option><option value="hot">🔥 Hot</option><option value="top">⭐ Top</option></select></div>
-        <div class="field full"><label>🎨 Цвет</label><div class="color-row">${colorsHTML}</div></div>
-        <div class="field full"><label>🏷️ Теги (через запятую)</label><input type="text" class="edit-tags" placeholder="капт, топ, яркий"></div>
+        <div class="field"><label>✨ Тип</label><div class="type-row"><div class="type-opt active" data-type="redux">✨ Redux</div><div class="type-opt" data-type="revik">💫 REV</div></div></div>
+        <div class="field"><label>🎨 Цвет</label><div class="color-row">${colorsHTML}</div></div>
+        <div class="field full">
+          <label>🏷️ Теги (Enter или запятая для добавления)</label>
+          <div class="tags-input-wrap">
+            <div class="tags-container">
+              <input type="text" class="tags-input" placeholder="Начни печатать...">
+            </div>
+            <div class="tag-dropdown"></div>
+          </div>
+        </div>
         <div class="field full"><label>✍️ Описание</label><textarea class="edit-desc" placeholder="Короткое описание..."></textarea></div>
       </div>
       <div class="pending-actions">
@@ -355,27 +597,201 @@ function makePendingCard(item) {
         <button class="btn btn-danger"><i class="fas fa-times"></i> Отклонить</button>
       </div>
     </div>`;
+  
+  // Видео плеер по клику
+  card.querySelectorAll('.pending-video-thumb').forEach(thumb => {
+    thumb.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const ytId = thumb.dataset.ytId;
+      if (!ytId) return;
+      thumb.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+    });
+  });
+  
+  // Выбор превью (без запуска плеера, если клик по видео-области)
   card.querySelectorAll('.pending-video').forEach(v => {
-    v.addEventListener('click', () => {
+    v.addEventListener('click', (e) => {
+      // Игнорируем клик по плееру/картинке (это открывает видео)
+      if (e.target.closest('.pending-video-thumb')) return;
       card.querySelectorAll('.pending-video').forEach(x => x.classList.remove('selected'));
       v.classList.add('selected');
       const idx = parseInt(v.dataset.idx);
-      card.querySelector('.edit-name').value = titles[idx] || '';
+      // Если в поле имени было автозаполненное значение — обновляем
+      const nameInput = card.querySelector('.edit-name');
+      const currentValue = nameInput.value;
+      const wasAutoFilled = nameCandidates.some(c => c.text === currentValue);
+      if (wasAutoFilled) {
+        nameInput.value = driveFilename || titles[idx] || '';
+      }
       card.querySelector('.edit-author').value = authors[idx] || '';
     });
   });
+  
+  // Клик по chip с предложением названия
+  card.querySelectorAll('.name-suggestion').forEach(s => {
+    s.addEventListener('click', () => {
+      card.querySelector('.edit-name').value = s.dataset.text;
+    });
+  });
+  
   card.querySelectorAll('.type-opt').forEach(t => {
     t.addEventListener('click', () => { card.querySelectorAll('.type-opt').forEach(x => x.classList.remove('active')); t.classList.add('active'); });
   });
   card.querySelectorAll('.color-opt').forEach(c => {
     c.addEventListener('click', () => { card.querySelectorAll('.color-opt').forEach(x => x.classList.remove('active')); c.classList.add('active'); });
   });
+  
+  // ЛОК: любое взаимодействие с формой = захват
+  ['input', 'change', 'focus', 'click'].forEach(ev => {
+    card.querySelectorAll('input, select, textarea, .type-opt, .color-opt').forEach(el => {
+      el.addEventListener(ev, async () => {
+        if (!myLocks.has(item.id)) {
+          const ok = await acquireLock(item.id);
+          if (!ok) {
+            toast('🔒 Эту заявку сейчас редактирует другой админ');
+            card.classList.add('locked-by-other');
+          }
+        }
+      });
+    });
+  });
+  
+  // ============ УМНЫЕ ТЕГИ ============
+  setupTagsInput(card, item.id);
+  
   card.querySelector('.pending-actions .btn').addEventListener('click', () => approveMod(item, card));
   card.querySelector('.pending-actions .btn-danger').addEventListener('click', () => rejectMod(item.id));
+  
   return card;
 }
 
+// ============ АВТОДОПОЛНЕНИЕ ТЕГОВ ============
+function setupTagsInput(card, itemId) {
+  const container = card.querySelector('.tags-container');
+  const input = card.querySelector('.tags-input');
+  const dropdown = card.querySelector('.tag-dropdown');
+  card._tags = new Set(); // хранение тегов для этой карточки
+  let highlightedIndex = -1;
+  
+  function addTag(tag) {
+    tag = tag.toLowerCase().trim();
+    if (!tag || card._tags.has(tag) || tag.length > 30) return;
+    card._tags.add(tag);
+    renderChips();
+    hideDropdown();
+    input.value = '';
+    input.focus();
+  }
+  
+  function removeTag(tag) {
+    card._tags.delete(tag);
+    renderChips();
+  }
+  
+  function renderChips() {
+    container.querySelectorAll('.tag-chip').forEach(c => c.remove());
+    Array.from(card._tags).forEach(tag => {
+      const chip = document.createElement('span');
+      chip.className = 'tag-chip';
+      chip.innerHTML = `${tag} <button title="Удалить">×</button>`;
+      chip.querySelector('button').addEventListener('click', (e) => {
+        e.stopPropagation();
+        removeTag(tag);
+      });
+      container.insertBefore(chip, input);
+    });
+  }
+  
+  function updateDropdown() {
+    const query = input.value.toLowerCase().trim();
+    dropdown.innerHTML = '';
+    highlightedIndex = -1;
+    
+    if (!query) {
+      // Показываем топ-8 самых популярных не выбранных
+      const top = allExistingTags.filter(t => !card._tags.has(t.name)).slice(0, 8);
+      if (top.length === 0) { hideDropdown(); return; }
+      top.forEach((t, i) => addDropdownItem(t.name, t.count, false, i));
+      showDropdown();
+      return;
+    }
+    
+    const matches = allExistingTags.filter(t => t.name.includes(query) && !card._tags.has(t.name)).slice(0, 10);
+    const isNew = !allExistingTags.find(t => t.name === query) && !card._tags.has(query);
+    
+    if (matches.length === 0 && !isNew) { hideDropdown(); return; }
+    
+    matches.forEach((t, i) => addDropdownItem(t.name, t.count, false, i));
+    if (isNew) addDropdownItem(query, 0, true, matches.length);
+    
+    showDropdown();
+  }
+  
+  function addDropdownItem(name, count, isNew, index) {
+    const item = document.createElement('div');
+    item.className = 'tag-dropdown-item';
+    item.dataset.index = index;
+    item.innerHTML = isNew 
+      ? `<span>${name}</span><span class="tag-new">+ создать новый</span>`
+      : `<span>${name}</span><span class="tag-count">${count} мод(ов)</span>`;
+    item.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      addTag(name);
+    });
+    dropdown.appendChild(item);
+  }
+  
+  function showDropdown() { dropdown.classList.add('show'); }
+  function hideDropdown() { dropdown.classList.remove('show'); highlightedIndex = -1; }
+  
+  function updateHighlight() {
+    const items = dropdown.querySelectorAll('.tag-dropdown-item');
+    items.forEach(i => i.classList.remove('highlighted'));
+    if (highlightedIndex >= 0 && items[highlightedIndex]) {
+      items[highlightedIndex].classList.add('highlighted');
+      items[highlightedIndex].scrollIntoView({block:'nearest'});
+    }
+  }
+  
+  container.addEventListener('click', () => input.focus());
+  
+  input.addEventListener('input', updateDropdown);
+  input.addEventListener('focus', updateDropdown);
+  input.addEventListener('blur', () => setTimeout(hideDropdown, 200));
+  
+  input.addEventListener('keydown', (e) => {
+    const items = dropdown.querySelectorAll('.tag-dropdown-item');
+    
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (items.length === 0) return;
+      highlightedIndex = Math.min(highlightedIndex + 1, items.length - 1);
+      updateHighlight();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      highlightedIndex = Math.max(highlightedIndex - 1, -1);
+      updateHighlight();
+    } else if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      if (highlightedIndex >= 0 && items[highlightedIndex]) {
+        items[highlightedIndex].dispatchEvent(new MouseEvent('mousedown'));
+      } else if (input.value.trim()) {
+        addTag(input.value);
+      }
+    } else if (e.key === 'Escape') {
+      hideDropdown();
+    } else if (e.key === 'Backspace' && !input.value && card._tags.size > 0) {
+      const last = Array.from(card._tags).pop();
+      removeTag(last);
+    }
+  });
+}
+
 async function approveMod(item, card) {
+  if (othersLocks.has(item.id)) {
+    toast('🔒 Заявку редактирует другой админ');
+    return;
+  }
   const selectedVideo = card.querySelector('.pending-video.selected');
   const idx = parseInt(selectedVideo.dataset.idx);
   const selectedType = card.querySelector('.type-opt.active').dataset.type;
@@ -385,7 +801,7 @@ async function approveMod(item, card) {
   const author = card.querySelector('.edit-author').value.trim();
   const badge = card.querySelector('.edit-badge').value || null;
   const desc = card.querySelector('.edit-desc').value.trim() || 'Описание скоро появится.';
-  const tags = card.querySelector('.edit-tags').value.split(',').map(t => t.trim()).filter(t => t);
+  const tags = Array.from(card._tags || []);
   if (!name || !author) { toast('❌ Заполни название и автора!'); return; }
   const ytUrl = item.youtube_urls[idx];
   const ytIdMatch = ytUrl.match(/(?:youtu\.be\/|v=)([a-zA-Z0-9_-]{11})/);
@@ -399,14 +815,20 @@ async function approveMod(item, card) {
     });
     if (e1) throw e1;
     await sb.from('pending_mods').delete().eq('id', item.id);
+    await releaseLock(item.id);
     toast('✅ Мод "'+name+'" опубликован!');
-    loadPending(); loadApprovedCount();
+    loadPending(); loadApprovedCount(); loadAllTags();
   } catch(e) { toast('❌ Ошибка: ' + e.message); }
 }
 
 async function rejectMod(id) {
+  if (othersLocks.has(id)) {
+    toast('🔒 Заявку редактирует другой админ');
+    return;
+  }
   if (!confirm('Отклонить заявку?')) return;
   await sb.from('pending_mods').delete().eq('id', id);
+  await releaseLock(id);
   toast('❌ Отклонено'); loadPending();
 }
 
@@ -416,11 +838,8 @@ async function loadApproved() {
   box.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
   const {data, error} = await sb.from('mods').select('*').order('created_at', {ascending: false});
   if (error) { box.innerHTML = '<div class="empty"><i class="fas fa-triangle-exclamation"></i><h3>Ошибка</h3></div>'; return; }
-  
-  // Загружаем текущий "мод дня"
   const {data: settingData} = await sb.from('site_settings').select('value').eq('key', 'mod_of_day_id').single();
-  const dayId = settingData ? parseInt(settingData.value) : null;
-  
+  const dayId = settingData && settingData.value ? parseInt(settingData.value) : null;
   document.getElementById('approvedBadge').textContent = data.length;
   if (data.length === 0) { box.innerHTML = '<div class="empty"><i class="fas fa-folder-open"></i><h3>Нет модов</h3><p>Одобри первую заявку!</p></div>'; return; }
   box.className = 'approved-grid'; box.innerHTML = '';
@@ -445,7 +864,7 @@ async function loadApproved() {
 async function deleteMod(id, name) {
   if (!confirm('Удалить "'+name+'" с сайта?')) return;
   await sb.from('mods').delete().eq('id', id);
-  toast('🗑️ Удалено'); loadApproved();
+  toast('🗑️ Удалено'); loadApproved(); loadAllTags();
 }
 
 // ============ MOD OF DAY ============
@@ -454,20 +873,14 @@ async function loadModOfDay() {
   const listBox = document.getElementById('dayModList');
   currentBox.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
   listBox.innerHTML = '';
-  
   try {
-    // Загружаем все моды и текущую настройку
     const [{data: mods}, {data: setting}] = await Promise.all([
       sb.from('mods').select('*').order('name', {ascending: true}),
       sb.from('site_settings').select('value').eq('key', 'mod_of_day_id').single()
     ]);
-    
     allApprovedMods = mods || [];
     currentDayModId = setting && setting.value ? parseInt(setting.value) : null;
-    
-    // Показываем текущий мод дня
     renderDayCurrent();
-    // Показываем список для выбора
     renderDayModList('');
   } catch(e) {
     currentBox.innerHTML = '<div class="empty"><i class="fas fa-triangle-exclamation"></i><h3>Ошибка</h3></div>';
@@ -477,67 +890,32 @@ async function loadModOfDay() {
 function renderDayCurrent() {
   const box = document.getElementById('dayCurrentBox');
   if (!currentDayModId) {
-    box.innerHTML = `
-      <div class="day-current">
-        <div class="day-current-icon">🎲</div>
-        <div class="day-current-info">
-          <div class="day-current-label">⭐ мод дня</div>
-          <div class="day-current-name">Автоматически (по рейтингу)</div>
-          <div class="day-current-meta">Сайт сам выбирает мод с самым высоким рейтингом</div>
-        </div>
-      </div>`;
+    box.innerHTML = `<div class="day-current"><div class="day-current-icon">🎲</div><div class="day-current-info"><div class="day-current-label">⭐ мод дня</div><div class="day-current-name">Автоматически (по рейтингу)</div><div class="day-current-meta">Сайт сам выбирает мод с самым высоким рейтингом</div></div></div>`;
     return;
   }
-  
   const mod = allApprovedMods.find(m => m.id === currentDayModId);
   if (!mod) {
-    box.innerHTML = `
-      <div class="day-current">
-        <div class="day-current-icon">⚠️</div>
-        <div class="day-current-info">
-          <div class="day-current-label">⭐ мод дня</div>
-          <div class="day-current-name">Не найден</div>
-          <div class="day-current-meta">Мод был удалён — вернись к автоматическому режиму</div>
-        </div>
-        <div class="day-current-actions">
-          <button class="btn btn-sec" onclick="clearDayMod()"><i class="fas fa-times"></i> Сбросить</button>
-        </div>
-      </div>`;
+    box.innerHTML = `<div class="day-current"><div class="day-current-icon">⚠️</div><div class="day-current-info"><div class="day-current-label">⭐ мод дня</div><div class="day-current-name">Не найден</div><div class="day-current-meta">Мод был удалён — вернись к автоматическому режиму</div></div><div class="day-current-actions"><button class="btn btn-sec" onclick="clearDayMod()"><i class="fas fa-times"></i> Сбросить</button></div></div>`;
     return;
   }
-  
-  box.innerHTML = `
-    <div class="day-current">
-      <div class="day-current-icon">${mod.type==='redux'?'✨':'💫'}</div>
-      <div class="day-current-info">
-        <div class="day-current-label">⭐ сейчас на главной</div>
-        <div class="day-current-name">${mod.name}</div>
-        <div class="day-current-meta">👤 ${mod.author} · 🎨 ${mod.color_name} · ⭐ ${mod.rating}</div>
-      </div>
-      <div class="day-current-actions">
-        <button class="btn btn-sec" onclick="clearDayMod()"><i class="fas fa-magic"></i> Автовыбор</button>
-      </div>
-    </div>`;
+  box.innerHTML = `<div class="day-current"><div class="day-current-icon">${mod.type==='redux'?'✨':'💫'}</div><div class="day-current-info"><div class="day-current-label">⭐ сейчас на главной</div><div class="day-current-name">${mod.name}</div><div class="day-current-meta">👤 ${mod.author} · 🎨 ${mod.color_name} · ⭐ ${mod.rating}</div></div><div class="day-current-actions"><button class="btn btn-sec" onclick="clearDayMod()"><i class="fas fa-magic"></i> Автовыбор</button></div></div>`;
 }
 
 function renderDayModList(query) {
   const box = document.getElementById('dayModList');
   if (allApprovedMods.length === 0) {
-    box.innerHTML = '<div class="empty"><i class="fas fa-folder-open"></i><h3>Нет модов</h3><p>Сначала опубликуй хотя бы один мод</p></div>';
+    box.innerHTML = '<div class="empty"><i class="fas fa-folder-open"></i><h3>Нет модов</h3></div>';
     return;
   }
-  
   let filtered = allApprovedMods;
   if (query) {
     const q = query.toLowerCase();
     filtered = allApprovedMods.filter(m => m.name.toLowerCase().includes(q) || m.author.toLowerCase().includes(q));
   }
-  
   if (filtered.length === 0) {
     box.innerHTML = '<div class="empty"><i class="fas fa-search"></i><h3>Ничего не найдено</h3></div>';
     return;
   }
-  
   box.className = 'approved-grid';
   box.innerHTML = '';
   filtered.forEach(r => {
@@ -548,12 +926,9 @@ function renderDayModList(query) {
       <div class="approved-preview"><img src="${r.preview_image||''}" onerror="this.style.display='none'"><div class="approved-color-bar" style="background:${r.color}"></div></div>
       <div class="approved-body">
         <div class="approved-name">${r.name}</div>
-        <div class="approved-meta">👤 ${r.author} · ${r.type==='redux'?'✨ Redux':'💫 REV'} · 🎨 ${r.color_name}</div>
+        <div class="approved-meta">👤 ${r.author} · ${r.type==='redux'?'✨ Redux':'💫 REV'}</div>
         <div class="approved-stats"><span><i class="fas fa-star"></i>${r.rating||5}</span><span><i class="fas fa-download"></i>${r.downloads||0}</span></div>
-        ${isDay ? 
-          '<button class="btn btn-sec" style="width:100%;padding:8px" disabled><i class="fas fa-check"></i> Уже мод дня</button>' :
-          `<button class="btn btn-gold" style="width:100%;padding:8px" onclick="setDayMod(${r.id},'${r.name.replace(/'/g,"\\'")}')"><i class="fas fa-star"></i> Сделать модом дня</button>`
-        }
+        ${isDay ? '<button class="btn btn-sec" style="width:100%;padding:8px" disabled><i class="fas fa-check"></i> Уже мод дня</button>' : `<button class="btn btn-gold" style="width:100%;padding:8px" onclick="setDayMod(${r.id},'${r.name.replace(/'/g,"\\'")}')"><i class="fas fa-star"></i> Сделать модом дня</button>`}
       </div>`;
     box.appendChild(card);
   });
@@ -566,9 +941,7 @@ async function setDayMod(id, name) {
     toast('⭐ "'+name+'" теперь мод дня!');
     renderDayCurrent();
     renderDayModList(document.getElementById('daySearch').value);
-  } catch(e) {
-    toast('❌ Ошибка: ' + e.message);
-  }
+  } catch(e) { toast('❌ Ошибка: ' + e.message); }
 }
 
 async function clearDayMod() {
@@ -579,14 +952,10 @@ async function clearDayMod() {
     toast('🎲 Автовыбор включён');
     renderDayCurrent();
     renderDayModList(document.getElementById('daySearch').value);
-  } catch(e) {
-    toast('❌ Ошибка: ' + e.message);
-  }
+  } catch(e) { toast('❌ Ошибка: ' + e.message); }
 }
 
-document.getElementById('daySearch').addEventListener('input', e => {
-  renderDayModList(e.target.value);
-});
+document.getElementById('daySearch').addEventListener('input', e => renderDayModList(e.target.value));
 
 sb.channel('pending_changes').on('postgres_changes', {event:'INSERT', schema:'public', table:'pending_mods'}, () => {
   if (currentAdmin) { toast('🔔 Новая заявка!'); loadPending(); }
