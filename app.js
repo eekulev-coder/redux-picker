@@ -538,7 +538,7 @@ document.querySelectorAll('.card-thumb[data-yt]').forEach(function(img){
       iframe.setAttribute('loading','lazy');
       parent.appendChild(iframe);
       parent._iframe=iframe;
-    },3.000);
+    },2.500);
   });
   parent.addEventListener('mouseleave',function(){
     clearTimeout(timer);
