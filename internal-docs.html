@@ -89,7 +89,6 @@ button{cursor:pointer;font-family:inherit}
 .pending-video:hover{border-color:var(--s3)}
 .pending-video.selected{border-color:var(--s1);box-shadow:0 0 0 3px rgba(229,164,196,.2)}
 
-/* YouTube плеер */
 .pending-video-thumb{position:relative;width:100%;padding-top:56.25%;background:var(--bg2);cursor:pointer;overflow:hidden}
 .pending-video-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .pending-video-thumb iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
@@ -106,12 +105,14 @@ button{cursor:pointer;font-family:inherit}
 .pending-drive{padding:12px 16px;background:var(--bg);border-radius:10px;font-size:.8rem;color:var(--text2);margin-bottom:20px;display:flex;align-items:center;gap:10px;word-break:break-all;flex-wrap:wrap}
 .pending-drive i{color:#4285f4;font-size:1rem;flex-shrink:0}
 .drive-filename{margin-left:auto;background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.3);padding:4px 10px;border-radius:8px;color:var(--blue);font-size:.75rem;font-weight:600;font-family:'Unbounded',sans-serif}
+.drive-filename.generic{background:rgba(250,204,21,.1);border-color:rgba(250,204,21,.3);color:var(--yellow)}
 
 .name-suggestions{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
 .name-suggestion{padding:5px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;font-size:.7rem;color:var(--text2);cursor:pointer;transition:all .2s;font-family:'Space Grotesk',sans-serif}
 .name-suggestion:hover{border-color:var(--s1);color:var(--s1);background:var(--surface)}
 .name-suggestion.from-gdrive{color:var(--blue);border-color:rgba(96,165,250,.3)}
 .name-suggestion.from-gdrive:hover{border-color:var(--blue);color:var(--blue);background:rgba(96,165,250,.1)}
+.name-suggestion.active{background:var(--s1);color:#000;border-color:var(--s1)}
 
 .edit-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
 .edit-form .full{grid-column:span 2}
@@ -125,7 +126,6 @@ button{cursor:pointer;font-family:inherit}
 .color-opt:hover{transform:scale(1.15)}
 .color-opt.active{border-color:#fff;box-shadow:0 0 12px currentColor;transform:scale(1.15)}
 
-/* УМНЫЕ ТЕГИ с автодополнением */
 .tags-input-wrap{position:relative}
 .tags-container{display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:10px;min-height:44px;align-items:center;cursor:text}
 .tags-container:focus-within{border-color:var(--s1);box-shadow:0 0 0 3px rgba(229,164,196,.15)}
@@ -243,7 +243,7 @@ button{cursor:pointer;font-family:inherit}
           <div class="section-title">Заявки на модерацию</div>
           <div class="section-desc">Одобри или отклони заявки от Discord бота</div>
         </div>
-        <button class="top-btn" onclick="loadPending()"><i class="fas fa-sync"></i> Обновить</button>
+        <button class="top-btn" onclick="refreshAll()"><i class="fas fa-sync"></i> Обновить</button>
       </div>
       <div id="pendingList"></div>
     </div>
@@ -285,15 +285,67 @@ const COLORS = [
   {n:'коричневый', h:'#8d6e63'},{n:'тёмный', h:'#37474F'},{n:'белый', h:'#f5f5f5'},
 ];
 
+// СПИСОК "МУСОРНЫХ" ИМЁН ИЗ GDRIVE (не использовать как название мода)
+const GENERIC_NAMES = [
+  'update', 'redux', 'preset', 'presets', 'files', 'file', 'download', 
+  'gta5', 'gta 5', 'мод', 'мода', 'моды', 'mods', 'mod', 'reshade', 
+  'graphics', 'graphic', 'setting', 'settings', 'config', 'v1', 'v2', 
+  'v3', 'v4', 'v5', 'final', 'new', 'test', 'скачать', 'папка', 'folder',
+  'installation', 'install', 'rar', 'zip', 'archive', 'архив',
+  'мой ���иск', 'my drive', 'shared', 'shared with me'
+];
+
+function cleanFilename(name) {
+  if (!name) return '';
+  // Убираем расширения (.rar, .zip, .7z и т.д.)
+  return name.replace(/\.(rar|zip|7z|tar|gz|exe|iso|mp4|avi)$/i, '').trim();
+}
+
+function isGenericName(name) {
+  if (!name) return true;
+  const cleaned = cleanFilename(name).toLowerCase().trim();
+  if (cleaned.length < 3) return true;
+  // Проверяем на точное совпадение
+  if (GENERIC_NAMES.includes(cleaned)) return true;
+  // Проверяем на частичное (например "update v1" или "redux files")
+  for (const generic of GENERIC_NAMES) {
+    // если имя это generic + цифра/версия
+    const patterns = [
+      new RegExp(`^${generic}\\s*[v]?\\d*$`, 'i'),
+      new RegExp(`^${generic}\\s*(final|new|test)$`, 'i'),
+      new RegExp(`^${generic}\\.(rar|zip|7z)$`, 'i'),
+    ];
+    if (patterns.some(p => p.test(cleaned))) return true;
+  }
+  return false;
+}
+
+/**
+ * УМНОЕ АВТО-НАЗВАНИЕ
+ * Приоритет:
+ * 1. GDrive filename если он НЕ generic
+ * 2. YouTube title
+ * 3. GDrive filename даже если generic (last resort)
+ */
+function getSmartName(driveFilename, ytTitle) {
+  const cleanedDrive = cleanFilename(driveFilename);
+  if (cleanedDrive && !isGenericName(cleanedDrive)) {
+    return cleanedDrive;
+  }
+  if (ytTitle && ytTitle.trim()) {
+    return ytTitle.trim();
+  }
+  return cleanedDrive || 'Без названия';
+}
+
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentAdmin = null;
 let allApprovedMods = [];
 let currentDayModId = null;
-let allExistingTags = []; // все теги из БД для автодополнения
-let myLocks = new Set(); // мои блокировки
-let othersLocks = new Map(); // блокировки других: pending_id -> admin_login
+let allExistingTags = []; // ГЛОБАЛЬНЫЙ список тегов
+let myLocks = new Set();
+let othersLocks = new Map();
 
-// ============ LOGIN ============
 async function doLogin() {
   const login = document.getElementById('loginUser').value.trim();
   const pass = document.getElementById('loginPass').value.trim();
@@ -314,14 +366,14 @@ function showAdmin() {
   document.getElementById('loginWrap').style.display = 'none';
   document.getElementById('adminPanel').classList.add('active');
   document.getElementById('userName').textContent = currentAdmin.login;
-  loadPending();
-  loadApprovedCount();
-  loadAllTags();
+  loadAllTags().then(() => {
+    loadPending();
+    loadApprovedCount();
+  });
   initLockSystem();
 }
 
 function logout() {
-  // Снимаем все свои локи перед выходом
   myLocks.forEach(id => releaseLock(id));
   localStorage.removeItem('rdx_admin');
   location.reload();
@@ -349,7 +401,7 @@ function toast(msg) {
   setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(100px)'; t.style.transition='all .3s'; setTimeout(() => t.remove(), 300); }, 3000);
 }
 
-// ============ ЗАГРУЗКА ВСЕХ ТЕГОВ (для автодополнения) ============
+// ============ ЗАГРУЗКА ТЕГОВ ============
 async function loadAllTags() {
   try {
     const {data} = await sb.from('mods').select('tags');
@@ -357,71 +409,77 @@ async function loadAllTags() {
     if (data) {
       data.forEach(m => {
         (m.tags || []).forEach(t => {
-          const tag = t.toLowerCase().trim();
+          const tag = String(t).toLowerCase().trim();
           if (tag) tagCounts[tag] = (tagCounts[tag] || 0) + 1;
         });
       });
     }
     allExistingTags = Object.keys(tagCounts).map(name => ({name, count: tagCounts[name]}))
                                               .sort((a,b) => b.count - a.count);
+    console.log('📌 Загружено тегов:', allExistingTags.length);
   } catch(e) {
     console.error('Ошибка загрузки тегов:', e);
     allExistingTags = [];
   }
 }
 
-// ============ СИСТЕМА ЛОКОВ (совместная работа) ============
+// Добавить тег в глобальный список сразу после одобрения (без перезагрузки)
+function addTagsToGlobal(tags) {
+  tags.forEach(tag => {
+    const clean = String(tag).toLowerCase().trim();
+    if (!clean) return;
+    const existing = allExistingTags.find(t => t.name === clean);
+    if (existing) {
+      existing.count++;
+    } else {
+      allExistingTags.push({name: clean, count: 1});
+    }
+  });
+  // Пересортировка по популярности
+  allExistingTags.sort((a,b) => b.count - a.count);
+}
+
+async function refreshAll() {
+  await loadAllTags();
+  loadPending();
+  loadApprovedCount();
+}
+
+// ============ ЛОКИ ============
 async function initLockSystem() {
-  // Каждые 5 сек обновляем свои локи чтобы они не сгорели
   setInterval(refreshMyLocks, 5000);
-  // Каждые 3 сек проверяем чужие локи
   setInterval(checkAllLocks, 3000);
-  // Каждые 10 сек чистим старые локи
   setInterval(async () => { try { await sb.rpc('cleanup_old_locks'); } catch(e){} }, 10000);
-  
-  // При закрытии вкладки — отпускаем все свои локи
   window.addEventListener('beforeunload', () => {
     myLocks.forEach(id => {
       navigator.sendBeacon(`${SUPABASE_URL}/rest/v1/admin_locks?pending_id=eq.${id}&admin_login=eq.${encodeURIComponent(currentAdmin.login)}`,
         new Blob([JSON.stringify({})], {type:'application/json'}));
     });
   });
-  
-  // Подписка на изменения локов в реалтайме
   sb.channel('locks_changes').on('postgres_changes', {event:'*', schema:'public', table:'admin_locks'}, () => {
     checkAllLocks();
     updateOnlineCount();
   }).subscribe();
-  
   await checkAllLocks();
 }
 
 async function acquireLock(pendingId) {
   try {
-    // Сначала проверяем нет ли уже чужого лока
     const {data: existing} = await sb.from('admin_locks').select('*').eq('pending_id', pendingId).single();
     if (existing && existing.admin_login !== currentAdmin.login) {
       const age = (Date.now() - new Date(existing.locked_at).getTime()) / 1000;
-      if (age < 30) {
-        return false; // чужой лок ещё живой
-      }
-      // Старый лок — удаляем
+      if (age < 30) return false;
       await sb.from('admin_locks').delete().eq('pending_id', pendingId);
     }
-    // Ставим свой лок
     await sb.from('admin_locks').upsert({pending_id: pendingId, admin_login: currentAdmin.login, locked_at: new Date().toISOString()}, {onConflict: 'pending_id'});
     myLocks.add(pendingId);
     return true;
-  } catch(e) {
-    return false;
-  }
+  } catch(e) { return false; }
 }
 
 async function releaseLock(pendingId) {
   myLocks.delete(pendingId);
-  try {
-    await sb.from('admin_locks').delete().eq('pending_id', pendingId).eq('admin_login', currentAdmin.login);
-  } catch(e) {}
+  try { await sb.from('admin_locks').delete().eq('pending_id', pendingId).eq('admin_login', currentAdmin.login); } catch(e) {}
 }
 
 async function refreshMyLocks() {
@@ -443,13 +501,10 @@ async function checkAllLocks() {
       data.forEach(lock => {
         if (lock.admin_login !== currentAdmin.login) {
           const age = (Date.now() - new Date(lock.locked_at).getTime()) / 1000;
-          if (age < 30) {
-            othersLocks.set(lock.pending_id, lock.admin_login);
-          }
+          if (age < 30) othersLocks.set(lock.pending_id, lock.admin_login);
         }
       });
     }
-    // Обновляем визуал карточек
     document.querySelectorAll('.pending-card').forEach(card => {
       const id = parseInt(card.dataset.pendingId);
       if (!id) return;
@@ -472,7 +527,7 @@ async function checkAllLocks() {
 
 async function updateOnlineCount() {
   try {
-    const {data} = await sb.from('admin_locks').select('admin_login');
+    const {data} = await sb.from('admin_locks').select('admin_login,locked_at');
     const unique = new Set([currentAdmin.login]);
     if (data) data.forEach(l => {
       const age = (Date.now() - new Date(l.locked_at || Date.now()).getTime()) / 1000;
@@ -481,12 +536,8 @@ async function updateOnlineCount() {
     const count = unique.size;
     const el = document.getElementById('onlineAdmins');
     const txt = document.getElementById('onlineAdminsText');
-    if (count > 1) {
-      el.style.display = 'flex';
-      txt.textContent = `${count} онлайн`;
-    } else {
-      el.style.display = 'none';
-    }
+    if (count > 1) { el.style.display = 'flex'; txt.textContent = `${count} онлайн`; }
+    else { el.style.display = 'none'; }
   } catch(e) {}
 }
 
@@ -518,6 +569,8 @@ function makePendingCard(item) {
   const authors = item.video_authors || [];
   const previews = item.preview_images || [];
   const driveFilename = item.drive_filename || '';
+  const cleanedDrive = cleanFilename(driveFilename);
+  const isDriveGeneric = isGenericName(cleanedDrive);
   
   let videosHTML = '';
   videos.forEach((url, i) => {
@@ -541,19 +594,34 @@ function makePendingCard(item) {
   let colorsHTML = '';
   COLORS.forEach(c => { colorsHTML += `<div class="color-opt" style="background:${c.h}" data-color="${c.n}" data-hex="${c.h}" title="${c.n}"></div>`; });
   
+  // УМНОЕ НАЗВАНИЕ по умолчанию
+  const defaultName = getSmartName(driveFilename, titles[0] || '');
+  
   // Кандидаты названий
   const nameCandidates = [];
-  if (driveFilename) nameCandidates.push({text: driveFilename, source: 'gdrive'});
-  titles.forEach(t => { if (t && !nameCandidates.find(c=>c.text===t)) nameCandidates.push({text: t, source: 'yt'}); });
+  if (cleanedDrive) {
+    nameCandidates.push({
+      text: cleanedDrive,
+      source: isDriveGeneric ? 'gdrive-generic' : 'gdrive',
+      label: isDriveGeneric ? '📁 GDrive (общее имя)' : '📁 GDrive'
+    });
+  }
+  titles.forEach((t, i) => {
+    if (t && !nameCandidates.find(c => c.text === t)) {
+      nameCandidates.push({
+        text: t,
+        source: 'yt',
+        label: `📺 YouTube${titles.length > 1 ? ` #${i+1}` : ''}`
+      });
+    }
+  });
   
   const suggestionsHTML = nameCandidates.length > 1 ? `
     <div class="name-suggestions">
       ${nameCandidates.map(c => 
-        `<span class="name-suggestion ${c.source==='gdrive'?'from-gdrive':''}" data-text="${c.text.replace(/"/g,'&quot;')}">${c.source==='gdrive'?'📁 ':'📺 '}${c.text.length>40?c.text.slice(0,40)+'...':c.text}</span>`
+        `<span class="name-suggestion ${c.source==='gdrive'?'from-gdrive':''} ${c.text===defaultName?'active':''}" data-text="${c.text.replace(/"/g,'&quot;')}">${c.label}: ${c.text.length>30?c.text.slice(0,30)+'...':c.text}</span>`
       ).join('')}
     </div>` : '';
-  
-  const defaultName = driveFilename || titles[0] || '';
   
   card.innerHTML = `
     <div class="pending-header">
@@ -569,7 +637,7 @@ function makePendingCard(item) {
       <div class="pending-drive">
         <i class="fab fa-google-drive"></i>
         <a href="${item.drive_url}" target="_blank">${item.drive_url}</a>
-        ${driveFilename ? `<span class="drive-filename">📁 ${driveFilename}</span>` : ''}
+        ${cleanedDrive ? `<span class="drive-filename ${isDriveGeneric?'generic':''}">📁 ${cleanedDrive}${isDriveGeneric?' (общее)':''}</span>` : ''}
       </div>
       <div class="edit-form">
         <div class="field full">
@@ -582,7 +650,7 @@ function makePendingCard(item) {
         <div class="field"><label>✨ Тип</label><div class="type-row"><div class="type-opt active" data-type="redux">✨ Redux</div><div class="type-opt" data-type="revik">💫 REV</div></div></div>
         <div class="field"><label>🎨 Цвет</label><div class="color-row">${colorsHTML}</div></div>
         <div class="field full">
-          <label>🏷️ Теги (Enter или запятая для добавления)</label>
+          <label>🏷️ Теги (Enter или запятая)</label>
           <div class="tags-input-wrap">
             <div class="tags-container">
               <input type="text" class="tags-input" placeholder="Начни печатать...">
@@ -598,7 +666,6 @@ function makePendingCard(item) {
       </div>
     </div>`;
   
-  // Видео плеер по клику
   card.querySelectorAll('.pending-video-thumb').forEach(thumb => {
     thumb.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -608,28 +675,26 @@ function makePendingCard(item) {
     });
   });
   
-  // Выбор превью (без запуска плеера, если клик по видео-области)
   card.querySelectorAll('.pending-video').forEach(v => {
     v.addEventListener('click', (e) => {
-      // Игнорируем клик по плееру/картинке (это открывает видео)
       if (e.target.closest('.pending-video-thumb')) return;
       card.querySelectorAll('.pending-video').forEach(x => x.classList.remove('selected'));
       v.classList.add('selected');
       const idx = parseInt(v.dataset.idx);
-      // Если в поле имени было автозаполненное значение — обновляем
       const nameInput = card.querySelector('.edit-name');
       const currentValue = nameInput.value;
       const wasAutoFilled = nameCandidates.some(c => c.text === currentValue);
       if (wasAutoFilled) {
-        nameInput.value = driveFilename || titles[idx] || '';
+        nameInput.value = getSmartName(driveFilename, titles[idx] || '');
       }
       card.querySelector('.edit-author').value = authors[idx] || '';
     });
   });
   
-  // Клик по chip с предложением названия
   card.querySelectorAll('.name-suggestion').forEach(s => {
     s.addEventListener('click', () => {
+      card.querySelectorAll('.name-suggestion').forEach(x => x.classList.remove('active'));
+      s.classList.add('active');
       card.querySelector('.edit-name').value = s.dataset.text;
     });
   });
@@ -641,8 +706,7 @@ function makePendingCard(item) {
     c.addEventListener('click', () => { card.querySelectorAll('.color-opt').forEach(x => x.classList.remove('active')); c.classList.add('active'); });
   });
   
-  // ЛОК: любое взаимодействие с формой = захват
-  ['input', 'change', 'focus', 'click'].forEach(ev => {
+  ['input', 'change', 'focus'].forEach(ev => {
     card.querySelectorAll('input, select, textarea, .type-opt, .color-opt').forEach(el => {
       el.addEventListener(ev, async () => {
         if (!myLocks.has(item.id)) {
@@ -656,7 +720,6 @@ function makePendingCard(item) {
     });
   });
   
-  // ============ УМНЫЕ ТЕГИ ============
   setupTagsInput(card, item.id);
   
   card.querySelector('.pending-actions .btn').addEventListener('click', () => approveMod(item, card));
@@ -665,16 +728,16 @@ function makePendingCard(item) {
   return card;
 }
 
-// ============ АВТОДОПОЛНЕНИЕ ТЕГОВ ============
+// ============ УМНЫЕ ТЕГИ ============
 function setupTagsInput(card, itemId) {
   const container = card.querySelector('.tags-container');
   const input = card.querySelector('.tags-input');
   const dropdown = card.querySelector('.tag-dropdown');
-  card._tags = new Set(); // хранение тегов для этой карточки
+  card._tags = new Set();
   let highlightedIndex = -1;
   
   function addTag(tag) {
-    tag = tag.toLowerCase().trim();
+    tag = String(tag).toLowerCase().trim();
     if (!tag || card._tags.has(tag) || tag.length > 30) return;
     card._tags.add(tag);
     renderChips();
@@ -708,7 +771,7 @@ function setupTagsInput(card, itemId) {
     highlightedIndex = -1;
     
     if (!query) {
-      // Показываем топ-8 самых популярных не выбранных
+      // Топ-8 популярных
       const top = allExistingTags.filter(t => !card._tags.has(t.name)).slice(0, 8);
       if (top.length === 0) { hideDropdown(); return; }
       top.forEach((t, i) => addDropdownItem(t.name, t.count, false, i));
@@ -816,8 +879,12 @@ async function approveMod(item, card) {
     if (e1) throw e1;
     await sb.from('pending_mods').delete().eq('id', item.id);
     await releaseLock(item.id);
+    
+    // 🔥 ГЛАВНОЕ: сразу обновляем глобальный список тегов
+    addTagsToGlobal(tags);
+    
     toast('✅ Мод "'+name+'" опубликован!');
-    loadPending(); loadApprovedCount(); loadAllTags();
+    loadPending(); loadApprovedCount();
   } catch(e) { toast('❌ Ошибка: ' + e.message); }
 }
 
@@ -832,7 +899,6 @@ async function rejectMod(id) {
   toast('❌ Отклонено'); loadPending();
 }
 
-// ============ APPROVED ============
 async function loadApproved() {
   const box = document.getElementById('approvedList');
   box.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
@@ -867,7 +933,6 @@ async function deleteMod(id, name) {
   toast('🗑️ Удалено'); loadApproved(); loadAllTags();
 }
 
-// ============ MOD OF DAY ============
 async function loadModOfDay() {
   const currentBox = document.getElementById('dayCurrentBox');
   const listBox = document.getElementById('dayModList');
@@ -959,6 +1024,11 @@ document.getElementById('daySearch').addEventListener('input', e => renderDayMod
 
 sb.channel('pending_changes').on('postgres_changes', {event:'INSERT', schema:'public', table:'pending_mods'}, () => {
   if (currentAdmin) { toast('🔔 Новая заявка!'); loadPending(); }
+}).subscribe();
+
+// Real-time обновление списка тегов при появлении нового мода в БД
+sb.channel('mods_tags_sync').on('postgres_changes', {event:'INSERT', schema:'public', table:'mods'}, () => {
+  loadAllTags();
 }).subscribe();
 </script>
 </body>
