@@ -497,64 +497,27 @@ document.getElementById('closeAuth').onclick=closeAllModals;
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAllModals()});
 }
 
-ffunction startRandom(){
-var modal=document.getElementById('randomModal');
-modal.classList.add('active');
-document.body.style.overflow='hidden';
-document.getElementById('rollingView').style.display='block';
-document.getElementById('resultView').style.display='none';
-
+function startRandom(){
+var modal=document.getElementById('randomModal');modal.classList.add('active');document.body.style.overflow='hidden';
+document.getElementById('rollingView').style.display='block';document.getElementById('resultView').style.display='none';
 var reel=document.getElementById('slotReel');
-var slot=document.querySelector('.slot');
-
-// Сбрасываем
-reel.innerHTML='';
-reel.style.transition='none';
-reel.style.transform='translateX(0)';
-
-// Выбираем победителя ЗАРАНЕЕ
+reel.innerHTML='';reel.style.transition='none';reel.style.transform='translateX(0)';
 var winner=DB[Math.floor(Math.random()*DB.length)];
-
-// Создаём длинную ленту случайных редуксов
-var items=[];
-for(var i=0;i<50;i++){
-  items.push(DB[Math.floor(Math.random()*DB.length)]);
-}
-
-// Рендерим все элементы
-items.forEach(function(r){
-  var item=document.createElement('div');
-  item.className='slot-item';
-  item.textContent=r.name;
-  item.style.color=r.color;
+var shuffled=[],ii;
+for(ii=0;ii<40;ii++)shuffled.push(DB[Math.floor(Math.random()*DB.length)]);
+shuffled[35]=winner;
+shuffled.forEach(function(r){
+  var item=document.createElement('div');item.className='slot-item';
+  item.textContent=r.name;item.style.color=r.color;
   reel.appendChild(item);
 });
-
-// ЖДЁМ рендера, потом настраиваем анимацию
-setTimeout(function(){
-  var slotWidth=slot.offsetWidth;
-  var itemEls=reel.querySelectorAll('.slot-item');
-  var itemWidth=itemEls[0].offsetWidth;
-  
-  // Позиция куда должен встать победитель (например 40-й элемент)
-  var winnerIndex=40;
-  
-  // ЗАМЕНЯЕМ элемент на этой позиции на победителя
-  itemEls[winnerIndex].textContent=winner.name;
-  itemEls[winnerIndex].style.color=winner.color;
-  
-  // Вычисляем точный сдвиг: центр winner-элемента должен быть в центре слота
-  var finalX = -(winnerIndex * itemWidth) + (slotWidth / 2) - (itemWidth / 2);
-  
-  // Запускаем анимацию
+var itemWidth=200,slotWidth=400;
+var finalX=-(35*itemWidth)+(slotWidth/2)-(itemWidth/2);
+requestAnimationFrame(function(){
   reel.style.transition='transform 4s cubic-bezier(0.15,0.65,0.35,1)';
   reel.style.transform='translateX('+finalX+'px)';
-  
-  // Показываем результат после анимации
-  setTimeout(function(){
-    showRandom(winner);
-  }, 4200);
-}, 50);
+});
+setTimeout(function(){showRandom(winner)},4200);
 }
 
 function showRandom(r){
