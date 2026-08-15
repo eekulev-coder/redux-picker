@@ -502,22 +502,51 @@ var modal=document.getElementById('randomModal');modal.classList.add('active');d
 document.getElementById('rollingView').style.display='block';document.getElementById('resultView').style.display='none';
 var reel=document.getElementById('slotReel');
 reel.innerHTML='';reel.style.transition='none';reel.style.transform='translateX(0)';
+
+// Выбираем победителя
 var winner=DB[Math.floor(Math.random()*DB.length)];
+var winnerPosition=35; // позиция победителя в ленте
+
+// Создаём ленту
 var shuffled=[],ii;
-for(ii=0;ii<40;ii++)shuffled.push(DB[Math.floor(Math.random()*DB.length)]);
-shuffled[35]=winner;
+for(ii=0;ii<45;ii++){
+  shuffled.push(DB[Math.floor(Math.random()*DB.length)]);
+}
+shuffled[winnerPosition]=winner;
+
+// Рендерим элементы
 shuffled.forEach(function(r){
   var item=document.createElement('div');item.className='slot-item';
   item.textContent=r.name;item.style.color=r.color;
   reel.appendChild(item);
 });
-var itemWidth=200,slotWidth=400;
-var finalX=-(35*itemWidth)+(slotWidth/2)-(itemWidth/2);
+
+// ЖДЁМ пока браузер отрисует элементы, потом измеряем реально
 requestAnimationFrame(function(){
-  reel.style.transition='transform 4s cubic-bezier(0.15,0.65,0.35,1)';
-  reel.style.transform='translateX('+finalX+'px)';
+  requestAnimationFrame(function(){
+    // Реально измеряем слот и элементы
+    var slot=document.querySelector('.slot');
+    var items=reel.querySelectorAll('.slot-item');
+    if(!items.length)return;
+    
+    var slotRect=slot.getBoundingClientRect();
+    var itemRect=items[winnerPosition].getBoundingClientRect();
+    var itemWidth=itemRect.width;
+    var slotWidth=slotRect.width;
+    
+    // Вычисляем сколько нужно сдвинуть, чтобы центр winner элемента был по центру слота
+    // Позиция левого края winner элемента = winnerPosition * itemWidth
+    // Мы хотим чтобы центр winner (winnerPosition*itemWidth + itemWidth/2) был в центре слота (slotWidth/2)
+    var finalX = -(winnerPosition * itemWidth + itemWidth/2 - slotWidth/2);
+    
+    // Запускаем анимацию
+    reel.style.transition='transform 4s cubic-bezier(0.15,0.65,0.35,1)';
+    reel.style.transform='translateX('+finalX+'px)';
+    
+    // После окончания анимации показываем результат
+    setTimeout(function(){showRandom(winner)},4200);
+  });
 });
-setTimeout(function(){showRandom(winner)},4200);
 }
 
 function showRandom(r){
