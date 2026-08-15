@@ -535,14 +535,34 @@ if(!window._hoverInit){
     hoverEl=null;
   }
   
-  document.addEventListener('mouseover',function(e){
-    var thumb=e.target.closest('.card-thumb[data-yt]');
-    if(!thumb){return}
-    if(thumb===hoverEl){return} // уже висим — игнор
+  // Отслеживаем движение мыши глобально
+  document.addEventListener('mousemove',function(e){
+    // Находим карточку под курсором
+    var thumb=null;
+    var el=e.target;
+    while(el&&el!==document){
+      if(el.classList&&el.classList.contains('card-thumb')&&el.dataset.yt){
+        thumb=el;
+        break;
+      }
+      el=el.parentElement;
+    }
+    
+    // Если под курсором нет карточки-превью — стопим видео
+    if(!thumb){
+      if(hoverEl){stopHoverVideo()}
+      return;
+    }
+    
+    // Если под курсором ТА ЖЕ карточка что и раньше — ничего не делаем
+    if(thumb===hoverEl)return;
+    
+    // Новая карточка — стопим старое видео и запускаем новое
     stopHoverVideo();
     hoverEl=thumb;
     var ytId=thumb.dataset.yt;
     if(!ytId)return;
+    
     hoverTimer=setTimeout(function(){
       if(hoverEl!==thumb)return; // за это время увели мышь
       var iframe=document.createElement('iframe');
@@ -554,6 +574,12 @@ if(!window._hoverInit){
       hoverTimer=null;
     },HOVER_DELAY);
   });
+  
+  // Стопим когда мышь ушла из окна вообще
+  document.addEventListener('mouseleave',function(){
+    stopHoverVideo();
+  });
+}
   
   document.addEventListener('mouseout',function(e){
     var thumb=e.target.closest('.card-thumb[data-yt]');
