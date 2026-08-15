@@ -312,9 +312,7 @@ input,select{cursor:none;font-family:inherit;font-weight:500}
 .slot-pointer::after{content:'▲';bottom:-2px}
 .slot-reel{display:flex;flex-direction:row;height:100%;align-items:center;will-change:transform}
 .slot-item{
-width:200px;
 min-width:200px;
-max-width:200px;
 height:100%;
 display:flex;
 align-items:center;
@@ -322,13 +320,10 @@ justify-content:center;
 font-family:var(--font-bold);
 font-weight:700;
 font-size:1rem;
-padding:0 15px;
+padding:0 20px;
 white-space:nowrap;
 text-align:center;
-flex-shrink:0;
-box-sizing:border-box;
-overflow:hidden;
-text-overflow:ellipsis;
+flex-shrink:0
 }
 .random-actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap}
 
