@@ -527,7 +527,7 @@ if(!window._hoverInit){
   var hoverTimer=null;
   var hoverEl=null;
   var currentIframe=null;
-  var HOVER_DELAY=1000; // задержка в мс — меняй здесь
+  var HOVER_DELAY=0.600; // задержка в мс — меняй здесь
   
   function stopHoverVideo(){
     if(hoverTimer){clearTimeout(hoverTimer);hoverTimer=null}
