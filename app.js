@@ -281,7 +281,7 @@ function initHoverVideo(){
   var hoverTimer=null;
   var hoverEl=null;
   var currentIframe=null;
-  var HOVER_DELAY=2500;
+  var HOVER_DELAY=0.500;
   
   function stopHoverVideo(){
     if(hoverTimer){clearTimeout(hoverTimer);hoverTimer=null}
