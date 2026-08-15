@@ -155,6 +155,23 @@ button{cursor:pointer;font-family:inherit}
 .approved-stats i{color:var(--s1);margin-right:3px}
 .approved-buttons{display:flex;flex-direction:column;gap:6px}
 
+.admin-trail{
+  font-size:.7rem;
+  color:var(--text2);
+  padding:6px 10px;
+  background:var(--bg);
+  border-radius:6px;
+  margin-bottom:6px;
+  border-left:3px solid var(--blue);
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.admin-trail.edited{border-left-color:var(--yellow)}
+.admin-trail i{color:var(--s1);font-size:.75rem}
+.admin-trail b{color:var(--text);font-weight:700}
+
 .empty{text-align:center;padding:60px 20px;color:var(--text3)}
 .empty i{font-size:4rem;opacity:.3;margin-bottom:16px;display:block}
 .empty h3{color:var(--text2);margin-bottom:8px;font-family:'Unbounded',sans-serif}
@@ -188,7 +205,6 @@ button{cursor:pointer;font-family:inherit}
 .edit-modal-close:hover{color:var(--red);border-color:var(--red)}
 .edit-modal-title{font-family:'Unbounded',sans-serif;font-size:1.2rem;margin-bottom:20px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 
-/* ============ СТАТИСТИКА ============ */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:30px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;position:relative;overflow:hidden;transition:all .3s}
 .stat-card:hover{border-color:var(--s1);transform:translateY(-2px)}
@@ -284,6 +300,7 @@ button{cursor:pointer;font-family:inherit}
     <button class="tab active" data-tab="pending">⏳ Заявки <span class="tab-badge" id="pendingBadge">0</span></button>
     <button class="tab" data-tab="approved">✅ Опубликовано <span class="tab-badge" id="approvedBadge">0</span></button>
     <button class="tab" data-tab="modofday">⭐ Мод дня</button>
+    <button class="tab" data-tab="upload">➕ Загрузить мод</button>
     <button class="tab" data-tab="stats">📊 Статистика <span class="tab-badge live" id="onlineBadge">0</span></button>
   </div>
   
@@ -323,6 +340,77 @@ button{cursor:pointer;font-family:inherit}
       <div id="dayModList"></div>
     </div>
     
+    <div class="page" id="uploadPage">
+      <div class="section-head">
+        <div>
+          <div class="section-title">➕ Загрузить мод вручную</div>
+          <div class="section-desc">Добавь мод без Discord бота — введи YouTube и GDrive ссылки</div>
+        </div>
+      </div>
+      <div class="pending-card" style="padding:30px">
+        <div style="margin-bottom:20px">
+          <div class="field">
+            <label>📺 YouTube URL <span style="color:#f472b6">*</span></label>
+            <input type="text" id="uploadYt" placeholder="https://youtu.be/xxxxxxxxxxx">
+            <button class="top-btn" style="margin-top:8px" onclick="fetchYtInfo()"><i class="fas fa-search"></i> Загрузить инфу с YouTube</button>
+          </div>
+          <div id="uploadYtPreview" style="display:none;margin-top:14px"></div>
+        </div>
+        <div class="edit-form">
+          <div class="field full">
+            <label>📛 Название мода <span style="color:#f472b6">*</span></label>
+            <input type="text" id="uploadName" placeholder="Название редукса или REV">
+          </div>
+          <div class="field">
+            <label>👤 Автор <span style="color:#f472b6">*</span></label>
+            <input type="text" id="uploadAuthor" placeholder="Ник автора">
+          </div>
+          <div class="field">
+            <label>🏆 Бейдж</label>
+            <select id="uploadBadge">
+              <option value="">— нет —</option>
+              <option value="new">✨ New</option>
+              <option value="hot">🔥 Hot</option>
+              <option value="top">⭐ Top</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>✨ Тип <span style="color:#f472b6">*</span></label>
+            <div class="type-row" id="uploadTypes">
+              <div class="type-opt active" data-type="redux">✨ Redux</div>
+              <div class="type-opt" data-type="revik">💫 REV</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>🎨 Цвет <span style="color:#f472b6">*</span></label>
+            <div class="color-row" id="uploadColors"></div>
+          </div>
+          <div class="field full">
+            <label>📦 Ссылка на скачивание (Drive URL) <span style="color:#f472b6">*</span></label>
+            <input type="text" id="uploadDrive" placeholder="https://drive.google.com/... или mediafire.com/...">
+          </div>
+          <div class="field full">
+            <label>🏷️ Теги (Enter или запятая)</label>
+            <div class="tags-input-wrap">
+              <div class="tags-container" id="uploadTagsContainer">
+                <input type="text" class="tags-input" id="uploadTagsInput" placeholder="Начни печатать...">
+              </div>
+              <div class="tag-dropdown" id="uploadTagDropdown"></div>
+            </div>
+          </div>
+          <div class="field full">
+            <label>✍️ Описание</label>
+            <textarea id="uploadDesc" placeholder="Короткое описание мода..."></textarea>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px">
+          <button class="btn" style="background:linear-gradient(135deg,#a3e635,#84cc16);color:#000;flex:1" onclick="submitUploadMod()"><i class="fas fa-check"></i> Опубликовать мод</button>
+          <button class="btn btn-sec" style="flex:1" onclick="clearUploadForm()"><i class="fas fa-eraser"></i> Очистить форму</button>
+        </div>
+        <div class="msg" id="uploadMsg"></div>
+      </div>
+    </div>
+    
     <div class="page" id="statsPage">
       <div class="section-head">
         <div>
@@ -331,9 +419,7 @@ button{cursor:pointer;font-family:inherit}
         </div>
         <button class="top-btn" onclick="loadStats()"><i class="fas fa-sync"></i> Обновить</button>
       </div>
-      
       <div class="stats-grid" id="statsCards"></div>
-      
       <div class="charts-grid">
         <div class="chart-card full">
           <div class="chart-header">
@@ -346,22 +432,15 @@ button{cursor:pointer;font-family:inherit}
           </div>
           <div class="chart-container"><canvas id="chartOnline"></canvas></div>
         </div>
-        
         <div class="chart-card">
-          <div class="chart-header">
-            <div class="chart-title">📈 Посещения</div>
-          </div>
+          <div class="chart-header"><div class="chart-title">📈 Посещения</div></div>
           <div class="chart-container"><canvas id="chartVisits"></canvas></div>
         </div>
-        
         <div class="chart-card">
-          <div class="chart-header">
-            <div class="chart-title">✨ Новые пользователи</div>
-          </div>
+          <div class="chart-header"><div class="chart-title">✨ Новые пользователи</div></div>
           <div class="chart-container"><canvas id="chartUsers"></canvas></div>
         </div>
       </div>
-      
       <div class="charts-grid">
         <div class="top-list">
           <h3>👥 Сейчас онлайн</h3>
@@ -392,7 +471,21 @@ const GENERIC_NAMES = ['update','redux','preset','presets','files','file','downl
 function cleanFilename(name){if(!name)return '';return name.replace(/\.(rar|zip|7z|tar|gz|exe|iso|mp4|avi)$/i,'').trim()}
 function isGenericName(name){if(!name)return true;var c=cleanFilename(name).toLowerCase().trim();if(c.length<3)return true;if(GENERIC_NAMES.indexOf(c)!==-1)return true;for(var i=0;i<GENERIC_NAMES.length;i++){var g=GENERIC_NAMES[i];if(new RegExp('^'+g+'\\s*[v]?\\d*$','i').test(c))return true;if(new RegExp('^'+g+'\\s*(final|new|test)$','i').test(c))return true}return false}
 function getSmartName(d,y){var c=cleanFilename(d);if(c&&!isGenericName(c))return c;if(y&&y.trim())return y.trim();return c||'Без названия'}
-function getDisplayName(m){if(m.drive_filename){var c=cleanFilename(m.drive_filename);if(c&&!isGenericName(c))return c}return m.name}
+
+// ИСПРАВЛЕННАЯ getDisplayName — приоритет для отредактированного названия
+function getDisplayName(m){
+  if(m.name && m.name.trim()){
+    // Если name отличается от cleanFilename(drive_filename) — админ вручную задал name
+    if(!m.drive_filename || m.name !== cleanFilename(m.drive_filename)){
+      if(!isGenericName(m.name)) return m.name;
+    }
+  }
+  if(m.drive_filename){
+    var c=cleanFilename(m.drive_filename);
+    if(c && !isGenericName(c)) return c;
+  }
+  return m.name || 'Без названия';
+}
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentAdmin = null;
@@ -402,7 +495,6 @@ let allExistingTags = [];
 let myLocks = new Set();
 let othersLocks = new Map();
 
-// Chart instances
 let chartOnline = null, chartVisits = null, chartUsers = null;
 let statsRefreshInterval = null;
 
@@ -428,7 +520,6 @@ function showAdmin() {
   document.getElementById('userName').textContent = currentAdmin.login;
   loadAllTags().then(() => { loadPending(); loadApprovedCount(); loadOnlineCount(); });
   initLockSystem();
-  // Обновляем счётчик онлайн каждые 15 сек
   setInterval(loadOnlineCount, 15000);
 }
 
@@ -451,6 +542,7 @@ document.querySelectorAll('.tab').forEach(t => {
     if (t.dataset.tab === 'pending') loadPending();
     if (t.dataset.tab === 'approved') loadApproved();
     if (t.dataset.tab === 'modofday') loadModOfDay();
+    if (t.dataset.tab === 'upload') initUploadPage();
     if (t.dataset.tab === 'stats') { loadStats(); startStatsRefresh(); }
     else stopStatsRefresh();
   });
@@ -467,9 +559,7 @@ async function loadAllTags() {
   try {
     const {data} = await sb.from('mods').select('tags');
     const tagCounts = {};
-    if (data) {
-      data.forEach(m => { (m.tags || []).forEach(t => { const tag = String(t).toLowerCase().trim(); if (tag) tagCounts[tag] = (tagCounts[tag] || 0) + 1; }); });
-    }
+    if (data) { data.forEach(m => { (m.tags || []).forEach(t => { const tag = String(t).toLowerCase().trim(); if (tag) tagCounts[tag] = (tagCounts[tag] || 0) + 1; }); }); }
     allExistingTags = Object.keys(tagCounts).map(name => ({name, count: tagCounts[name]})).sort((a,b) => b.count - a.count);
   } catch(e) { allExistingTags = []; }
 }
@@ -487,7 +577,6 @@ function addTagsToGlobal(tags) {
 
 async function refreshAll() { await loadAllTags(); loadPending(); loadApprovedCount(); }
 
-// ============ ОНЛАЙН СЧЁТЧИК ============
 async function loadOnlineCount(){
   try{
     await sb.rpc('cleanup_sessions');
@@ -497,16 +586,12 @@ async function loadOnlineCount(){
   }catch(e){}
 }
 
-// ============ СТАТИСТИКА ============
 async function loadStats(){
   try{
-    // Очищаем старые сессии
     await sb.rpc('cleanup_sessions');
-    
-    // Собираем данные
     const [sessionsRes, modsRes, usersRes, todayRes, ratingsRes] = await Promise.all([
       sb.from('active_sessions').select('*'),
-      sb.from('mods').select('id,downloads,name,author,rating,votes'),
+      sb.from('mods').select('id,downloads,name,author,rating,votes,drive_filename'),
       sb.from('users').select('id,login,created_at'),
       sb.from('daily_stats').select('*').eq('date', new Date().toISOString().split('T')[0]).maybeSingle(),
       sb.from('user_ratings').select('id', {count:'exact', head:true})
@@ -516,19 +601,14 @@ async function loadStats(){
     const mods = modsRes.data || [];
     const users = usersRes.data || [];
     const today = todayRes.data;
-    
     const totalDownloads = mods.reduce((s,m) => s + (m.downloads || 0), 0);
     const totalRatings = ratingsRes.count || 0;
     const authorsSet = new Set(mods.map(m => m.author));
-    
-    // Регистрации за неделю
     const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
     const newUsersWeek = users.filter(u => new Date(u.created_at) >= weekAgo).length;
     
-    // Обновляем счётчик онлайн вкладки
     document.getElementById('onlineBadge').textContent = sessions.length;
     
-    // Карточки
     document.getElementById('statsCards').innerHTML = `
       <div class="stat-card live">
         <div class="stat-icon">👥</div>
@@ -580,187 +660,68 @@ async function loadStats(){
       </div>
     `;
     
-    // Список онлайн
     renderOnlineUsers(sessions);
-    
-    // Топ модов
     renderTopMods(mods);
-    
-    // Графики
     await loadCharts(7);
-    
-  }catch(e){
-    console.error('Ошибка загрузки статистики:', e);
-    toast('❌ Ошибка загрузки статистики');
-  }
+  }catch(e){ console.error('Ошибка загрузки статистики:', e); }
 }
 
 function renderOnlineUsers(sessions){
   const box = document.getElementById('onlineUsersList');
-  if(sessions.length === 0){
-    box.innerHTML = '<div class="empty" style="padding:20px"><i class="fas fa-user-slash"></i><p>Никого нет онлайн</p></div>';
-    return;
-  }
-  
-  // Сортируем: сначала авторизованные
-  const sorted = sessions.slice().sort((a,b) => {
-    if(a.user_login && !b.user_login) return -1;
-    if(!a.user_login && b.user_login) return 1;
-    return new Date(b.last_seen) - new Date(a.last_seen);
-  });
-  
+  if(sessions.length === 0){ box.innerHTML = '<div class="empty" style="padding:20px"><i class="fas fa-user-slash"></i><p>Никого нет онлайн</p></div>'; return; }
+  const sorted = sessions.slice().sort((a,b) => { if(a.user_login && !b.user_login) return -1; if(!a.user_login && b.user_login) return 1; return new Date(b.last_seen) - new Date(a.last_seen); });
   box.innerHTML = sorted.map(s => {
     const isUser = !!s.user_login;
     const name = s.user_login || 'Гость';
     const initial = name.charAt(0).toUpperCase();
     const ageMin = Math.floor((Date.now() - new Date(s.last_seen).getTime()) / 60000);
     const timeAgo = ageMin < 1 ? 'сейчас' : ageMin + ' мин назад';
-    return `
-      <div class="online-user">
-        <div class="online-user-avatar">${initial}</div>
-        <div class="online-user-info">
-          <div class="online-user-name ${isUser?'':'online-user-guest'}">${name}</div>
-          <div class="online-user-time">Активен ${timeAgo}</div>
-        </div>
-      </div>
-    `;
+    return `<div class="online-user"><div class="online-user-avatar">${initial}</div><div class="online-user-info"><div class="online-user-name ${isUser?'':'online-user-guest'}">${name}</div><div class="online-user-time">Активен ${timeAgo}</div></div></div>`;
   }).join('');
 }
 
 function renderTopMods(mods){
   const box = document.getElementById('topModsList');
   const top = mods.slice().sort((a,b) => (b.downloads||0) - (a.downloads||0)).slice(0, 10);
-  if(top.length === 0){
-    box.innerHTML = '<div class="empty" style="padding:20px"><i class="fas fa-folder-open"></i><p>Нет модов</p></div>';
-    return;
-  }
-  box.innerHTML = top.map((m, i) => `
-    <div class="top-item">
-      <div class="top-rank">#${i+1}</div>
-      <div class="top-info">
-        <div class="top-name">${getDisplayName(m)}</div>
-        <div class="top-sub">👤 ${m.author} · ⭐ ${m.rating}</div>
-      </div>
-      <div class="top-value">${(m.downloads||0).toLocaleString('ru')}</div>
-    </div>
-  `).join('');
+  if(top.length === 0){ box.innerHTML = '<div class="empty" style="padding:20px"><i class="fas fa-folder-open"></i><p>Нет модов</p></div>'; return; }
+  box.innerHTML = top.map((m, i) => `<div class="top-item"><div class="top-rank">#${i+1}</div><div class="top-info"><div class="top-name">${getDisplayName(m)}</div><div class="top-sub">👤 ${m.author} · ⭐ ${m.rating}</div></div><div class="top-value">${(m.downloads||0).toLocaleString('ru')}</div></div>`).join('');
 }
 
 async function loadCharts(days){
   try{
     const {data} = await sb.from('daily_stats').select('*').order('date', {ascending:true});
     if(!data) return;
-    
-    // Генерируем последние N дней (даже пустые)
     const labels = [];
     const dateMap = {};
     data.forEach(d => dateMap[d.date] = d);
-    
     for(let i = days-1; i >= 0; i--){
       const d = new Date(); d.setDate(d.getDate() - i);
       const key = d.toISOString().split('T')[0];
       labels.push(d.toLocaleDateString('ru', {day:'2-digit', month:'short'}));
       if(!dateMap[key]) dateMap[key] = {date:key, peak_online:0, total_visits:0, new_users:0, downloads:0};
     }
-    
     const sortedData = [];
     for(let i = days-1; i >= 0; i--){
       const d = new Date(); d.setDate(d.getDate() - i);
       const key = d.toISOString().split('T')[0];
       sortedData.push(dateMap[key]);
     }
-    
     const peakOnline = sortedData.map(d => d.peak_online || 0);
     const visits = sortedData.map(d => d.total_visits || 0);
     const newUsers = sortedData.map(d => d.new_users || 0);
-    
-    // График онлайна
     if(chartOnline) chartOnline.destroy();
-    chartOnline = new Chart(document.getElementById('chartOnline'), {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Пик онлайна',
-          data: peakOnline,
-          borderColor: '#a3e635',
-          backgroundColor: 'rgba(163,230,53,0.15)',
-          fill: true,
-          tension: 0.4,
-          borderWidth: 3,
-          pointRadius: 4,
-          pointBackgroundColor: '#a3e635'
-        }]
-      },
-      options: chartOptions()
-    });
-    
-    // График посещений
+    chartOnline = new Chart(document.getElementById('chartOnline'), { type: 'line', data: { labels, datasets: [{ label: 'Пик онлайна', data: peakOnline, borderColor: '#a3e635', backgroundColor: 'rgba(163,230,53,0.15)', fill: true, tension: 0.4, borderWidth: 3, pointRadius: 4, pointBackgroundColor: '#a3e635' }] }, options: chartOptions() });
     if(chartVisits) chartVisits.destroy();
-    chartVisits = new Chart(document.getElementById('chartVisits'), {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Посещения',
-          data: visits,
-          backgroundColor: '#60a5fa',
-          borderRadius: 6
-        }]
-      },
-      options: chartOptions()
-    });
-    
-    // График новых юзеров
+    chartVisits = new Chart(document.getElementById('chartVisits'), { type: 'bar', data: { labels, datasets: [{ label: 'Посещения', data: visits, backgroundColor: '#60a5fa', borderRadius: 6 }] }, options: chartOptions() });
     if(chartUsers) chartUsers.destroy();
-    chartUsers = new Chart(document.getElementById('chartUsers'), {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Новые пользователи',
-          data: newUsers,
-          backgroundColor: '#e5a4c4',
-          borderRadius: 6
-        }]
-      },
-      options: chartOptions()
-    });
-    
+    chartUsers = new Chart(document.getElementById('chartUsers'), { type: 'bar', data: { labels, datasets: [{ label: 'Новые пользователи', data: newUsers, backgroundColor: '#e5a4c4', borderRadius: 6 }] }, options: chartOptions() });
   }catch(e){ console.error('Ошибка графиков:', e); }
 }
 
 function chartOptions(){
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: '#160d1c',
-        borderColor: '#e5a4c4',
-        borderWidth: 1,
-        titleColor: '#f5f0f5',
-        bodyColor: '#a09098',
-        padding: 12,
-        cornerRadius: 8
-      }
-    },
-    scales: {
-      x: {
-        grid: { color: 'rgba(255,255,255,0.05)' },
-        ticks: { color: '#a09098', font: { size: 11 } }
-      },
-      y: {
-        beginAtZero: true,
-        grid: { color: 'rgba(255,255,255,0.05)' },
-        ticks: { color: '#a09098', font: { size: 11 }, precision: 0 }
-      }
-    }
-  };
+  return { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#160d1c', borderColor: '#e5a4c4', borderWidth: 1, titleColor: '#f5f0f5', bodyColor: '#a09098', padding: 12, cornerRadius: 8 } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a09098', font: { size: 11 } } }, y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a09098', font: { size: 11 }, precision: 0 } } } };
 }
 
-// Переключение периода графика
 document.querySelectorAll('.chart-tab[data-chart="online"]').forEach(t => {
   t.addEventListener('click', () => {
     document.querySelectorAll('.chart-tab[data-chart="online"]').forEach(x => x.classList.remove('active'));
@@ -769,29 +730,19 @@ document.querySelectorAll('.chart-tab[data-chart="online"]').forEach(t => {
   });
 });
 
-function startStatsRefresh(){
-  stopStatsRefresh();
-  statsRefreshInterval = setInterval(loadStats, 20000);
-}
-function stopStatsRefresh(){
-  if(statsRefreshInterval){clearInterval(statsRefreshInterval);statsRefreshInterval=null}
-}
+function startStatsRefresh(){ stopStatsRefresh(); statsRefreshInterval = setInterval(loadStats, 20000); }
+function stopStatsRefresh(){ if(statsRefreshInterval){clearInterval(statsRefreshInterval);statsRefreshInterval=null} }
 
-// ============ ЛОКИ ============
 async function initLockSystem() {
   setInterval(refreshMyLocks, 5000);
   setInterval(checkAllLocks, 3000);
   setInterval(async () => { try { await sb.rpc('cleanup_old_locks'); } catch(e){} }, 10000);
   window.addEventListener('beforeunload', () => {
     myLocks.forEach(id => {
-      navigator.sendBeacon(`${SUPABASE_URL}/rest/v1/admin_locks?pending_id=eq.${id}&admin_login=eq.${encodeURIComponent(currentAdmin.login)}`,
-        new Blob([JSON.stringify({})], {type:'application/json'}));
+      navigator.sendBeacon(`${SUPABASE_URL}/rest/v1/admin_locks?pending_id=eq.${id}&admin_login=eq.${encodeURIComponent(currentAdmin.login)}`, new Blob([JSON.stringify({})], {type:'application/json'}));
     });
   });
-  sb.channel('locks_changes').on('postgres_changes', {event:'*', schema:'public', table:'admin_locks'}, () => {
-    checkAllLocks();
-    updateOnlineCount();
-  }).subscribe();
+  sb.channel('locks_changes').on('postgres_changes', {event:'*', schema:'public', table:'admin_locks'}, () => { checkAllLocks(); updateOnlineCount(); }).subscribe();
   await checkAllLocks();
 }
 
@@ -907,7 +858,6 @@ function makePendingCard(item) {
   const nameCandidates = [];
   if (cleanedDrive) nameCandidates.push({text: cleanedDrive, source: isDriveGeneric ? 'gdrive-generic' : 'gdrive', label: isDriveGeneric ? '📁 GDrive (общее имя)' : '📁 GDrive'});
   titles.forEach((t, i) => { if (t && !nameCandidates.find(c => c.text === t)) nameCandidates.push({text: t, source: 'yt', label: `📺 YouTube${titles.length > 1 ? ` #${i+1}` : ''}`}); });
-  
   const suggestionsHTML = nameCandidates.length > 1 ? `<div class="name-suggestions">${nameCandidates.map(c => `<span class="name-suggestion ${c.source==='gdrive'?'from-gdrive':''} ${c.text===defaultName?'active':''}" data-text="${c.text.replace(/"/g,'&quot;')}">${c.label}: ${c.text.length>30?c.text.slice(0,30)+'...':c.text}</span>`).join('')}</div>` : '';
   
   card.innerHTML = `
@@ -972,12 +922,8 @@ function makePendingCard(item) {
     });
   });
   
-  card.querySelectorAll('.type-opt').forEach(t => {
-    t.addEventListener('click', () => { card.querySelectorAll('.type-opt').forEach(x => x.classList.remove('active')); t.classList.add('active'); });
-  });
-  card.querySelectorAll('.color-opt').forEach(c => {
-    c.addEventListener('click', () => { card.querySelectorAll('.color-opt').forEach(x => x.classList.remove('active')); c.classList.add('active'); });
-  });
+  card.querySelectorAll('.type-opt').forEach(t => { t.addEventListener('click', () => { card.querySelectorAll('.type-opt').forEach(x => x.classList.remove('active')); t.classList.add('active'); }); });
+  card.querySelectorAll('.color-opt').forEach(c => { c.addEventListener('click', () => { card.querySelectorAll('.color-opt').forEach(x => x.classList.remove('active')); c.classList.add('active'); }); });
   
   ['input', 'change', 'focus'].forEach(ev => {
     card.querySelectorAll('input, select, textarea, .type-opt, .color-opt').forEach(el => {
@@ -1008,15 +954,9 @@ function setupTagsInput(card, itemId) {
   function addTag(tag) {
     tag = String(tag).toLowerCase().trim();
     if (!tag || card._tags.has(tag) || tag.length > 30) return;
-    card._tags.add(tag);
-    renderChips();
-    hideDropdown();
-    input.value = '';
-    input.focus();
+    card._tags.add(tag); renderChips(); hideDropdown(); input.value = ''; input.focus();
   }
-  
   function removeTag(tag) { card._tags.delete(tag); renderChips(); }
-  
   function renderChips() {
     container.querySelectorAll('.tag-chip').forEach(c => c.remove());
     Array.from(card._tags).forEach(tag => {
@@ -1027,18 +967,10 @@ function setupTagsInput(card, itemId) {
       container.insertBefore(chip, input);
     });
   }
-  
   function updateDropdown() {
     const query = input.value.toLowerCase().trim();
-    dropdown.innerHTML = '';
-    highlightedIndex = -1;
-    if (!query) {
-      const top = allExistingTags.filter(t => !card._tags.has(t.name)).slice(0, 8);
-      if (top.length === 0) { hideDropdown(); return; }
-      top.forEach((t, i) => addDropdownItem(t.name, t.count, false, i));
-      showDropdown();
-      return;
-    }
+    dropdown.innerHTML = ''; highlightedIndex = -1;
+    if (!query) { const top = allExistingTags.filter(t => !card._tags.has(t.name)).slice(0, 8); if (top.length === 0) { hideDropdown(); return; } top.forEach((t, i) => addDropdownItem(t.name, t.count, false, i)); showDropdown(); return; }
     const matches = allExistingTags.filter(t => t.name.includes(query) && !card._tags.has(t.name)).slice(0, 10);
     const isNew = !allExistingTags.find(t => t.name === query) && !card._tags.has(query);
     if (matches.length === 0 && !isNew) { hideDropdown(); return; }
@@ -1046,7 +978,6 @@ function setupTagsInput(card, itemId) {
     if (isNew) addDropdownItem(query, 0, true, matches.length);
     showDropdown();
   }
-  
   function addDropdownItem(name, count, isNew, index) {
     const item = document.createElement('div');
     item.className = 'tag-dropdown-item';
@@ -1055,21 +986,17 @@ function setupTagsInput(card, itemId) {
     item.addEventListener('mousedown', (e) => { e.preventDefault(); addTag(name); });
     dropdown.appendChild(item);
   }
-  
   function showDropdown() { dropdown.classList.add('show'); }
   function hideDropdown() { dropdown.classList.remove('show'); highlightedIndex = -1; }
-  
   function updateHighlight() {
     const items = dropdown.querySelectorAll('.tag-dropdown-item');
     items.forEach(i => i.classList.remove('highlighted'));
     if (highlightedIndex >= 0 && items[highlightedIndex]) { items[highlightedIndex].classList.add('highlighted'); items[highlightedIndex].scrollIntoView({block:'nearest'}); }
   }
-  
   container.addEventListener('click', () => input.focus());
   input.addEventListener('input', updateDropdown);
   input.addEventListener('focus', updateDropdown);
   input.addEventListener('blur', () => setTimeout(hideDropdown, 200));
-  
   input.addEventListener('keydown', (e) => {
     const items = dropdown.querySelectorAll('.tag-dropdown-item');
     if (e.key === 'ArrowDown') { e.preventDefault(); if (items.length === 0) return; highlightedIndex = Math.min(highlightedIndex + 1, items.length - 1); updateHighlight(); }
@@ -1102,7 +1029,8 @@ async function approveMod(item, card) {
       type: selectedType, name: name, author: author, color: hex, color_name: selectedColor.dataset.color,
       youtube_url: ytUrl, youtube_id: ytIdMatch ? ytIdMatch[1] : '', drive_url: item.drive_url,
       preview_image: preview, description: desc, tags: tags, badge: badge, palette: [hex, hex, hex, hex],
-      drive_filename: item.drive_filename || null
+      drive_filename: item.drive_filename || null,
+      uploaded_by: currentAdmin.login
     });
     if (e1) throw e1;
     await sb.from('pending_mods').delete().eq('id', item.id);
@@ -1136,12 +1064,24 @@ async function loadApproved() {
     const displayName = getDisplayName(r);
     const card = document.createElement('div');
     card.className = 'approved-card' + (isDay ? ' is-day' : '');
+    
+    // История админов
+    let historyHtml = '';
+    if(r.uploaded_by){
+      historyHtml += '<div class="admin-trail"><i class="fas fa-upload"></i> Загрузил: <b>'+r.uploaded_by+'</b></div>';
+    }
+    if(r.last_edited_by){
+      const editDate = r.last_edited_at ? new Date(r.last_edited_at).toLocaleString('ru', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
+      historyHtml += '<div class="admin-trail edited"><i class="fas fa-pen"></i> Редактировал: <b>'+r.last_edited_by+'</b>'+(editDate?' <span style="color:var(--text3)">('+editDate+')</span>':'')+'</div>';
+    }
+    
     card.innerHTML = `
       <div class="approved-preview"><img src="${r.preview_image||''}" onerror="this.style.display='none'"><div class="approved-color-bar" style="background:${r.color}"></div></div>
       <div class="approved-body">
         <div class="approved-name">${displayName}</div>
         <div class="approved-meta">👤 ${r.author} · ${r.type==='redux'?'✨ Redux':'💫 REV'} · 🎨 ${r.color_name}</div>
         <div class="approved-stats"><span><i class="fas fa-star"></i>${r.rating||5}</span><span><i class="fas fa-download"></i>${r.downloads||0}</span></div>
+        ${historyHtml}
         <div class="approved-buttons">
           <button class="btn btn-sec" style="width:100%;padding:8px" onclick="editMod(${r.id})"><i class="fas fa-edit"></i> Редактировать</button>
           <button class="btn btn-danger" style="width:100%;padding:8px" onclick="deleteMod(${r.id},'${displayName.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i> Удалить</button>
@@ -1163,12 +1103,28 @@ async function editMod(id) {
   const displayName = getDisplayName(mod);
   let colorsHTML = '';
   COLORS.forEach(c => { const isActive = c.h === mod.color ? 'active' : ''; colorsHTML += `<div class="color-opt ${isActive}" style="background:${c.h}" data-hex="${c.h}" data-color="${c.n}" title="${c.n}"></div>`; });
+  
+  // История админов в модалке
+  let historyBlock = '';
+  if(mod.uploaded_by || mod.last_edited_by){
+    historyBlock = '<div style="background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:20px;font-size:.8rem;color:var(--text2);border-left:3px solid var(--s1)">';
+    if(mod.uploaded_by){
+      historyBlock += '<div style="margin-bottom:4px"><i class="fas fa-upload" style="color:var(--s1);margin-right:6px"></i>Загрузил: <b style="color:var(--text)">'+mod.uploaded_by+'</b></div>';
+    }
+    if(mod.last_edited_by){
+      const editDate = mod.last_edited_at ? new Date(mod.last_edited_at).toLocaleString('ru') : '';
+      historyBlock += '<div><i class="fas fa-pen" style="color:var(--yellow);margin-right:6px"></i>Последнее редактирование: <b style="color:var(--text)">'+mod.last_edited_by+'</b>'+(editDate?' <span style="color:var(--text3)">('+editDate+')</span>':'')+'</div>';
+    }
+    historyBlock += '</div>';
+  }
+  
   const overlay = document.createElement('div');
   overlay.className = 'edit-modal-overlay';
   overlay.innerHTML = `
     <div class="edit-modal">
       <button class="edit-modal-close"><i class="fas fa-times"></i></button>
       <div class="edit-modal-title">✏️ Редактировать мод</div>
+      ${historyBlock}
       <div class="edit-form">
         <div class="field full"><label>📛 Название</label><input type="text" id="editModName" value="${displayName.replace(/"/g,'&quot;')}"></div>
         <div class="field"><label>👤 Автор</label><input type="text" id="editModAuthor" value="${(mod.author||'').replace(/"/g,'&quot;')}"></div>
@@ -1270,7 +1226,9 @@ async function editMod(id) {
       const {error} = await sb.from('mods').update({
         name: name, author: author, badge: badge, type: type, color: hex, color_name: color.dataset.color,
         tags: tags, description: desc, drive_url: driveUrl, youtube_url: ytUrl, youtube_id: ytId, preview_image: preview,
-        palette: [hex, hex, hex, hex]
+        palette: [hex, hex, hex, hex],
+        last_edited_by: currentAdmin.login,
+        last_edited_at: new Date().toISOString()
       }).eq('id', id);
       if (error) throw error;
       overlay.remove();
@@ -1345,6 +1303,164 @@ async function clearDayMod() {
 }
 
 document.getElementById('daySearch').addEventListener('input', e => renderDayModList(e.target.value));
+
+// ============ ЗАГРУЗКА МОДА ВРУЧНУЮ ============
+let uploadYtInfo = null;
+let uploadTagsSet = new Set();
+let uploadPageInit = false;
+
+function initUploadPage(){
+  if(uploadPageInit)return;
+  uploadPageInit = true;
+  const colorRow = document.getElementById('uploadColors');
+  colorRow.innerHTML = '';
+  COLORS.forEach(c => {
+    const d = document.createElement('div');
+    d.className = 'color-opt'; d.style.background = c.h; d.dataset.hex = c.h; d.dataset.color = c.n; d.title = c.n;
+    d.addEventListener('click', () => { colorRow.querySelectorAll('.color-opt').forEach(x => x.classList.remove('active')); d.classList.add('active'); });
+    colorRow.appendChild(d);
+  });
+  document.querySelectorAll('#uploadTypes .type-opt').forEach(t => { t.addEventListener('click', () => { document.querySelectorAll('#uploadTypes .type-opt').forEach(x => x.classList.remove('active')); t.classList.add('active'); }); });
+  setupUploadTags();
+  document.getElementById('uploadYt').addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); fetchYtInfo(); } });
+}
+
+async function fetchYtInfo(){
+  const url = document.getElementById('uploadYt').value.trim();
+  const preview = document.getElementById('uploadYtPreview');
+  const msg = document.getElementById('uploadMsg');
+  msg.classList.remove('show');
+  if(!url){ msg.textContent = '❌ Вставь YouTube ссылку'; msg.className = 'msg err show'; return; }
+  const ytIdMatch = url.match(/(?:youtu\.be\/|v=|shorts\/)([a-zA-Z0-9_-]{11})/);
+  if(!ytIdMatch){ msg.textContent = '❌ Неверный формат YouTube ссылки'; msg.className = 'msg err show'; return; }
+  const ytId = ytIdMatch[1];
+  try{
+    const {data: existing} = await sb.from('mods').select('id,name').eq('youtube_id', ytId).maybeSingle();
+    if(existing){ msg.textContent = '⚠️ Мод с этим YouTube уже есть: "'+existing.name+'"'; msg.className = 'msg err show'; return; }
+  }catch(e){}
+  preview.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+  preview.style.display = 'block';
+  try{
+    const oembed = 'https://www.youtube.com/oembed?url=https://youtu.be/'+ytId+'&format=json';
+    const r = await fetch(oembed);
+    const data = await r.json();
+    uploadYtInfo = { id: ytId, title: data.title || 'Без названия', author: data.author_name || 'Неизвестный автор', thumbnail: 'https://img.youtube.com/vi/'+ytId+'/maxresdefault.jpg' };
+    preview.innerHTML = `<div style="display:flex;gap:12px;padding:12px;background:var(--bg);border-radius:10px;align-items:center;flex-wrap:wrap"><img src="${uploadYtInfo.thumbnail}" style="width:180px;height:100px;object-fit:cover;border-radius:8px" onerror="this.src='https://img.youtube.com/vi/${ytId}/hqdefault.jpg'"><div style="flex:1;min-width:200px"><div style="font-weight:700;margin-bottom:4px">${uploadYtInfo.title}</div><div style="font-size:.8rem;color:var(--text2)">👤 ${uploadYtInfo.author}</div></div><button class="top-btn" onclick="applyYtInfo()"><i class="fas fa-magic"></i> Использовать</button></div>`;
+    if(!document.getElementById('uploadName').value) document.getElementById('uploadName').value = uploadYtInfo.title;
+    if(!document.getElementById('uploadAuthor').value) document.getElementById('uploadAuthor').value = uploadYtInfo.author;
+    msg.textContent = '✅ Инфо загружено!'; msg.className = 'msg ok show';
+    setTimeout(() => msg.classList.remove('show'), 2000);
+  }catch(e){ msg.textContent = '❌ Не удалось загрузить: '+e.message; msg.className = 'msg err show'; preview.style.display = 'none'; }
+}
+
+function applyYtInfo(){
+  if(!uploadYtInfo)return;
+  document.getElementById('uploadName').value = uploadYtInfo.title;
+  document.getElementById('uploadAuthor').value = uploadYtInfo.author;
+}
+
+function setupUploadTags(){
+  const container = document.getElementById('uploadTagsContainer');
+  const input = document.getElementById('uploadTagsInput');
+  const dropdown = document.getElementById('uploadTagDropdown');
+  let hIdx = -1;
+  function addTag(tag){ tag = String(tag).toLowerCase().trim(); if(!tag || uploadTagsSet.has(tag) || tag.length > 30) return; uploadTagsSet.add(tag); renderChips(); dropdown.classList.remove('show'); input.value = ''; input.focus(); }
+  function renderChips(){
+    container.querySelectorAll('.tag-chip').forEach(c => c.remove());
+    Array.from(uploadTagsSet).forEach(tag => {
+      const chip = document.createElement('span'); chip.className = 'tag-chip';
+      chip.innerHTML = `${tag} <button title="Удалить">×</button>`;
+      chip.querySelector('button').addEventListener('click', (e) => { e.stopPropagation(); uploadTagsSet.delete(tag); renderChips(); });
+      container.insertBefore(chip, input);
+    });
+  }
+  function updateDropdown(){
+    const q = input.value.toLowerCase().trim();
+    dropdown.innerHTML = ''; hIdx = -1;
+    if(!q){ const top = allExistingTags.filter(t => !uploadTagsSet.has(t.name)).slice(0, 8); if(top.length === 0){ dropdown.classList.remove('show'); return; } top.forEach((t, i) => addItem(t.name, t.count, false, i)); dropdown.classList.add('show'); return; }
+    const matches = allExistingTags.filter(t => t.name.includes(q) && !uploadTagsSet.has(t.name)).slice(0, 10);
+    const isNew = !allExistingTags.find(t => t.name === q) && !uploadTagsSet.has(q);
+    if(matches.length === 0 && !isNew){ dropdown.classList.remove('show'); return; }
+    matches.forEach((t, i) => addItem(t.name, t.count, false, i));
+    if(isNew) addItem(q, 0, true, matches.length);
+    dropdown.classList.add('show');
+  }
+  function addItem(name, count, isNew, idx){
+    const item = document.createElement('div');
+    item.className = 'tag-dropdown-item';
+    item.innerHTML = isNew ? `<span>${name}</span><span class="tag-new">+ создать новый</span>` : `<span>${name}</span><span class="tag-count">${count} мод(ов)</span>`;
+    item.addEventListener('mousedown', (e) => { e.preventDefault(); addTag(name); });
+    dropdown.appendChild(item);
+  }
+  container.addEventListener('click', () => input.focus());
+  input.addEventListener('input', updateDropdown);
+  input.addEventListener('focus', updateDropdown);
+  input.addEventListener('blur', () => setTimeout(() => dropdown.classList.remove('show'), 200));
+  input.addEventListener('keydown', (e) => {
+    const items = dropdown.querySelectorAll('.tag-dropdown-item');
+    if(e.key === 'ArrowDown'){ e.preventDefault(); if(items.length===0)return; hIdx = Math.min(hIdx+1, items.length-1); items.forEach(i=>i.classList.remove('highlighted')); if(items[hIdx])items[hIdx].classList.add('highlighted'); }
+    else if(e.key === 'ArrowUp'){ e.preventDefault(); hIdx = Math.max(hIdx-1, -1); items.forEach(i=>i.classList.remove('highlighted')); if(hIdx>=0 && items[hIdx])items[hIdx].classList.add('highlighted'); }
+    else if(e.key === 'Enter' || e.key === ','){ e.preventDefault(); if(hIdx>=0 && items[hIdx])items[hIdx].dispatchEvent(new MouseEvent('mousedown')); else if(input.value.trim())addTag(input.value); }
+    else if(e.key === 'Backspace' && !input.value && uploadTagsSet.size > 0){ const last = Array.from(uploadTagsSet).pop(); uploadTagsSet.delete(last); renderChips(); }
+  });
+}
+
+async function submitUploadMod(){
+  const msg = document.getElementById('uploadMsg');
+  msg.classList.remove('show');
+  const ytUrl = document.getElementById('uploadYt').value.trim();
+  const name = document.getElementById('uploadName').value.trim();
+  const author = document.getElementById('uploadAuthor').value.trim();
+  const driveUrl = document.getElementById('uploadDrive').value.trim();
+  const badge = document.getElementById('uploadBadge').value || null;
+  const desc = document.getElementById('uploadDesc').value.trim() || 'Описание скоро появится.';
+  const type = document.querySelector('#uploadTypes .type-opt.active')?.dataset.type || 'redux';
+  const color = document.querySelector('#uploadColors .color-opt.active');
+  const tags = Array.from(uploadTagsSet);
+  if(!ytUrl){ msg.textContent = '❌ Укажи YouTube URL'; msg.className = 'msg err show'; return; }
+  if(!name){ msg.textContent = '❌ Укажи название'; msg.className = 'msg err show'; return; }
+  if(!author){ msg.textContent = '❌ Укажи автора'; msg.className = 'msg err show'; return; }
+  if(!driveUrl){ msg.textContent = '❌ Укажи ссылку на скачивание'; msg.className = 'msg err show'; return; }
+  if(!color){ msg.textContent = '❌ Выбери цвет'; msg.className = 'msg err show'; return; }
+  const ytIdMatch = ytUrl.match(/(?:youtu\.be\/|v=|shorts\/)([a-zA-Z0-9_-]{11})/);
+  if(!ytIdMatch){ msg.textContent = '❌ Неверный YouTube URL'; msg.className = 'msg err show'; return; }
+  const ytId = ytIdMatch[1];
+  try{
+    const {data: existing} = await sb.from('mods').select('id,name').eq('youtube_id', ytId).maybeSingle();
+    if(existing){ msg.textContent = '⚠️ Мод с этим YouTube уже опубликован: "'+existing.name+'"'; msg.className = 'msg err show'; return; }
+  }catch(e){}
+  const hex = color.dataset.hex;
+  const preview = uploadYtInfo && uploadYtInfo.thumbnail ? uploadYtInfo.thumbnail : 'https://img.youtube.com/vi/'+ytId+'/maxresdefault.jpg';
+  try{
+    const {error} = await sb.from('mods').insert({
+      type: type, name: name, author: author, color: hex, color_name: color.dataset.color,
+      youtube_url: 'https://youtu.be/'+ytId, youtube_id: ytId, drive_url: driveUrl,
+      preview_image: preview, description: desc, tags: tags, badge: badge, palette: [hex, hex, hex, hex],
+      uploaded_by: currentAdmin.login
+    });
+    if(error) throw error;
+    addTagsToGlobal(tags);
+    msg.textContent = '✅ Мод "'+name+'" опубликован на сайте!'; msg.className = 'msg ok show';
+    setTimeout(() => { clearUploadForm(); loadApprovedCount(); }, 1500);
+  }catch(e){ msg.textContent = '❌ Ошибка: '+e.message; msg.className = 'msg err show'; }
+}
+
+function clearUploadForm(){
+  document.getElementById('uploadYt').value = '';
+  document.getElementById('uploadName').value = '';
+  document.getElementById('uploadAuthor').value = '';
+  document.getElementById('uploadDrive').value = '';
+  document.getElementById('uploadDesc').value = '';
+  document.getElementById('uploadBadge').value = '';
+  document.getElementById('uploadYtPreview').style.display = 'none';
+  document.getElementById('uploadYtPreview').innerHTML = '';
+  document.querySelectorAll('#uploadColors .color-opt').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('#uploadTypes .type-opt').forEach((x, i) => x.classList.toggle('active', i === 0));
+  uploadTagsSet.clear();
+  document.querySelectorAll('#uploadTagsContainer .tag-chip').forEach(c => c.remove());
+  document.getElementById('uploadMsg').classList.remove('show');
+  uploadYtInfo = null;
+}
 
 sb.channel('pending_changes').on('postgres_changes', {event:'INSERT', schema:'public', table:'pending_mods'}, () => {
   if (currentAdmin) { toast('🔔 Новая заявка!'); loadPending(); }
