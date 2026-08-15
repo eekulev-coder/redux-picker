@@ -32,7 +32,6 @@ let ST={search:'',color:'all',author:'all',cat:'all',sort:'popular'};
 let currentUser=null,favorites=[];
 let authMode='login';
 
-// ===== CURSOR =====
 const cMain=document.getElementById('cursorMain'),cDot=document.getElementById('cursorDot'),cLabel=document.getElementById('cursorLabel');
 let mx=0,my=0,cx=0,cy=0;
 document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cDot.style.left=mx+'px';cDot.style.top=my+'px';cLabel.style.left=mx+'px';cLabel.style.top=my+'px'});
@@ -51,7 +50,6 @@ document.querySelectorAll('.redux-card-wrapper').forEach(function(el){
 });
 }
 
-// ===== BRANCHES REACT TO CURSOR =====
 function updateBranches(){
 var tl=document.getElementById('branchTL'),br=document.getElementById('branchBR');
 if(!tl||!br)return;
@@ -74,7 +72,6 @@ if(brDist<maxD){
 }
 setInterval(updateBranches,50);
 
-// ===== PARTICLES =====
 var pCanvas=document.getElementById('particlesCanvas'),pCtx=pCanvas.getContext('2d');
 var particles=[],pMouse={x:-999,y:-999};
 function resizePCanvas(){pCanvas.width=innerWidth;pCanvas.height=innerHeight}
@@ -118,7 +115,6 @@ for(i=0;i<particles.length;i++)for(j=i+1;j<particles.length;j++){
 requestAnimationFrame(animParticles)}
 animParticles();
 
-// ===== WIND =====
 function initWind(){
 var wind=document.getElementById('wind');
 function makeWind(){
@@ -133,7 +129,6 @@ setInterval(makeWind,2500);
 for(var i=0;i<3;i++)setTimeout(makeWind,i*800);
 }
 
-// ===== SAKURA PETALS =====
 var petalEmojis=['🌸','🌺','💮'];
 function spawnPetal(){
 var p=document.createElement('div');p.className='petal';
@@ -151,7 +146,6 @@ for(var i=0;i<8;i++)setTimeout(spawnPetal,i*300);
 setInterval(spawnPetal,1200);
 }
 
-// ===== LOADING =====
 function runLoading(){
 var bar=document.getElementById('loadingBar'),text=document.getElementById('loadingText'),sakura=document.getElementById('loadingSakura');
 var i,p,side;
@@ -177,7 +171,6 @@ var iv=setInterval(function(){
 },200);
 }
 
-// ===== SHOW MAIN =====
 function showMain(){
 var ids=['navbar','hero','reduxDay','trendingMarquee','catalog','about','footer'];
 ids.forEach(function(id,i){
@@ -191,14 +184,12 @@ setupMagnetic();setupPages();setupTelegram();loadUserData();
 setTimeout(function(){toast('🌸 Добро пожаловать в Redux Picker')},800);
 }
 
-// ===== TOAST =====
 function toast(msg){
 var c=document.getElementById('toastContainer'),t=document.createElement('div');
 t.className='toast';t.innerHTML=msg;c.appendChild(t);
 setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(100px)';t.style.transition='all .3s';setTimeout(function(){t.remove()},300)},3500);
 }
 
-// ===== CONFETTI =====
 function spawnConfetti(){
 var emojis=['🌸','✨','💖','🎉','⭐','💫','🌺'];
 for(var i=0;i<35;i++){
@@ -236,7 +227,6 @@ document.querySelectorAll('.magnetic').forEach(function(b){
   b.addEventListener('mouseleave',function(){b.style.transform=''});
 });}
 
-// ===== DAY CARD =====
 function renderDayCard(){
 var r=DB.reduce(function(a,b){return a.rating>b.rating?a:b});
 var emoji=emojiMap[r.name]||'🌸';
@@ -258,7 +248,6 @@ document.getElementById('reduxDay').innerHTML=
 bindHovers();
 }
 
-// ===== TRENDING MARQUEE =====
 function renderMarquee(){
 var sorted=DB.slice().sort(function(a,b){return b.dl-a.dl}).slice(0,10);
 var items=sorted.map(function(r,i){
@@ -272,7 +261,6 @@ document.querySelectorAll('.marquee-item').forEach(function(el){
 bindHovers();
 }
 
-// ===== FILTERS =====
 function initFilters(){
 var au=[];DB.forEach(function(r){if(au.indexOf(r.author)===-1)au.push(r.author)});au.sort();
 var as=document.getElementById('authorSel');
@@ -294,7 +282,6 @@ document.getElementById('catSel').onchange=function(e){ST.cat=e.target.value;ren
 document.getElementById('sortSel').onchange=function(e){ST.sort=e.target.value;renderGrid()};
 }
 
-// ===== RENDER GRID (with 3D TILT wrapper!) =====
 function renderGrid(target){
 if(!target)target='bentoGrid';
 var list=DB.slice();
@@ -359,7 +346,6 @@ list.forEach(function(r,i){
   
   wrapper.appendChild(card);
   
-  // ===== 3D TILT =====
   wrapper.addEventListener('mousemove',function(e){
     var rect=wrapper.getBoundingClientRect();
     var x=e.clientX-rect.left;
@@ -398,7 +384,6 @@ if(favorites.length>0){b.style.display='inline-block';b.textContent=favorites.le
 else b.style.display='none';
 }
 
-// ===== PAGES =====
 function setupPages(){
 document.querySelectorAll('[data-page]').forEach(function(a){
   a.addEventListener('click',function(e){
@@ -435,7 +420,6 @@ setTimeout(function(){
 },300);
 }
 
-// ===== FAVORITES =====
 function toggleFav(id){
 if(!currentUser){toast('🌸 Войди чтобы сохранять избранное');document.getElementById('authModal').classList.add('active');renderAuthContent();return}
 var idx=favorites.indexOf(id);
@@ -451,7 +435,6 @@ r.rating=Math.round(((r.rating*r.votes+star)/(r.votes+1))*10)/10;r.votes++;
 renderGrid();toast('⭐ Твоя оценка: '+star+'/5 для '+r.name);
 }
 
-// ===== DETAIL =====
 function openDetail(r){
 var modal=document.getElementById('detailModal'),box=document.getElementById('detailBox');
 var isFav=favorites.indexOf(r.id)!==-1;
@@ -485,7 +468,6 @@ modal.classList.add('active');document.body.style.overflow='hidden';bindHovers()
 document.querySelectorAll('.blob').forEach(function(b,i){if(i===0)b.style.background=r.color;if(i===2)b.style.background=r.palette[1]||r.color});
 }
 
-// ===== MODALS =====
 function setupModals(){
 document.getElementById('randomHeroBtn').onclick=startRandom;
 document.getElementById('closeRandom').onclick=closeAllModals;
@@ -497,51 +479,54 @@ document.getElementById('closeAuth').onclick=closeAllModals;
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAllModals()});
 }
 
+// ============ РАНДОМ (простая надёжная версия) ============
 function startRandom(){
-var modal=document.getElementById('randomModal');modal.classList.add('active');document.body.style.overflow='hidden';
-document.getElementById('rollingView').style.display='block';document.getElementById('resultView').style.display='none';
-var reel=document.getElementById('slotReel');
-reel.innerHTML='';reel.style.transition='none';reel.style.transform='translateX(0)';
+var modal=document.getElementById('randomModal');
+modal.classList.add('active');
+document.body.style.overflow='hidden';
+document.getElementById('rollingView').style.display='block';
+document.getElementById('resultView').style.display='none';
+
+var display=document.getElementById('slotDisplay');
+display.classList.remove('pop');
+
+// Выбираем победителя ЗАРАНЕЕ — он будет и в анимации, и в результате
 var winner=DB[Math.floor(Math.random()*DB.length)];
-var shuffled=[],ii;
-for(ii=0;ii<40;ii++)shuffled.push(DB[Math.floor(Math.random()*DB.length)]);
-shuffled[35]=winner;
-shuffled.forEach(function(r){
-  var item=document.createElement('div');item.className='slot-item';
-  item.textContent=r.name;item.style.color=r.color;
-  reel.appendChild(item);
-});
-var itemWidth=200,slotWidth=400;
-var finalX=-(35*itemWidth)+(slotWidth/2)-(itemWidth/2);
-requestAnimationFrame(function(){
-  reel.style.transition='transform 4s cubic-bezier(0.15,0.65,0.35,1)';
-  reel.style.transform='translateX('+finalX+'px)';
-});
-setTimeout(function(){showRandom(winner)},4200);
-}
+
+var iterations=0;
+var maxIterations=20;
+var currentDelay=60;
+
+function tick(){
+  iterations++;
   
-  // Последняя итерация — показываем победителя
-  if(currentIteration>=iterations){
-    slotCurrent.textContent=winner.name;
-    slotCurrent.style.color=winner.color;
-    slotCurrent.style.transition='transform 0.3s';
-    slotCurrent.style.transform='scale(1.15)';
+  // Замедление
+  if(iterations>10)currentDelay+=25;
+  if(iterations>15)currentDelay+=40;
+  
+  if(iterations>=maxIterations){
+    // ФИНАЛ — показываем ТОЧНО победителя
+    display.textContent=winner.name;
+    display.style.color=winner.color;
+    display.classList.add('pop');
     setTimeout(function(){
-      slotCurrent.style.transform='scale(1)';
-      setTimeout(function(){showRandom(winner)},400);
-    },200);
+      showRandom(winner);
+    },500);
     return;
   }
   
-  // Показываем случайный редукс
-  var random=DB[Math.floor(Math.random()*DB.length)];
-  slotCurrent.textContent=random.name;
-  slotCurrent.style.color=random.color;
+  // Промежуточный кадр — случайный редукс
+  var rnd=DB[Math.floor(Math.random()*DB.length)];
+  display.textContent=rnd.name;
+  display.style.color=rnd.color;
   
-  setTimeout(tick, interval);
+  setTimeout(tick,currentDelay);
 }
 
-setTimeout(tick, 100);
+// Стартуем сразу
+display.textContent='?';
+display.style.color='var(--s1)';
+setTimeout(tick,200);
 }
 
 function showRandom(r){
@@ -571,7 +556,6 @@ var cols=['#e5a4c4','#d9a8c2','#c4a8d9','#a8b0e0','#a8c0e0'];
 document.querySelectorAll('.blob').forEach(function(b,i){b.style.background=cols[i]});
 }
 
-// ===== TELEGRAM AURA =====
 function setupTelegram(){
 document.getElementById('tgLink').addEventListener('click',function(e){
   var rect=e.currentTarget.getBoundingClientRect();
@@ -601,7 +585,6 @@ requestAnimationFrame(upd);
 setTimeout(function(){el.remove()},2500);
 }
 
-// ===== AUTH =====
 function setupAuth(){
 document.getElementById('authBtn').onclick=function(){
   if(currentUser)renderUserProfile();else{authMode='login';renderAuthContent()}
