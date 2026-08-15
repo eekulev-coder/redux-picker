@@ -497,56 +497,64 @@ document.getElementById('closeAuth').onclick=closeAllModals;
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAllModals()});
 }
 
-function startRandom(){
-var modal=document.getElementById('randomModal');modal.classList.add('active');document.body.style.overflow='hidden';
-document.getElementById('rollingView').style.display='block';document.getElementById('resultView').style.display='none';
+ffunction startRandom(){
+var modal=document.getElementById('randomModal');
+modal.classList.add('active');
+document.body.style.overflow='hidden';
+document.getElementById('rollingView').style.display='block';
+document.getElementById('resultView').style.display='none';
+
 var reel=document.getElementById('slotReel');
-reel.innerHTML='';reel.style.transition='none';reel.style.transform='translateX(0)';
+var slot=document.querySelector('.slot');
 
-// Выбираем победителя
+// Сбрасываем
+reel.innerHTML='';
+reel.style.transition='none';
+reel.style.transform='translateX(0)';
+
+// Выбираем победителя ЗАРАНЕЕ
 var winner=DB[Math.floor(Math.random()*DB.length)];
-var winnerPosition=35; // позиция победителя в ленте
 
-// Создаём ленту
-var shuffled=[],ii;
-for(ii=0;ii<45;ii++){
-  shuffled.push(DB[Math.floor(Math.random()*DB.length)]);
+// Создаём длинную ленту случайных редуксов
+var items=[];
+for(var i=0;i<50;i++){
+  items.push(DB[Math.floor(Math.random()*DB.length)]);
 }
-shuffled[winnerPosition]=winner;
 
-// Рендерим элементы
-shuffled.forEach(function(r){
-  var item=document.createElement('div');item.className='slot-item';
-  item.textContent=r.name;item.style.color=r.color;
+// Рендерим все элементы
+items.forEach(function(r){
+  var item=document.createElement('div');
+  item.className='slot-item';
+  item.textContent=r.name;
+  item.style.color=r.color;
   reel.appendChild(item);
 });
 
-// ЖДЁМ пока браузер отрисует элементы, потом измеряем реально
-requestAnimationFrame(function(){
-  requestAnimationFrame(function(){
-    // Реально измеряем слот и элементы
-    var slot=document.querySelector('.slot');
-    var items=reel.querySelectorAll('.slot-item');
-    if(!items.length)return;
-    
-    var slotRect=slot.getBoundingClientRect();
-    var itemRect=items[winnerPosition].getBoundingClientRect();
-    var itemWidth=itemRect.width;
-    var slotWidth=slotRect.width;
-    
-    // Вычисляем сколько нужно сдвинуть, чтобы центр winner элемента был по центру слота
-    // Позиция левого края winner элемента = winnerPosition * itemWidth
-    // Мы хотим чтобы центр winner (winnerPosition*itemWidth + itemWidth/2) был в центре слота (slotWidth/2)
-    var finalX = -(winnerPosition * itemWidth + itemWidth/2 - slotWidth/2);
-    
-    // Запускаем анимацию
-    reel.style.transition='transform 4s cubic-bezier(0.15,0.65,0.35,1)';
-    reel.style.transform='translateX('+finalX+'px)';
-    
-    // После окончания анимации показываем результат
-    setTimeout(function(){showRandom(winner)},4200);
-  });
-});
+// ЖДЁМ рендера, потом настраиваем анимацию
+setTimeout(function(){
+  var slotWidth=slot.offsetWidth;
+  var itemEls=reel.querySelectorAll('.slot-item');
+  var itemWidth=itemEls[0].offsetWidth;
+  
+  // Позиция куда должен встать победитель (например 40-й элемент)
+  var winnerIndex=40;
+  
+  // ЗАМЕНЯЕМ элемент на этой позиции на победителя
+  itemEls[winnerIndex].textContent=winner.name;
+  itemEls[winnerIndex].style.color=winner.color;
+  
+  // Вычисляем точный сдвиг: центр winner-элемента должен быть в центре слота
+  var finalX = -(winnerIndex * itemWidth) + (slotWidth / 2) - (itemWidth / 2);
+  
+  // Запускаем анимацию
+  reel.style.transition='transform 4s cubic-bezier(0.15,0.65,0.35,1)';
+  reel.style.transform='translateX('+finalX+'px)';
+  
+  // Показываем результат после анимации
+  setTimeout(function(){
+    showRandom(winner);
+  }, 4200);
+}, 50);
 }
 
 function showRandom(r){
